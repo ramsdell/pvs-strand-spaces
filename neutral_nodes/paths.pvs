@@ -1,0 +1,23 @@
+% Paths through state transitions with an initial state
+
+% John D. Ramsdell -- The MITRE Corporation -- January 2014
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+paths[state: type, label: type, init?: setof[state],
+      trans: setof[[state, label, state]]]: theory
+begin
+
+  trans: type = (trans)
+
+  % A path is an infinite sequence of states, where successive members
+  % of the sequence satisfy the transition relation.
+  path?(p: sequence[[state, label]]): bool =
+    init?(p(0)`1) and
+    forall(n: nat): trans(p(n)`1, p(n)`2, p(n + 1)`1)
+
+  path: type = (path?)
+
+end paths

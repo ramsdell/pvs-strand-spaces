@@ -1,0 +1,88 @@
+% Strand Spaces and Nodes
+
+% John D. Ramsdell -- The MITRE Corporation -- November 2012
+
+% This theory defines strand spaces and nodes, and shows that the set
+% of nodes in a strand space is finite.
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+strand_spaces[state: type, trans: setof[[state, state]],
+              mesg: type, carried_by?: [mesg, mesg -> bool],
+              encode: [state -> mesg]]: theory
+begin
+
+  importing traces[state, trans, mesg, carried_by?, encode]
+
+  % A strand space is a nonempty finite sequence of traces.
+  strand_space: type = nonempty_finite_sequence[trace]
+
+  % Type strand is the domain of the given strand space.
+  strand(ss: strand_space): nonempty_type = index(ss)
+
+  % Type node is the set of nodes in the given strand space.
+  node(ss: strand_space): nonempty_type = [s: strand(ss), index(ss(s))]
+
+  % Sum the length of traces below j in strand space ss.
+  events_below(ss: strand_space)(j: upto(length(ss))): recursive nat =
+    if j = 0 then
+      0
+    else
+      length(ss(j - 1)) + events_below(ss)(j - 1)
+    endif
+    measure j
+
+  % A key lemma about events_below used to show the set of nodes
+  % associated with a strand space is finite.
+  events_below_increasing:
+    lemma forall(ss: strand_space, j: upto(length(ss)), n: node(ss)):
+       n`1 < j implies events_below(ss)(n`1) + n`2 < events_below(ss)(j)
+
+  % For n in node(ss), finite_node_witness(ss)(n) maps into
+  % below(events_below(ss)(length(ss))) and is injective.
+  finite_node_witness(ss: strand_space)(n: node(ss)):
+    below(events_below(ss)(length(ss))) =
+      events_below(ss)(n`1) + n`2
+
+  finite_node_type: theorem
+    forall(ss: strand_space): is_finite_type[node(ss)]
+
+  auto_rewrite+ finite_node_type
+
+  % The event associated with node n in a strand space ss
+  event_at(ss: strand_space)(n: node(ss)): event = ss(n`1)(n`2)
+
+  % Is n a transition node?
+  tran_node?(ss: strand_space)(n: node(ss)): bool =
+    sync?(event_at(ss)(n))
+
+  sync_at(ss: strand_space)(n: (tran_node?(ss))): (gtrans) =
+    t(event_at(ss)(n))
+
+  % Is message m inbound at node n?
+  inbound_at?(ss: strand_space)(m: mesg, n: node(ss)): bool =
+    cases event_at(ss)(n) of
+      recv(t): t = m
+    else
+      false
+    endcases
+
+  % Is message m outbound at node n?
+  outbound_at?(ss: strand_space)(m: mesg, n: node(ss)): bool =
+    cases event_at(ss)(n) of
+      send(t): t = m
+    else
+      false
+    endcases
+
+  % Does message m originate at node n in a strand space ss?
+  appears_at?(ss: strand_space)(m: mesg, n: node(ss)): bool =
+    appears_index?(ss(n`1), m, n`2)
+
+  never_carried?(ss: strand_space)(m: mesg): bool =
+    forall(n: node(ss)):
+      not carried_by_event?(m, event_at(ss)(n))
+
+end strand_spaces

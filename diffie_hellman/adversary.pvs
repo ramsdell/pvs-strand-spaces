@@ -1,0 +1,227 @@
+% The adversary model for the message algebra defined in the init_alg
+% theory, where anno is the type of role annotations.  The adversary
+% roles are the same as the ones in strand_spaces@adversary with the
+% exception of an additional role for elements of sort base and two
+% for elements of sort expn.  The adversary can exponentiate known
+% values.  It can also perform operations on exponents.
+
+% John D. Ramsdell -- The MITRE Corporation -- July 2013
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+adversary[anno: type,
+          grp: type,
+          e: grp,
+          o: [grp, grp -> grp],
+          inv: [grp -> grp],
+          bas: type from grp]: theory
+begin
+  assuming
+    a, b, c: var grp
+
+    associativity : assumption associative?(o)
+
+    unit : assumption identity?(o)(e)
+
+    inverse : assumption inverses?(o)(inv)(e)
+
+    commutativity: assumption commutative?(o)
+
+    importing basis[grp, e, o, inv, bas]
+
+    free: assumption is_basis
+
+  endassuming
+
+  importing init_alg[grp, e, o, inv, bas]
+  strand_spaces: library = "../strand_spaces"
+  importing strand_spaces@roles[anno, mesg, carried_by?]
+
+  % The new adversary roles
+
+  % Actions on values of type (base?)
+
+  % Exponentiate a base value
+
+  % The trace
+  exponentiate_trace(b: base, x: expn): trace =
+    tripleton_seq(recv(b), recv(x), send(exp(b, x)))
+
+  % The role
+  exponentiate_role(ri: role_item): bool =
+    exists(b: base, x: expn):
+      ri = simple_role_item(exponentiate_trace(b, x))
+
+  exponentiate_anno: lemma
+    forall(bu: bundle, ra: role_assignment(bu), n: node(bu`space)):
+      ra(n`1) = exponentiate_role implies
+        not anno_node?(bu, ra)(n)
+
+  % Actions on values of type expn
+
+  % Invert
+
+  % The trace
+  inv_trace(x: expn): trace =
+    doubleton_seq(recv(x), send(ex(inv(g(x)))))
+
+  % The role
+  inv_role(ri: role_item): bool =
+    exists(x: expn):
+      ri = simple_role_item(inv_trace(x))
+
+  inv_anno: lemma
+    forall(bu: bundle, ra: role_assignment(bu), n: node(bu`space)):
+      ra(n`1) = inv_role implies
+        not anno_node?(bu, ra)(n)
+
+  % Multiply
+
+  % The trace
+  mul_trace(x, y: expn): trace =
+    tripleton_seq(recv(x), recv(y), send(ex(g(x) o g(y))))
+
+  % The role
+  mul_role(ri: role_item): bool =
+    exists(x, y: expn):
+      ri = simple_role_item(mul_trace(x, y))
+
+  mul_anno: lemma
+    forall(bu: bundle, ra: role_assignment(bu), n: node(bu`space)):
+      ra(n`1) = mul_role implies
+        not anno_node?(bu, ra)(n)
+
+  % The five traditional adversary roles
+
+  % Create an atom
+
+  % The trace
+  create_trace(x: atom): trace =
+    singleton_seq(send(x))
+
+  % The role
+  create_role(ri: role_item): bool =
+    exists(x: atom): ri = simple_role_item(create_trace(x))
+
+  create_anno: lemma
+    forall(bu: bundle, ra: role_assignment(bu), n: node(bu`space)):
+      ra(n`1) = create_role implies
+        not anno_node?(bu, ra)(n)
+
+  % Create a tag
+
+  tag_trace(x: tag): trace =
+    singleton_seq(send(x))
+
+  tag_role(ri: role_item): bool =
+    exists(x: tag): ri = simple_role_item(tag_trace(x))
+
+  tag_anno: lemma
+    forall(bu: bundle, ra: role_assignment(bu), n: node(bu`space)):
+      ra(n`1) = tag_role implies
+        not anno_node?(bu, ra)(n)
+
+  % Hash a message
+
+  hash_trace(x: mesg): trace =
+    doubleton_seq(recv(x), send(hs(x)))
+
+  hash_role(ri: role_item): bool =
+    exists(x: mesg): ri = simple_role_item(hash_trace(x))
+
+  hash_anno: lemma
+    forall(bu: bundle, ra: role_assignment(bu), n: node(bu`space)):
+      ra(n`1) = hash_role implies
+        not anno_node?(bu, ra)(n)
+
+  % Pair two messages
+
+  pair_trace(x, y: mesg): trace =
+    tripleton_seq(recv(x), recv(y), send(pr(x, y)))
+
+  pair_role(ri: role_item): bool =
+    exists(x, y: mesg): ri = simple_role_item(pair_trace(x, y))
+
+  pair_anno: lemma
+    forall(bu: bundle, ra: role_assignment(bu), n: node(bu`space)):
+      ra(n`1) = pair_role implies
+        not anno_node?(bu, ra)(n)
+
+  % Separate two messages in a pair
+
+  sep_trace(x, y: mesg): trace =
+    tripleton_seq(recv(pr(x,y)), send(x), send(y))
+
+  sep_role(ri: role_item): bool =
+    exists(x, y: mesg): ri = simple_role_item(sep_trace(x, y))
+
+  sep_anno: lemma
+    forall(bu: bundle, ra: role_assignment(bu), n: node(bu`space)):
+      ra(n`1) = sep_role implies
+        not anno_node?(bu, ra)(n)
+
+  % Encrypt a message with a key
+
+  enc_trace(x: mesg, k: key): trace =
+    tripleton_seq(recv(x), recv(k), send(en(x, k)))
+
+  enc_role(ri: role_item): bool =
+    exists(x: mesg, k: key): ri = simple_role_item(enc_trace(x, k))
+
+  enc_anno: lemma
+    forall(bu: bundle, ra: role_assignment(bu), n: node(bu`space)):
+      ra(n`1) = enc_role implies
+        not anno_node?(bu, ra)(n)
+
+  % Decrypt a message with the inverse of a key
+
+  dec_trace(x: mesg, k: key): trace =
+    tripleton_seq(recv(en(x, k)), recv(invk(k)), send(x))
+
+  dec_role(ri : role_item): bool =
+    exists(x: mesg, k: key): ri = simple_role_item(dec_trace(x, k))
+
+  dec_anno: lemma
+    forall(bu: bundle, ra: role_assignment(bu), n: node(bu`space)):
+      ra(n`1) = dec_role implies
+        not anno_node?(bu, ra)(n)
+
+  % All the adversary roles as a finite set
+  adversary_roles: protocol =
+    add(exponentiate_role,
+        add(inv_role,
+            add(mul_role,
+                add(create_role,
+                    add(tag_role,
+                        add(hash_role,
+                            add(pair_role,
+                                add(sep_role,
+                                    add(enc_role,
+                                        singleton(dec_role))))))))))
+
+  enumerate_adversary_roles: lemma
+  forall(r: role):
+    adversary_roles(r) iff
+      r = exponentiate_role or
+      r = inv_role or
+      r = mul_role or
+      r = create_role or
+      r = tag_role or
+      r = hash_role or
+      r = pair_role or
+      r = sep_role or
+      r = enc_role or
+      r = dec_role
+
+  adversary_anno: lemma
+    forall(bu: bundle, ra: role_assignment(bu), n: node(bu`space)):
+      adversary_roles(ra(n`1)) implies
+        not anno_node?(bu, ra)(n)
+
+  adversary_strands_are_short: lemma
+    forall(ss: strand_space, s: strand(ss), h: nat, r: (adversary_roles)):
+      h >= 4 implies not role_pred(ss)(s, h, r)
+
+end adversary

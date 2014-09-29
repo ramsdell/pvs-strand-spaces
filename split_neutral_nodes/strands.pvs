@@ -1,0 +1,41 @@
+% Strands in the State Split Envelope Protocol
+
+% John D. Ramsdell -- The MITRE Corporation -- January 2014
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+strands: theory
+begin
+
+  importing protocol_roles
+
+  extend_inst_rew: lemma
+  forall(bu: bundle, z: strand(bu`space), x: mesg):
+    extend_inst(bu)(z, 2, x) iff
+      2 <= bu`space(z)`length and
+      prefix?[event](bu`space(z), extend_trace(x))
+
+  auto_rewrite+ extend_inst_rew
+
+  extend_neutral_node: lemma
+  forall(bu: bundle, z: strand(bu`space), x: mesg):
+    extend_inst(bu)(z, 2, x) implies
+      neutral_node?(bu`space)(z, 1)
+
+  quote_inst_rew: lemma
+  forall(bu: bundle, z: strand(bu`space), nonce: text, x: mesg, aik: akey):
+    quote_inst(bu)(z, 3, nonce, x, aik) iff
+      3 <= bu`space(z)`length and
+      prefix?[event](bu`space(z), quote_trace(nonce, x, aik))
+
+  auto_rewrite+ quote_inst_rew
+
+  quote_neutral_node: lemma
+  forall(bu: bundle, z: strand(bu`space),
+         h: nat, nonce: text, x: mesg, aik: akey):
+    quote_inst(bu)(z, h, nonce, x, aik) and h > 1 implies
+      neutral_node?(bu`space)(z, 1)
+
+end strands

@@ -1,0 +1,134 @@
+% A Diffie-Hellman message algebra as an initial algebra
+
+% John D. Ramsdell -- The MITRE Corporation -- June 2013
+
+% This algebra is a simplification of the Diffie-Hellman Algebra in
+% which the sort name has been dropped, tags have there own sort.
+% Base sorted messages are called atoms, and in this specification,
+% atom was used for the sort instead of base.
+
+% This algebra is unlike the Diffie-Hellman Algebra in CPSA in that
+% there are no variables, but it is instead generated only by
+% constants and thereby making it an initial algebra.  As a result,
+% constants for all the atom sorted messages have been added to the
+% signature.
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+init_alg[grp: type,
+         e: grp,
+         o: [grp, grp -> grp],
+         inv: [grp -> grp],
+         bas: type from grp]: theory
+begin
+  assuming
+    a, b, c: var grp
+
+    associativity : assumption associative?(o)
+
+    unit : assumption identity?(o)(e)
+
+    inverse : assumption inverses?(o)(inv)(e)
+
+    commutativity: assumption commutative?(o)
+
+    importing basis[grp, e, o, inv, bas]
+
+    free: assumption is_basis
+
+  endassuming
+
+  importing groups[grp, e, o, inv]
+
+  % The top algebra sort is mesg, and the base sorts are akey, skey,
+  % base, expn, text, and data.  When specifying CPSA roles or shape
+  % analysis sentences, use only these sorts. (I know, in PVS they are
+  % really types).
+
+  % Asymmetric keys come in pairs for each n: ak(n) and ik(n).
+  % Subsort cmpd is for compound messages and is not used.
+  mesg: datatype with subtypes key, expn, text, data, tag, cmpd
+  begin
+    ak(n: nat): akey? : key
+    ik(n: nat): ikey? : key
+    sk(n: nat): skey? : key
+    hs(n: mesg): hash? : key
+    ba(g: grp): base? : key       % This is the generator raised to g
+    ex(g: grp): expn? : expn      % This is the exponent associated with g
+    tx(n: nat): text? : text
+    dt(n: nat): data? : data
+    tg(n: nat): tag?: tag
+    pr(fst: mesg, snd: mesg): pair? : cmpd
+    en(plt: mesg, key: key): enc? : cmpd
+  end mesg
+
+  base: type = (base?)
+
+  % Basis elements
+  elem?(x: mesg): bool =
+    exists(be: bas): x = ex(be)
+
+  elem: type = (elem?)
+  judgement elem subtype_of expn
+
+  % Keys are further classified as being symmetric or asymmetric.
+
+  % Symmetric keys
+  skey: type = (skey?)
+
+  % Asymmetric keys come in pairs.  See the definition of invk below.
+  akey: type = {x: mesg | akey?(x) or ikey?(x)}
+  judgement (akey?) subtype_of akey
+  judgement (ikey?) subtype_of akey
+
+  % The inverse of a key
+  invk(k: key): key =
+    cases k of
+      ak(n): ik(n),
+      ik(n): ak(n),
+      sk(n): sk(n),
+      hs(n): hs(n),
+      ba(n): ba(n)
+    endcases
+
+  exp(b: base, x: expn): base = ba(g(b) o g(x))
+
+  invk_akey: lemma forall(n: nat): invk(ak(n)) = ik(n)
+  invk_ikey: lemma forall(n: nat): invk(ik(n)) = ak(n)
+  invk_skey: lemma forall(n: nat): invk(sk(n)) = sk(n)
+  invk_hash: lemma forall(n: mesg): invk(hs(n)) = hs(n)
+  invk_expn: lemma forall(g: grp): invk(ba(g)) = ba(g)
+
+  auto_rewrite+ invk_akey, invk_ikey, invk_skey, invk_hash, invk_expn
+
+  invk_invk_identity: theorem forall(k: key): invk(invk(k)) = k
+
+  invk_bijective: theorem bijective?(invk)
+
+  not_akey_invk_identity: theorem
+    forall(k: key): akey?(k) or ikey?(k) or invk(k) = k
+
+  % Atoms are the non-compound terms.
+  atom?(x: mesg): bool =
+    akey?(x) or ikey?(x) or skey?(x) or text?(x) or data?(x) or elem?(x)
+  % This type is called base in other documents.
+  atom: type = (atom?)
+  judgement akey subtype_of atom
+  judgement skey subtype_of atom
+  judgement elem subtype_of atom
+  judgement text subtype_of atom
+  judgement data subtype_of atom
+
+  % Is message x carried by message y?
+  carried_by?(x, y: mesg): recursive bool =
+  x = y or
+  cases y of
+    pr(f, s): carried_by?(x, f) or carried_by?(x, s),
+    en(p, k): carried_by?(x, p)
+  else false
+  endcases
+  measure y by <<
+
+end init_alg

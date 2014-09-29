@@ -1,0 +1,41 @@
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+cpsa: theory
+begin
+  importing tpm
+
+  optain: tag = tg(0)
+  refuse: tag = tg(1)
+
+  % This predicate captures the output of CPSA.
+  % i5, i7, and i8 correspond to the transitions on strand 5, 7, and 8.
+  cpsa(n: mesg, s: state, p: path, i5, i7, i8: nat): bool =
+    i8 < i7 and                           % The transition on 8 is before
+    i8 < i5 and                           % the ones on 5 and 7
+    p(i8) = s and
+    p(i8 + 1) = extend(n, p(i8)) and
+    p(i7) = p(i8 + 1) and
+    p(i7 + 1) = extend(tg(1), p(i7)) and  % The refuse extend
+    p(i5) = p(i8 + 1) and
+    p(i5 + 1) = extend(tg(0), p(i5))      % The obtain extend
+
+  subterm_extend: lemma
+    forall(x: mesg, s0, s1: state):
+      subterm(extend(x, s0), s1) implies
+        subterm(s0, s1)
+
+  no_circularity_in_subterm: lemma
+    forall(x: mesg, s: state):
+      not subterm(extend(x, s), s)
+
+  new_node: lemma
+    forall(n: mesg, s: state, p: path, i5, i7, i8: nat):
+      cpsa(n, s, p, i5, i7, i8) implies
+	(exists(j: nat):
+ 	  i7 < j and j < i5 and p(j + 1) = extend(n, p(j))) or
+ 	(exists(j: nat):
+	  i5 < j and j < i7 and p(j + 1) = extend(n, p(j)))
+
+end cpsa

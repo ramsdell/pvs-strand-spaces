@@ -1,0 +1,34 @@
+(|protocol_roles|
+ (|make_quote_TCC1| 0
+  (|make_quote_TCC1-1| NIL 3598440450 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|akey| TYPE-EQ-DECL NIL |init_alg| "../strand_spaces/")
+    (|ikey?| ADT-RECOGNIZER-DECL "[mesg -> boolean]" |init_alg|
+     "../strand_spaces/")
+    (|akey?| ADT-RECOGNIZER-DECL "[mesg -> boolean]" |init_alg|
+     "../strand_spaces/")
+    (|mesg| TYPE-DECL NIL |init_alg| "../strand_spaces/")
+    (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
+   NIL))
+ (|enumerate_protocol_roles| 0
+  (|enumerate_protocol_roles-1| NIL 3598747210
+   ("" (SKOLEM 1 "r") (("" (GRIND) NIL NIL)) NIL)
+   ((|add| CONST-DECL "(nonempty?)" |sets| NIL)
+    (|member| CONST-DECL "bool" |sets| NIL)
+    (|singleton| CONST-DECL "(singleton?)" |sets| NIL)
+    (|protocol_roles| CONST-DECL "protocol" |protocol_roles| NIL)
+    (|adversary_roles| CONST-DECL "protocol" |adversary| "../neutral_nodes/")
+    (|state| TYPE-DECL NIL |state| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|boot?| ADT-RECOGNIZER-DECL "[state -> boolean]" |state| NIL)
+    (|mesg| TYPE-DECL NIL |init_alg| "../strand_spaces/")
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|trans| CONST-DECL "bool" |state| NIL)
+    (|nonempty_add_finite| APPLICATION-JUDGEMENT "non_empty_finite_set"
+     |finite_sets| NIL)
+    (|nonempty_singleton_finite| APPLICATION-JUDGEMENT "non_empty_finite_set"
+     |finite_sets| NIL))
+   SHOSTAK)))
+

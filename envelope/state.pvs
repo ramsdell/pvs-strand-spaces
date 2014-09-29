@@ -1,0 +1,191 @@
+% Connection between the protocol and state
+
+% Reflects the TPM's Prefix Boot Extend Lemma into the strand space
+% world and infers the existence of an instance of the tpm extend enc
+% role that is between two other instances.
+
+% John D. Ramsdell -- The MITRE Corporation -- May 2013
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+state: theory
+begin
+
+  importing strands
+  importing state_spaces@protocols_and_state[state, trans]
+
+  state_induced_tpm_extend_enc_role: lemma
+  forall(bu: bundle, ra: assignment(bu),
+         i: nat, f: [(anno_node?(bu, ra)) -> below[i]], p: path,
+         n: (anno_node?(bu, ra)), x: mesg):
+    compat(bu, ra)(i, f, p) and
+    p(1+f(n)) = extend(x, p(f(n))) implies
+      ra(n`1) = tpm_extend_enc_role
+
+  % This lemma connects the TPM theory with the Strand Space theory
+  % using the TPM's Prefix Boot Extend Lemma.
+  prefix_boot_extend_anno: lemma
+  forall(bu: bundle, ra: assignment(bu), n0, n1: (anno_node?(bu, ra)),
+         x: mesg, a0, a1: anno, st0, st1: state):
+    compatible(bu, ra) and
+    annotations(bu, ra)(n0)(a0) and
+    annotations(bu, ra)(n1)(a1) and
+    prec?(bu)(n0, n1) and
+    subset?(a0, {t: trans | t`2 = st0}) and
+    subset?(a1, {t: trans | t`1 = st1}) and
+    has(st1, x) implies
+      subterm(st0, st1) or
+      exists(n: (anno_node?(bu, ra)), st: state):
+        annotations(bu, ra)(n)({t: trans | t`1 = st and
+                                           t`2 = extend(x, t`1)}) and
+        prec?(bu)(n0, n) and
+        prec?(bu)(n, n1)
+
+  % Lemmas about the implications of the existence of a full length
+  % tpm extend enc strand.
+
+  % This is lemma makes use of the fact that long strands can be the
+  % result of only two roles to ease the task in proving the role
+  % associated with a full length tpm extend enc strand.
+  long_strands_are_alice_or_extend_enc: lemma
+  forall(ss: strand_space, z: strand(ss), h: nat, r: (annotated_roles)):
+    h >= 5 and role_pred(ss)(z, h, r) implies
+      r = alice_role or r = tpm_extend_enc_role
+
+  tpm_extend_enc_inst_role: lemma
+  forall(bu: bundle, ra: assignment(bu), z: strand(bu`space),
+ 	 value, current_value: mesg, pcrkey, esk: skey,
+         tne: data, tpmkey: akey):
+    tpm_extend_enc_inst(bu)(z, 5, value, current_value,
+                            pcrkey, esk, tne, tpmkey) implies
+     ra(z) = tpm_extend_enc_role
+
+  tpm_extend_enc_inst_anno: lemma
+  forall(bu:bundle, ra: assignment(bu),
+         z: strand(bu`space),
+ 	 value, current_value: mesg, pcrkey, esk: skey,
+         tne: data, tpmkey: akey):
+    tpm_extend_enc_inst(bu)(z, 5, value, current_value, pcrkey,
+           	       	    esk, tne, tpmkey) implies
+      annotations(bu, ra)(z, 4)({t: trans |
+                                 pcr(t`1) = current_value and
+                                 t`2 = extend(value, t`1)})
+
+  % Lemmas about the implications of nodes annotated with extend transitions.
+
+  exists_extend_anno: lemma
+  forall(bu: bundle, ra: assignment(bu), value: mesg, st: state,
+         n: (anno_node?(bu, ra))):
+      compatible(bu, ra) and
+      annotations(bu, ra)(n)({t: trans | t`1 = st and
+                                         t`2 = extend(value, t`1)}) implies
+      n`2 = 4 and
+      exists(pcrkey, esk: skey, tne: data, tpmkey: akey):
+        tpm_extend_enc_inst(bu)(n`1, 5, value, pcr(st),
+ 	                        pcrkey, esk, tne, tpmkey)
+
+  exists_prefix_boot_extend_strand: lemma
+  forall(bu: bundle, ra: assignment(bu)):
+    compatible(bu, ra) implies
+      forall(z0, z1: strand(bu`space), x: mesg,
+      	     value0: mesg, st0: state, pcrkey0, esk0: skey,
+             tne0: data, tpmkey0: akey,
+      	     value1: mesg, st1: state, pcrkey1, esk1: skey,
+             tne1: data, tpmkey1: akey):
+        tpm_extend_enc_inst(bu)(z0, 5, value0, pcr(st0),
+	                        pcrkey0, esk0, tne0, tpmkey0) and
+        tpm_extend_enc_inst(bu)(z1, 5, value1, pcr(st1),
+	                        pcrkey1, esk1, tne1, tpmkey1) and
+        prec?(bu)((z0, 4), (z1, 3)) and
+        has(st1, x)
+        implies
+          subterm(extend(value0, st0), st1) or
+          exists(z: strand(bu`space),
+        	 current_value: mesg, pcrkey, esk: skey,
+                 tne: data, tpmkey: akey):
+            tpm_extend_enc_inst(bu)(z, 5, x, current_value,
+  	                            pcrkey, esk, tne, tpmkey) and
+            prec?(bu)((z0, 4), (z, 3)) and   % Note (z, 3) is after,
+            prec?(bu)((z, 4), (z1, 3))       % not (z, 4)
+
+   % Because node (z0, 4) is before the outbound node (z, 4) by state
+   % compatibility, there must exist an inbound node on the same
+   % strand that is before it too, which in this case is (z, 3).  The
+   % lemma to prove this is
+   % strand_spaces@bundles.after_send_implies_after_previous.
+
+  subterm_order: lemma
+  forall(st0, st1: state): st1 << st0 implies not subterm(st0, st1)
+
+  subterm_no_circularity_in_extend: lemma
+  forall(value: mesg, st: state):
+    not subterm(extend(value, st), st)
+
+  % A lemma that uses exists_prefix_boot_extend_strand with both
+  % orderings.
+  state_split_and_prefix_boot_extend_aux: lemma
+  forall(bu: bundle, ra: assignment(bu)):
+    compatible(bu, ra) implies
+      forall(z0, z1: strand(bu`space), x: mesg, st: state,
+      	     value0: mesg, pcrkey0, esk0: skey,
+             tne0: data, tpmkey0: akey,
+      	     value1: mesg, pcrkey1, esk1: skey,
+             tne1: data, tpmkey1: akey):
+        tpm_extend_enc_inst(bu)(z0, 5, value0, pcr(st),
+	                        pcrkey0, esk0, tne0, tpmkey0) and
+        tpm_extend_enc_inst(bu)(z1, 5, value1, pcr(st),
+	                        pcrkey1, esk1, tne1, tpmkey1) and
+        has(st, x) and value0 /= value1
+        implies
+          (exists(z: strand(bu`space),
+        	 current_value: mesg, pcrkey, esk: skey,
+                 tne: data, tpmkey: akey):
+            tpm_extend_enc_inst(bu)(z, 5, x, current_value,
+  	                            pcrkey, esk, tne, tpmkey) and
+            prec?(bu)((z0, 4), (z, 3)) and
+            prec?(bu)((z, 4), (z1, 3))) or
+          (exists(z: strand(bu`space),
+        	 current_value: mesg, pcrkey, esk: skey,
+                 tne: data, tpmkey: akey):
+            tpm_extend_enc_inst(bu)(z, 5, x, current_value,
+  	                            pcrkey, esk, tne, tpmkey) and
+            prec?(bu)((z1, 4), (z, 3)) and
+            prec?(bu)((z, 4), (z0, 3)))
+
+  % This lemma is the one exported for use in proving the Exists
+  % Extend Strand Both Security Goal.  It is the same as the lemma
+  % above except that state st has been replace by
+  % epsilon!(st: state): pcr(st)=origin.
+
+  state_split_and_prefix_boot_extend: lemma
+  forall(bu: bundle, ra: assignment(bu)):
+    compatible(bu, ra) implies
+      forall(z0, z1: strand(bu`space), x: mesg, origin: mesg,
+      	     value0: mesg, pcrkey0, esk0: skey,
+             tne0: data, tpmkey0: akey,
+      	     value1: mesg, pcrkey1, esk1: skey,
+             tne1: data, tpmkey1: akey):
+        tpm_extend_enc_inst(bu)(z0, 5, value0, origin,
+	                        pcrkey0, esk0, tne0, tpmkey0) and
+        tpm_extend_enc_inst(bu)(z1, 5, value1, origin,
+	                        pcrkey1, esk1, tne1, tpmkey1) and
+        has(epsilon!(st: state): pcr(st)=origin, x) and value0 /= value1
+        implies
+          (exists(z: strand(bu`space),
+        	 current_value: mesg, pcrkey, esk: skey,
+                 tne: data, tpmkey: akey):
+            tpm_extend_enc_inst(bu)(z, 5, x, current_value,
+  	                            pcrkey, esk, tne, tpmkey) and
+            prec?(bu)((z0, 4), (z, 3)) and
+            prec?(bu)((z, 4), (z1, 3))) or
+          (exists(z: strand(bu`space),
+        	 current_value: mesg, pcrkey, esk: skey,
+                 tne: data, tpmkey: akey):
+            tpm_extend_enc_inst(bu)(z, 5, x, current_value,
+  	                            pcrkey, esk, tne, tpmkey) and
+            prec?(bu)((z1, 4), (z, 3)) and
+            prec?(bu)((z, 4), (z0, 3)))
+
+end state

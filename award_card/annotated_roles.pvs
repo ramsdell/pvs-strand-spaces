@@ -1,0 +1,202 @@
+% Roles of the Award Card Protocol
+
+% This theory is a translation of the roles specified for CPSA.
+
+% John D. Ramsdell -- The MITRE Corporation -- June 2013
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+annotated_roles: theory
+begin
+
+  boxes: nat = 1      % Simplify by assuming just one box per card
+
+  importing award_card[boxes]
+  importing state_spaces@protocols_and_state[state, trans]
+
+  % anno: type = setof[trans]
+
+  % strand_spaces: library = "../strand_spaces"
+  % importing strand_spaces@adversary[anno]
+
+  % Tags
+
+  zero: tag = tg(0)
+  one: tag = tg(1)
+  buy: tag = tg(2)
+  new_card: tag = tg(3)
+
+  % (defrole buyer
+  %   (vars (nc nb text) (buyer cashier akey))
+  %   (trace
+  %    (recv (enc "buy" nc cashier buyer))
+  %    (send (enc nc nb buyer cashier))
+  %    (recv (cat nc nb)))
+  %   (uniq-orig nb))
+
+  buyer_trace(nc, nb: text, b, c: akey): trace =
+    tripleton_seq(recv(en(pr(buy, pr(nc, c)), b)),
+                  send(en(pr(nc, pr(nb, b)), c)),
+		  recv(pr(nc, nb)))
+
+  buyer_runique(nb: text): assumptions =
+    tripleton_seq(emptyset, singleton[atom](nb), emptyset)
+
+  buyer_role_item(nc, nb: text, b, c: akey): role_item =
+    (# trace   := c,
+       rnon    := no_assumptions(c`length),
+       runique := buyer_runique(nb),
+       ranno   := no_annotations(c`length) #)
+    where
+      c = buyer_trace(nc, nb, b, c)
+
+  buyer_role(ri: role_item): bool =
+    exists(nc, nb: text, b, c: akey):
+      ri = buyer_role_item(nc, nb, b, c)
+
+  buyer_anno: lemma
+    forall(bu: bundle, ra: role_assignment(bu), n: node(bu`space)):
+      ra(n`1) = buyer_role implies
+        not anno_node?(bu, ra)(n)
+
+  buyer_inst(bu: bundle)(z: strand(bu`space), h: nat,
+             nc, nb: text, b, c: akey): bool =
+    pred(bu`space)(z, h, buyer_role_item(nc, nb, b, c))
+
+  % State encoding
+
+  encode(st: state): mesg = tg(st)
+
+  encode_injective: lemma
+    forall(st0, st1: state):
+      encode(st0) = encode(st1) iff st0 = st1
+
+  auto_rewrite+ encode_injective
+
+  % (defrole cashier
+  %   (vars (nc nb text) (buyer cashier akey) (k-state skey))
+  %   (trace
+  %    (send (enc "buy" nc cashier buyer))
+  %    (recv (enc nc nb buyer cashier))
+  %    (recv (enc "one" buyer cashier (state-key)))
+  %    (send (enc "zero" buyer cashier (state-key)))
+  %    (send (cat nc nb)))
+  %   (non-orig k-state)
+  %   (uniq-orig nc))
+
+  cashier_trace(nc, nb: text, b, c: akey, k: skey): trace =
+    tripleton_seq(send(en(pr(buy, pr(nc, c)), b)),
+                  recv(en(pr(nc, pr(nb, b)), c)),
+                  recv(en(pr(one, pr(b, c)), k)))
+    o
+    doubleton_seq(send(en(pr(zero, pr(b, c)), k)),
+                  send(pr(nc, nb)))
+
+  cashier_rnon(k: skey): assumptions =
+    tripleton_seq(emptyset, emptyset, singleton[mesg](k))
+    o
+    doubleton_seq(emptyset, emptyset)
+
+  cashier_runique(nc: text): assumptions =
+    tripleton_seq(singleton[mesg](nc), emptyset, emptyset)
+    o
+    doubleton_seq(emptyset, emptyset)
+
+  cashier_annotations(nc, nb: text, b, c: akey, k: skey): annotations =
+    tripleton_seq(bottom, bottom, bottom)
+    o
+    doubleton_seq(up({t: trans |
+                      encode(t`1) = fst(plt(t(tr(2)))) and
+                      encode(t`2) = fst(plt(t(tr(3))))}),
+                  bottom)
+    where
+      tr = cashier_trace(nc, nb, b, c, k)
+
+  cashier_role_item(nc, nb: text, b, c: akey, k: skey): role_item =
+    (# trace   := cashier_trace(nc, nb, b, c, k),
+       rnon    := cashier_rnon(k),
+       runique := cashier_runique(nc),
+       ranno   := cashier_annotations(nc, nb, b, c, k) #)
+
+  cashier_role(ri: role_item): bool =
+    exists(nc, nb: text, b, c: akey, k: skey):
+      ri = cashier_role_item(nc, nb, b, c, k)
+
+  cashier_anno: lemma
+    forall(bu: bundle, ra: role_assignment(bu), n: node(bu`space)):
+      ra(n`1) = cashier_role implies
+        if n`2 = 3 then
+          annotations(bu, ra)(n) ({t: trans | t`1 = boxes and t`2 = 0})
+        else
+          not anno_node?(bu, ra)(n)
+        endif
+
+  cashier_inst(bu: bundle)(z: strand(bu`space), h: nat,
+               nc, nb: text, b, c: akey, k: skey): bool =
+    pred(bu`space)(z, h, cashier_role_item(nc, nb, b, c, k))
+
+  % (defrole new-card
+  %   (vars (buyer cashier akey) (k-state skey))
+  %   (trace
+  %    (recv "new-card")
+  %    (send (enc "one" buyer cashier (state-key))))
+  %   (non-orig k-state))
+
+  new_card_trace(b, c: akey, k: skey): trace =
+    doubleton_seq(recv(new_card),
+                  send(en(pr(one, pr(b, c)), k)))
+
+  new_card_rnon(k: skey): assumptions =
+    doubleton_seq(emptyset, singleton[atom](k))
+
+  new_card_annotations(b, c: akey, k: skey): annotations =
+    doubleton_seq(bottom,
+                  up({t: trans |
+                      encode(t`2) = fst(plt(t(new_card_trace(b, c, k)(1))))}))
+
+  new_card_role_item(b, c: akey, k: skey): role_item =
+    (# trace   := c,
+       rnon    := new_card_rnon(k),
+       runique := no_assumptions(c`length),
+       ranno   := new_card_annotations(b, c, k) #)
+    where
+      c = new_card_trace(b, c, k)
+
+  new_card_role(ri: role_item): bool =
+    exists(b, c: akey, k: skey):
+      ri = new_card_role_item(b, c, k)
+
+  new_card_anno: lemma
+    forall(bu: bundle, ra: role_assignment(bu), n: node(bu`space)):
+      ra(n`1) = new_card_role implies
+        if n`2 = 1 then
+          annotations(bu, ra)(n)({t: trans | t`2 = boxes})
+        else
+          not anno_node?(bu, ra)(n)
+        endif
+
+  new_card_inst(bu: bundle)(z: strand(bu`space), h: nat,
+                b, c: akey, k: skey): bool =
+    pred(bu`space)(z, h, new_card_role_item(b, c, k))
+
+  % The roles include the adversary's roles.
+  annotated_roles: protocol =
+    add(buyer_role,
+        add(cashier_role,
+            add(new_card_role,
+                adversary_roles)))
+
+  enumerate_annotated_roles: lemma
+  forall(r: role):
+    annotated_roles(r) iff
+      r = buyer_role or
+      r = cashier_role or
+      r = new_card_role or
+      adversary_roles(r)
+
+  % An award card specific role assignment
+  assignment(b: bundle): type = protocol_assignment(annotated_roles, b)
+
+end annotated_roles

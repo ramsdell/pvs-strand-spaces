@@ -1,0 +1,27 @@
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+tc_props[T: type, P: pred[[T, T]]]: theory
+begin
+  x, y: var T
+  n: var nat
+
+  tc_ordered: theorem
+  forall(f: [T -> below[n]]):
+    bijective?(f) and
+    (forall(x, y):
+      P(x, y) iff 1 + f(x) = f(y))
+    implies
+      (forall(x, y):
+        TC(P)(x, y) iff f(x) < f(y))
+
+  tc_strict_total: theorem
+  forall(f: [T -> below[n]]):
+    injective?(f) and
+    (forall(x, y):
+      TC(P)(x, y) iff f(x) < f(y))
+    implies
+      strict_total_order?(TC(P))
+
+end tc_props

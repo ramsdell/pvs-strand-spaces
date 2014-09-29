@@ -1,0 +1,9 @@
+#! /bin/sh
+
+# Script used to help convert logic files to PVS
+
+sed 's/) (/)\n(/g;s/)//g;s/z-//g' "$@" \
+    | awk '
+$1 == "(prec" {
+    print "    before?(bu)((z"$2",",$3"), (z"$4",",$5")) and"
+}'

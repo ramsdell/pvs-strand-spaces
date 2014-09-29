@@ -1,0 +1,42 @@
+% Nonempty finite sequences
+
+% John D. Ramsdell -- The MITRE Corporation -- December 2012
+
+% Defines nonempty finite sequences without reference to empty_seq.
+% Nonempty finite sets are constructed by adding to singleton_seq
+% instead.  Building a nonempty finite sequence by adding to empty_seq
+% causes problems because empty_seq is not a nonempty finite sequence.
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+nonempty_finite_sequences[T: type]: theory
+begin
+
+  nonempty_finite_sequence: type =
+    {fs: finite_sequence[T] | length(fs) > 0}
+
+  nmtfinseq: type = nonempty_finite_sequence
+
+  fs: var nmtfinseq
+  u, v, w, x, y, z: var T
+
+  % The index set
+  index(fs): nonempty_type = below[length(fs)] containing 0
+
+  singleton_seq(x): nmtfinseq =
+    (# length := 1,
+       seq := lambda(i: below(1)): x #)
+
+  % Singleton_seq correctness specification:
+  singleton_seq_lem: lemma singleton_seq(x) = add(x, empty_seq)
+
+  doubleton_seq(x, y): nmtfinseq = add(y, singleton_seq(x))
+
+  tripleton_seq(x, y, z): nmtfinseq = add(z, add(y, singleton_seq(x)))
+
+  sextupleton_seq(u, v, w, x, y, z): nmtfinseq =
+    add(z, add(y, add(x, add(w, add(v, singleton_seq(u))))))
+
+end nonempty_finite_sequences

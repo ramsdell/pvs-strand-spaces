@@ -1,0 +1,165 @@
+% Roles of the Wrap-Decrypt Protocol
+
+% John D. Ramsdell -- The MITRE Corporation -- June 2014
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+protocol_roles: theory
+begin
+
+  importing state
+  guarded_transitions: library = "../guarded_transitions"
+  importing guarded_transitions@adversary[state, init?, trans, encode]
+
+  % Make -- create a new key and return its handle
+
+  new_handle(st: state): mesg =
+    handle(add(init_attr, st))(length(st))
+
+  make_trace(st: state): trace =
+    doubleton_seq(sync(true, st, add(init_attr, st)), send(new_handle(st)))
+
+  % A handle originates in a state synchronization event
+  make_runique(st: state): assumptions =
+    doubleton_seq(singleton(new_handle(st)), emptyset)
+
+  make_role_item(st: state): role_item =
+    (# trace   := c,
+       rnon    := no_assumptions(c`length),
+       runique := make_runique(st) #)
+    where
+      c = make_trace(st)
+
+  make_role(ri: role_item): bool =
+    exists(st: state):
+      ri = make_role_item(st)
+
+  make_inst(bu: bundle)(z: strand(bu`space), h: nat, st: state): bool =
+    pred(bu)(z, h, make_role_item(st))
+
+  % Set-Wrap -- set the attribute of key k to WRAP
+
+  % The precondition ensures the key is in the state and its attribute
+  % is not DECRYPT.
+  set_wrap_trace(st: state, k: skey): trace =
+    let ads = has_key?(st, k) in     % The set of addresses for k
+    singleton_seq(sync(if exists(a: addr(st)): ads(a) and
+                            st(a) /= decrypt_attr
+                       then
+                         let a = epsilon(ads) in
+                         (true, st, st with [`seq(a) := wrap_attr])
+                       else
+                         (false, st, st)
+                       endif))
+
+  set_wrap_role_item(st: state, k: skey): role_item =
+    simple_role_item(set_wrap_trace(st, k))
+
+  set_wrap_role(ri: role_item): bool =
+    exists(st: state, k: skey):
+      ri = set_wrap_role_item(st, k)
+
+  set_wrap_inst(bu: bundle)(z: strand(bu`space), h: nat,
+                            st: state, k: skey): bool =
+    pred(bu)(z, h, set_wrap_role_item(st, k))
+
+  % Set-Decrypt -- set the attribute of key k to DECRYPT
+
+  % The precondition ensures the key is in the state and its attribute
+  % is not WRAP.
+  set_decrypt_trace(st: state, k: skey): trace =
+    let ads = has_key?(st, k) in     % The set of addresses for k
+    singleton_seq(sync(if exists(a: addr(st)): ads(a) and
+                            st(a) /= wrap_attr
+                       then
+                         let a = epsilon(ads) in
+                         (true, st, st with [`seq(a) := decrypt_attr])
+                       else
+                         (false, st, st)
+                       endif))
+
+  set_decrypt_role_item(st: state, k: skey): role_item =
+    simple_role_item(set_decrypt_trace(st, k))
+
+  set_decrypt_role(ri: role_item): bool =
+    exists(st: state, k: skey):
+      ri = set_decrypt_role_item(st, k)
+
+  set_decrypt_inst(bu: bundle)(z: strand(bu`space), h: nat,
+                            st: state, k: skey): bool =
+    pred(bu)(z, h, set_decrypt_role_item(st, k))
+
+  % Wrap -- wrap k0 with k1 and return the wrapped key
+
+  % The precondition ensures the key is in the state and its attribute
+  % is WRAP.
+  wrap_trace(st: state, k0, k1: skey): trace =
+    tripleton_seq(recv(hs(k0)),
+                  recv(hs(k1)),
+                  sync(exists(a: addr(st)):
+                         has_key?(st, k1)(a) and st(a) = wrap_attr,
+                       st, st))
+    o
+    singleton_seq(send(en(k0, k1)))
+
+  wrap_role_item(st: state, k0, k1: skey): role_item =
+    simple_role_item(wrap_trace(st, k0, k1))
+
+  wrap_role(ri: role_item): bool =
+    exists(st: state, k0, k1: skey):
+      ri = wrap_role_item(st, k0, k1)
+
+  wrap_inst(bu: bundle)(z: strand(bu`space), h: nat,
+                        st: state, k0, k1: skey): bool =
+    pred(bu)(z, h, wrap_role_item(st, k0, k1))
+
+  % Decrypt -- decrypt data using key k
+
+  % The precondition ensures the key is in the state and its attribute
+  % is DECRYPT.
+  decrypt_trace(st: state, x: mesg, k: skey): trace =
+    tripleton_seq(recv(en(x, k)),
+                  recv(hs(k)),
+                  sync(exists(a: addr(st)):
+                         has_key?(st, k)(a) and st(a) = decrypt_attr,
+                       st, st))
+    o
+    singleton_seq(send(x))
+
+  decrypt_role_item(st: state, x: mesg, k: skey): role_item =
+    simple_role_item(decrypt_trace(st, x, k))
+
+  decrypt_role(ri: role_item): bool =
+    exists(st: state, x: mesg, k: skey):
+      ri = decrypt_role_item(st, x, k)
+
+  decrypt_inst(bu: bundle)(z: strand(bu`space), h: nat,
+                           st: state, x: mesg, k: skey): bool =
+    pred(bu)(z, h, decrypt_role_item(st, x, k))
+
+  % The protocol
+
+  protocol_roles: protocol =
+    add(make_role,
+        add(set_wrap_role,
+            add(set_decrypt_role,
+                add(wrap_role,
+                    add(decrypt_role,
+                        adversary_roles)))))
+
+  enumerate_protocol_roles: lemma
+    forall(r: role):
+      protocol_roles(r) iff
+        r = make_role or
+        r = set_wrap_role or
+        r = set_decrypt_role or
+        r = wrap_role or
+        r = decrypt_role or
+        adversary_roles(r)
+
+  % An envelope specific role assignment
+  assignment(b: bundle): type = protocol_assignment(protocol_roles, b)
+
+end protocol_roles

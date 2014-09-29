@@ -1,0 +1,41 @@
+% Security goals for the Award Card Protocol
+
+% John D. Ramsdell -- The MITRE Corporation -- July 2013
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+security_goals: theory
+begin
+
+  importing shape_analysis_sentences
+  importing state
+
+  total_ordering_for_cashier: lemma
+  forall(bu: bundle, ra: assignment(bu)):
+    compatible(bu, ra) implies
+      forall(nc0, nc1, nb0, nb1: text, b0, b1, c0, c1: akey,
+             k0, k1: skey, z0, z1: strand(bu`space)):
+        cashier_inst(bu)(z0, 5, nc0, nb0, b0, c0, k0) and
+        cashier_inst(bu)(z1, 5, nc1, nb1, b1, c1, k1) implies
+          z0 = z1 or prec?(bu)((z0, 3), (z1, 3)) or
+          prec?(bu)((z1, 3), (z0, 3))
+
+  two_cards: theorem
+  forall(bu: bundle, ra: assignment(bu)):
+    compatible(bu, ra) implies
+      forall(nc0, nc1, nb0, nb1: text, b0, b1, c0, c1: akey,
+             k0, k1: skey, z0, z1: strand(bu`space)):
+        cashier_inst(bu)(z0, 5, nc0, nb0, b0, c0, k0) and
+        cashier_inst(bu)(z1, 5, nc1, nb1, b1, c1, k1)
+        implies
+          z0 = z1 or
+          exists(z: strand(bu`space), b, c: akey, k: skey):
+            new_card_inst(bu)(z, 2, b, c, k) and
+            ((prec?(bu)((z0, 3), (z, 0)) and
+              prec?(bu)((z, 1), (z1, 2))) or
+             (prec?(bu)((z1, 3), (z, 0)) and
+              prec?(bu)((z, 1), (z0, 2))))
+
+end security_goals

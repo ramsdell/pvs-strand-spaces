@@ -1,0 +1,153 @@
+% Roles of the Wrap-Decrypt Protocol
+
+% John D. Ramsdell -- The MITRE Corporation -- February 2014
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+protocol_roles: theory
+begin
+
+  importing state
+  transitions: library = "../transitions"
+  importing transitions@adversary[state, init?, trans]
+
+  % Make a key
+
+  make_trace(st: state, k: skey): trace =
+    doubleton_seq(sync({t: trans | t`1 = st and
+                                   t`2 = add(init_attr, st) and
+                                   key(t`2)(t`2`length - 1) = k}),
+                  send(hs(k)))
+
+  % Key k originates at a sync event!!!
+  make_runique(k: skey): assumptions =
+    doubleton_seq(singleton[atom](k), emptyset)
+
+  make_role_item(st: state, k: skey): role_item =
+    (# trace   := c,
+       rnon    := no_assumptions(c`length),
+       runique := make_runique(k) #)
+    where
+      c = make_trace(st, k)
+
+  make_role(ri: role_item): bool =
+    exists(st: state, k: skey):
+      ri = make_role_item(st, k)
+
+  make_inst(bu: bundle)(z: strand(bu`space), h: nat,
+                        st: state, k: skey): bool =
+    pred(bu`space)(z, h, make_role_item(st, k))
+
+  % Set-Wrap
+
+  set_wrap_trace(st: state, k: skey): trace =
+    singleton_seq(sync({t: trans | t`1 = st and
+                                   exists(a: addr(st)):
+                                     key(st)(a) = k and
+                                     t`2 = st with [`seq(a) := wrap_attr]}))
+
+  set_wrap_role_item(st: state, k: skey): role_item =
+    simple_role_item(set_wrap_trace(st, k))
+
+  set_wrap_role(ri: role_item): bool =
+    exists(st: state, k: skey):
+      ri = set_wrap_role_item(st, k)
+
+  set_wrap_inst(bu: bundle)(z: strand(bu`space), h: nat,
+                            st: state, k: skey): bool =
+    pred(bu`space)(z, h, set_wrap_role_item(st, k))
+
+  % Set-Decrypt
+
+  set_decrypt_trace(st: state, k: skey): trace =
+    singleton_seq(sync({t: trans | t`1 = st and
+                                   exists(a: addr(st)):
+                                     key(st)(a) = k and
+                                     t`2 = st with [`seq(a) := decrypt_attr]}))
+
+  set_decrypt_role_item(st: state, k: skey): role_item =
+    simple_role_item(set_decrypt_trace(st, k))
+
+  set_decrypt_role(ri: role_item): bool =
+    exists(st: state, k: skey):
+      ri = set_decrypt_role_item(st, k)
+
+  set_decrypt_inst(bu: bundle)(z: strand(bu`space), h: nat,
+                               st: state, k: skey): bool =
+    pred(bu`space)(z, h, set_decrypt_role_item(st, k))
+
+  % Wrap
+
+  wrap_trace(st: state, k0, k1: skey): trace =
+    tripleton_seq(recv(hs(k0)),
+                  recv(hs(k1)),
+                  sync({t: trans | t`1 = st and
+		                   t`2 = st and
+                                   exists(a0, a1: addr(st)):
+                                     key(st)(a0) = k0 and
+                                     key(st)(a1) = k1 and
+                                     wrap_attr?(st(a1))}))
+    o
+    singleton_seq(send(en(k0, k1)))
+
+  wrap_role_item(st: state, k0, k1: skey): role_item =
+    simple_role_item(wrap_trace(st, k0, k1))
+
+  wrap_role(ri: role_item): bool =
+    exists(st: state, k0, k1: skey):
+      ri = wrap_role_item(st, k0, k1)
+
+  wrap_inst(bu: bundle)(z: strand(bu`space), h: nat,
+                        st: state, k0, k1: skey): bool =
+    pred(bu`space)(z, h, wrap_role_item(st, k0, k1))
+
+  % Decrypt
+
+  decrypt_trace(st: state, x: mesg, k: skey): trace =
+    tripleton_seq(recv(en(x, k)),
+                  recv(hs(k)),
+                  sync({t: trans | t`1 = st and
+		                   t`2 = st and
+                                   exists(a: addr(st)):
+                                     key(st)(a) = k and
+                                     decrypt_attr?(st(a))}))
+    o
+    singleton_seq(send(x))
+
+  decrypt_role_item(st: state, x: mesg, k: skey): role_item =
+    simple_role_item(decrypt_trace(st, x, k))
+
+  decrypt_role(ri: role_item): bool =
+    exists(st: state, x: mesg, k: skey):
+      ri = decrypt_role_item(st, x, k)
+
+  decrypt_inst(bu: bundle)(z: strand(bu`space), h: nat,
+                           st: state, x: mesg, k: skey): bool =
+    pred(bu`space)(z, h, decrypt_role_item(st, x, k))
+
+  % The protocol
+
+  protocol_roles: protocol =
+    add(make_role,
+        add(set_wrap_role,
+            add(set_decrypt_role,
+                add(wrap_role,
+                    add(decrypt_role,
+                        adversary_roles)))))
+
+  enumerate_protocol_roles: lemma
+  forall(r: role):
+    protocol_roles(r) iff
+      r = make_role or
+      r = set_wrap_role or
+      r = set_decrypt_role or
+      r = wrap_role or
+      r = decrypt_role or
+      adversary_roles(r)
+
+  % An envelope specific role assignment
+  assignment(b: bundle): type = protocol_assignment(protocol_roles, b)
+
+end protocol_roles

@@ -1,0 +1,281 @@
+% Roles of the Exhaustible Award Card Protocol
+
+% This theory is a translation of the roles specified for CPSA.
+
+% John D. Ramsdell -- The MITRE Corporation -- June 2013
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+annotated_roles: theory
+begin
+
+  boxes: nat = 1
+
+  importing award_card[boxes]
+  importing state_spaces@protocols_and_state[state, trans]
+
+  % Tags
+
+  zero: tag = tg(0)
+  one: tag = tg(1)
+  new_card: tag = tg(2)
+
+  % (defrole buyer
+  %   (vars (nc nb text) (buyer cashier akey))
+  %   (trace
+  %    (recv (enc "one" nc cashier buyer))
+  %    (send (enc nc nb buyer cashier))
+  %    (recv (cat nc nb)))
+  %   (uniq-orig nb))
+
+  buyer_trace(nc, nb: text, b, c: akey): trace =
+    tripleton_seq(recv(en(pr(one, pr(nc, c)), b)),
+                  send(en(pr(nc, pr(nb, b)), c)),
+		  recv(pr(nc, nb)))
+
+  buyer_runique(nb: text): assumptions =
+    tripleton_seq(emptyset, singleton[mesg](nb), emptyset)
+
+  buyer_role_item(nc, nb: text, b, c: akey): role_item =
+    (# trace   := c,
+       rnon    := no_assumptions(c`length),
+       runique := buyer_runique(nb),
+       ranno   := no_annotations(c`length) #)
+    where
+      c = buyer_trace(nc, nb, b, c)
+
+  buyer_role(ri: role_item): bool =
+    exists(nc, nb: text, b, c: akey):
+      ri = buyer_role_item(nc, nb, b, c)
+
+  buyer_anno: lemma
+    forall(bu: bundle, ra: role_assignment(bu), n: node(bu`space)):
+      ra(n`1) = buyer_role implies
+        not anno_node?(bu, ra)(n)
+
+  buyer_inst(bu: bundle)(z: strand(bu`space), h: nat,
+             nc, nb: text, b, c: akey): bool =
+    pred(bu`space)(z, h, buyer_role_item(nc, nb, b, c))
+
+  % Inverse state encoding  (Yuck! This does not parse.)
+
+  % state(m: mesg): recursive lift[state] =
+  %   cases m of
+  %     en(pr(one, pr(b, pr(c, r))), k):
+  %     let st = state(r) in
+  %       if bottom?(st) or down(st) >= new then
+  %         bottom
+  %       else
+  % 	  up(down(st) + 1)
+  %       endif,
+  %     en(pr(zero, pr(b, c)), k):
+  %       up(0)
+  %     else: bottom
+  %   endcases
+  %   measure m by <<
+
+  % Next try...
+
+  nil(m: mesg, b, c: akey, k: skey): bool =
+    m = en(pr(zero, pr(b, c)), k)
+
+  succ(m: mesg, b, c: akey, k: skey): lift[mesg] =
+    if exists(r: mesg): m = en(pr(one, pr(b, pr(c, r))), k) then
+      up(epsilon!(r: mesg): m = en(pr(one, pr(b, pr(c, r))), k))
+    else
+      bottom
+    endif
+
+  state(m: mesg, b, c: akey, k: skey): recursive lift[state] =
+    if nil(m, b, c, k) then
+      up(0)
+    else
+      let rest = succ(m, b, c, k) in
+      if rest = bottom then
+        bottom
+      else
+        let st = state(down(rest), b, c, k) in
+        if bottom?(st) or down(st) >= new then
+          bottom
+        else
+          up(down(st) + 1)
+        endif
+      endif
+    endif
+    measure m by <<
+
+  % Lemmas and definitions used to get rid of epsilon.
+  succ_lem: lemma
+    forall(m: mesg, b, c: akey, k: skey, r: mesg):
+      m = en(pr(one, pr(b, pr(c, r))), k) implies
+        (epsilon!(r: mesg): m = en(pr(one, pr(b, pr(c, r))), k)) =
+          snd(snd(snd(plt(m))))
+
+  succ_alt(m: mesg, b, c: akey, k: skey): lift[mesg] =
+    if exists(r: mesg): m = en(pr(one, pr(b, pr(c, r))), k) then
+      up(snd(snd(snd(plt(m)))))
+    else
+      bottom
+    endif
+
+  succ_rew: lemma
+    forall(m: mesg, b, c: akey, k: skey):
+      succ(m, b, c, k) = succ_alt(m, b, c, k)
+
+  auto_rewrite+ succ_rew
+
+  encode(st: state, b, c: akey, k: skey): recursive mesg =
+    if st = 0 then
+      en(pr(zero, pr(b, c)), k)
+    else
+      en(pr(one, pr(b, pr(c, encode(st - 1, b, c, k)))), k)
+    endif
+    measure st
+
+  correct_encoding: lemma
+    forall(m: mesg, b, c: akey, k: skey, st: state):
+      up(st) = state(m, b, c, k) iff m = encode(st, b, c, k)
+
+  encode_injective: lemma
+    forall(st0, st1: state, b0, b1, c0, c1: akey, k0, k1: skey):
+      encode(st0, b0, c0, k0) = encode(st1, b1, c1, k1) iff
+        st0 = st1 and b0 = b1 and c0 = c1 and k0 = k1
+
+  auto_rewrite+ encode_injective
+
+  % (defrole cashier
+  %   (vars (nc nb text) (buyer cashier akey) (k-state skey) (rest mesg))
+  %   (trace
+  %    (send (enc "one" nc cashier buyer))
+  %    (recv (enc nc nb buyer cashier))
+  %    (recv (enc "one" buyer cashier rest (state-key)))
+  %    (send rest)
+  %    (send (cat nc nb)))
+  %   (non-orig k-state)
+  %   (uniq-orig nc))
+
+  cashier_trace(nc, nb: text, b, c: akey, k: skey, rest: mesg): trace =
+    tripleton_seq(send(en(pr(one, pr(nc, c)), b)),
+                  recv(en(pr(nc, pr(nb, b)), c)),
+                  recv(en(pr(one, pr(b, pr(c, rest))), k)))
+    o
+    doubleton_seq(send(rest),
+                  send(pr(nc, nb)))
+
+  cashier_rnon(k: skey): assumptions =
+    tripleton_seq(emptyset, emptyset, singleton[mesg](k))
+    o
+    doubleton_seq(emptyset, emptyset)
+
+  cashier_runique(nc: text): assumptions =
+    tripleton_seq(singleton[mesg](nc), emptyset, emptyset)
+    o
+    doubleton_seq(emptyset, emptyset)
+
+  cashier_annotations(nc, nb: text, b, c: akey,
+                      k: skey, rest: mesg): annotations =
+    tripleton_seq(bottom, bottom, bottom)
+    o
+    doubleton_seq(up({t: trans |
+                      encode(t`1, b, c, k) = t(tr(2)) and
+                      encode(t`2, b, c, k) = t(tr(3))}),
+                  bottom)
+    where
+      tr = cashier_trace(nc, nb, b, c, k, rest)
+
+  cashier_role_item(nc, nb: text, b, c: akey,
+                    k: skey, rest: mesg): role_item =
+    (# trace   := cashier_trace(nc, nb, b, c, k, rest),
+       rnon    := cashier_rnon(k),
+       runique := cashier_runique(nc),
+       ranno   := cashier_annotations(nc, nb, b, c, k, rest) #)
+
+  cashier_role(ri: role_item): bool =
+    exists(nc, nb: text, b, c: akey, k: skey, rest: mesg):
+      ri = cashier_role_item(nc, nb, b, c, k, rest)
+
+  cashier_anno: lemma
+    forall(bu: bundle, ra: role_assignment(bu), n: node(bu`space)):
+      ra(n`1) = cashier_role implies
+        if n`2 = 3 then
+          exists(b, c: akey, k: skey, rest: mesg):
+            annotations(bu, ra)(n)
+                ({t: trans | encode(t`1, b, c, k) =
+                               en(pr(one, pr(b, pr(c, rest))), k) and
+                             encode(t`2, b, c, k) = rest})
+        else
+          not anno_node?(bu, ra)(n)
+        endif
+
+  cashier_inst(bu: bundle)(z: strand(bu`space), h: nat,
+               nc, nb: text, b, c: akey, k: skey, rest: mesg): bool =
+    pred(bu`space)(z, h, cashier_role_item(nc, nb, b, c, k, rest))
+
+  % (defrole new-card
+  %   (vars (buyer cashier akey) (k-state skey))
+  %   (trace
+  %    (recv "new-card")
+  %    (send
+  %     (enc "one" buyer cashier
+  % 	     (enc "zero" buyer cashier (state-key))
+  % 	     (state-key))))
+  %   (non-orig k-state))
+
+  new_card_trace(b, c: akey, k: skey): trace =
+    doubleton_seq(recv(new_card),
+                  send(encode(boxes, b, c, k)))
+
+  new_card_rnon(k: skey): assumptions =
+    doubleton_seq(emptyset, singleton[mesg](k))
+
+  new_card_annotations(b, c: akey, k: skey): annotations =
+    doubleton_seq(bottom,
+                  up({t: trans |
+                      encode(t`2, b, c, k) = t(new_card_trace(b, c, k)(1))}))
+
+  new_card_role_item(b, c: akey, k: skey): role_item =
+    (# trace   := c,
+       rnon    := new_card_rnon(k),
+       runique := no_assumptions(c`length),
+       ranno   := new_card_annotations(b, c, k) #)
+    where
+      c = new_card_trace(b, c, k)
+
+  new_card_role(ri: role_item): bool =
+    exists(b, c: akey, k: skey):
+      ri = new_card_role_item(b, c, k)
+
+  new_card_anno: lemma
+    forall(bu: bundle, ra: role_assignment(bu), n: node(bu`space)):
+      ra(n`1) = new_card_role implies
+        if n`2 = 1 then
+          annotations(bu, ra)(n)({t: trans | t`2 = boxes})
+        else
+          not anno_node?(bu, ra)(n)
+        endif
+
+  new_card_inst(bu: bundle)(z: strand(bu`space), h: nat,
+                b, c: akey, k: skey): bool =
+    pred(bu`space)(z, h, new_card_role_item(b, c, k))
+
+  % The roles include the adversary's roles.
+  annotated_roles: finite_set[role] =
+    add(buyer_role,
+        add(cashier_role,
+            add(new_card_role,
+                adversary_roles)))
+
+  enumerate_annotated_roles: lemma
+  forall(r: role):
+    annotated_roles(r) iff
+      r = buyer_role or
+      r = cashier_role or
+      r = new_card_role or
+      adversary_roles(r)
+
+  % An exhaustible specific role assignment
+  assignment(b: bundle): type = protocol_assignment(annotated_roles, b)
+
+end annotated_roles

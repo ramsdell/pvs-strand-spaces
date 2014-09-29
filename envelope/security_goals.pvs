@@ -1,0 +1,99 @@
+% Proof of the security goal for the Envelope Protocol With Arbitrary
+% Origin.  The security goal is the adversary cannot obtain both the
+% secret and refusal quote.
+
+% This theory contains a theorem that justifies two restarts of CPSA.
+% CPSA demonstrates both restarts are dead skeletons, thus proving the
+% security goal.
+
+% When analyzing the Envelope Protocol With Boot Origin, there is
+% alternative way to prove the security goal.  The results of running
+% the no double extend case gives a shape analysis sentence that
+% allows one to prove the security goal within PVS.
+
+% John D. Ramsdell -- The MITRE Corporation -- May 2013
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+security_goals: theory
+begin
+
+  importing shape_analysis_sentences
+  importing state
+
+  % A little fact about that could have been stated and proved in the
+  % TPM theory.
+  epsilon_extend: lemma
+  forall(x, s: mesg, st: state):
+    pcr(st) = hs(pr(x, s)) implies
+      st = extend(x, epsilon!(st0: state): pcr(st0) = s)
+
+  % This is the exported lemma used in the restart version of the
+  % proof.  See the last two skeletions in the CPSA input file.
+
+  exists_extend_strand_both: theorem
+  forall(bu: bundle, ra: assignment(bu)):
+    compatible(bu, ra) implies
+      forall(z: strand(bu`space), nv, nr: node(bu`space),
+             v, tne: data, esk1, esk: skey,
+             k, aik, tpmkey: akey, n: text, origin: mesg):
+        forall(tne1: data, pcrkey, esk2: skey, tpmkey1: akey,
+               tne2: data, esk3: skey, tpmkey2: akey,
+               z0, z1, z2, z3, z4, z5: strand(bu`space)):
+          alice_shape(bu)(z, nv, nr, v, tne, esk1, esk,
+                          k, aik, tpmkey, n, origin)
+                         (tne1, pcrkey, esk2, tpmkey1,
+                          tne2, esk3, tpmkey2,
+                          z0, z1, z2, z3, z4, z5)
+          implies
+            (exists(z6: strand(bu`space),
+         	   current_value: mesg, pcrkey, esk: skey,
+                   tne: data, tpmkey: akey):
+              tpm_extend_enc_inst(bu)(z6, 5, n, current_value,
+    	                              pcrkey, esk, tne, tpmkey) and
+              prec?(bu)((z2, 4), (z6, 3)) and
+              prec?(bu)((z6, 4), (z5, 3))) or
+            (exists(z6: strand(bu`space),
+         	   current_value: mesg, pcrkey, esk: skey,
+                   tne: data, tpmkey: akey):
+              tpm_extend_enc_inst(bu)(z6, 5, n, current_value,
+    	                              pcrkey, esk, tne, tpmkey) and
+              prec?(bu)((z5, 4), (z6, 3)) and
+              prec?(bu)((z6, 4), (z2, 3)))
+
+  % The theorem that justifies the restart of CPSA used to finish the
+  % proof.  Derived from the Alice shape analysis sentence axiom and
+  % the above lemma.
+
+  alice_pov_implies_extend_strands: theorem
+  forall(bu: bundle, ra: assignment(bu)):
+    compatible(bu, ra) implies
+      forall(z: strand(bu`space), nv, nr: node(bu`space),
+             v, tne: data, esk1, esk: skey,
+             k, aik, tpmkey: akey, n: text, origin: mesg):
+        alice_pov(bu)(z, nv, nr, v, tne, esk1, esk,
+                      k, aik, tpmkey, n, origin)
+        implies
+          exists(tne1: data, pcrkey, esk2: skey, tpmkey1: akey,
+               tne2: data, esk3: skey, tpmkey2: akey,
+               z0, z1, z2, z3, z4, z5: strand(bu`space)):
+            alice_shape(bu)(z, nv, nr, v,
+                            tne, esk1, esk, k, aik, tpmkey, n, origin)
+                           (tne1, pcrkey, esk2, tpmkey1,
+                            tne2, esk3, tpmkey2,
+                            z0, z1, z2, z3, z4, z5) and
+            exists(z6: strand(bu`space),
+         	   current_value: mesg, pcrkey, esk: skey,
+                   tne: data, tpmkey: akey):
+              (tpm_extend_enc_inst(bu)(z6, 5, n, current_value,
+    	                               pcrkey, esk, tne, tpmkey) and
+                prec?(bu)((z2, 4), (z6, 3)) and
+                prec?(bu)((z6, 4), (z5, 3))) or
+              (tpm_extend_enc_inst(bu)(z6, 5, n, current_value,
+    	                               pcrkey, esk, tne, tpmkey) and
+                prec?(bu)((z5, 4), (z6, 3)) and
+                prec?(bu)((z6, 4), (z2, 3)))
+
+end security_goals

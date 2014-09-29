@@ -1,0 +1,93 @@
+% Strands in the State Split Envelope Protocol
+
+% John D. Ramsdell -- The MITRE Corporation -- June 2014
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+strands: theory
+begin
+
+  importing protocol_roles
+
+  make_inst_assumes: lemma
+    forall(bu: bundle, z: strand(bu`space), h: nat, st: state):
+      make_inst(bu)(z, h, st) implies
+        uniq(bu)(new_handle(st), (z, 0))
+
+  make_inst_rew: lemma
+    forall(bu: bundle, z: strand(bu`space), h: nat, st: state):
+      make_inst(bu)(z, h, st) iff
+        h <= bu`space(z)`length and
+        prefix?[event](bu`space(z), make_trace(st)) and
+        uniq(bu)(new_handle(st), (z, 0))
+
+  auto_rewrite+ make_inst_rew
+
+  make_transition_node: lemma
+    forall(bu: bundle, z: strand(bu`space), h: nat, st: state):
+      make_inst(bu)(z, h, st) implies
+        tran_node?(bu`space)(z, 0)
+
+  set_wrap_inst_rew: lemma
+    forall(bu: bundle, z: strand(bu`space), h: nat,
+                 st: state, k: skey):
+      set_wrap_inst(bu)(z, h, st, k) iff
+        h <= bu`space(z)`length and
+        prefix?[event](bu`space(z), set_wrap_trace(st, k))
+
+  auto_rewrite+ set_wrap_inst_rew
+
+  set_wrap_transition_node: lemma
+    forall(bu: bundle, z: strand(bu`space), h: nat,
+                 st: state, k :skey):
+      set_wrap_inst(bu)(z, h, st, k) implies
+        tran_node?(bu`space)(z, 0)
+
+  set_decrypt_inst_rew: lemma
+    forall(bu: bundle, z: strand(bu`space), h: nat,
+                 st: state, k: skey):
+      set_decrypt_inst(bu)(z, h, st, k) iff
+        h <= bu`space(z)`length and
+        prefix?[event](bu`space(z), set_decrypt_trace(st, k))
+
+  auto_rewrite+ set_decrypt_inst_rew
+
+  set_decrypt_transition_node: lemma
+    forall(bu: bundle, z: strand(bu`space), h: nat,
+                 st: state, k: skey):
+      set_decrypt_inst(bu)(z, h, st, k) implies
+        tran_node?(bu`space)(z, 0)
+
+  wrap_inst_rew: lemma
+    forall(bu: bundle, z: strand(bu`space), h: nat,
+                 st: state, k0, k1: skey):
+      wrap_inst(bu)(z, h, st, k0, k1) iff
+        h <= bu`space(z)`length and
+        prefix?[event](bu`space(z), wrap_trace(st, k0, k1))
+
+  auto_rewrite+ wrap_inst_rew
+
+  wrap_transition_node: lemma
+    forall(bu: bundle, z: strand(bu`space), h: nat,
+                 st: state, k0, k1 :skey):
+      wrap_inst(bu)(z, h, st, k0, k1) implies
+        h <= 2 or tran_node?(bu`space)(z, 2)
+
+  decrypt_inst_rew: lemma
+    forall(bu: bundle, z: strand(bu`space), h: nat,
+                 st: state, x: mesg, k: skey):
+      decrypt_inst(bu)(z, h, st, x, k) iff
+        h <= bu`space(z)`length and
+        prefix?[event](bu`space(z), decrypt_trace(st, x, k))
+
+  auto_rewrite+ decrypt_inst_rew
+
+  decrypt_transition_node: lemma
+    forall(bu: bundle, z: strand(bu`space), h: nat,
+                 st: state, x: mesg, k: skey):
+      decrypt_inst(bu)(z, h, st, x, k) implies
+        h <= 2 or tran_node?(bu`space)(z, 2)
+
+end strands

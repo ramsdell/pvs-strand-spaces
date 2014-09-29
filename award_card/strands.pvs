@@ -1,0 +1,40 @@
+% Strands in the Award Card Protocol (ACP)
+
+% John D. Ramsdell -- The MITRE Corporation -- July 2013
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+strands: theory
+begin
+
+  importing annotated_roles
+
+  cashier_inst_role: lemma
+  forall(bu: bundle, ra: assignment(bu), z: strand(bu`space),
+         nc, nb: text, b, c: akey, k: skey):
+    cashier_inst(bu)(z, 5, nc, nb, b, c, k) implies
+      ra(z) = cashier_role
+
+  cashier_inst_rew: lemma
+  forall(bu: bundle, z: strand(bu`space),
+         nc, nb: text, b, c: akey, k: skey):
+    cashier_inst(bu)(z, 5, nc, nb, b, c, k) iff
+      5 <= bu`space(z)`length and
+      prefix?[event](bu`space(z), cashier_trace(nc, nb, b, c, k)) and
+      non(bu`space)(k) and
+      uniq(bu`space)(nc, (z, 0))
+
+  auto_rewrite+ cashier_inst_rew
+
+  new_card_inst_rew: lemma
+  forall(bu: bundle, z: strand(bu`space), b, c: akey, k: skey):
+    new_card_inst(bu)(z, 2, b, c, k) iff
+      2 <= bu`space(z)`length and
+      prefix?[event](bu`space(z), new_card_trace(b, c, k)) and
+      non(bu`space)(k)
+
+  auto_rewrite+ new_card_inst_rew
+
+end strands

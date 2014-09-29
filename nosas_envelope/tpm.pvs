@@ -1,0 +1,98 @@
+% TPM model
+
+% A model of a TPM with only one PCR and its values are skeys.  The
+% state of the PCR is either the boot state or the result of extending
+% the current state.  The state is reflected into the algebra by
+% associating a state with a symmetric key.  The proofs use the fact
+% that the function making the association is injective.
+
+% John D. Ramsdell -- The MITRE Corporation -- January 2013
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+tpm: theory
+begin
+
+  strand_spaces: library = "../strand_spaces"
+  importing strand_spaces@init_alg
+
+  % The state of the PCR is either the boot state or the result of
+  % extending the PCR.
+  state: datatype
+  begin
+    boot: boot?
+    extend(m: mesg, st: state): extend?
+  end state
+
+  % The transition relation.  It is reflexive so as to allow
+  % transitions that are used for state observation.
+  trans(st, nx: state): bool =
+    st = nx or
+    cases nx of
+      boot: true,
+      extend(m, st1): st = st1
+    endcases
+
+  trans: type = (trans)
+
+  % A path is an infinite sequence of states, where successive members
+  % of the sequence satisfy the transition relation, and the initial
+  % state is the boot state.
+  path?(p: sequence[state]): bool =
+    boot?(p(0)) and
+    forall(n: nat): trans(p(n), p(n + 1))
+
+  path: type = (path?)
+
+  % Used to show a PCR extension differs from a PCR observation.
+  no_circularity_in_extend: lemma
+    forall(m: mesg, st: state):
+      st /= extend(m, st)
+
+  % Facts about paths through the TPM transition relation.
+
+  % If a state is not extended from a previous state, there must have
+  % been a intervening boot.
+  prefix_boot: lemma
+    forall(p: path, i, k: nat):
+      i <= k implies
+        subterm(p(i), p(k)) or
+        exists(j: nat): i <= j and j <= k and boot?(p(j))
+
+  has(st: state, x: mesg): recursive bool =
+    cases st of
+      boot: false,
+      extend(m, st): m = x or has(st, x)
+    endcases
+    measure st by <<
+
+  % If a state is extended from one involving a message, and a
+  % previous state is a boot state, there must have been an
+  % intervening transition that extends with the message.
+  boot_extend: lemma
+    forall(p: path, x: mesg, i, k: nat):
+      i < k and boot?(p(i)) and has(p(k), x) implies
+        exists(j: nat):
+          i <= j and j < k and p(j+1) = extend(x, p(j))
+
+  % This is the composition of the above two lemmas.
+
+  % If a state is extended from one involving a message and is not
+  % extended from a previous state, there must have been an
+  % intervening transition that extends with the message.
+  prefix_boot_extend: lemma
+    forall(p: path, x: mesg, i, k: nat):
+      i <= k and has(p(k), x) implies
+        subterm(p(i), p(k)) or
+        exists(j: nat):
+          i <= j and j < k and p(j+1) = extend(x, p(j))
+
+  extend: lemma
+    forall(p: path, x: mesg, k: nat):
+      has(p(k), x) implies
+        exists(j: nat):
+          j < k and p(j+1) = extend(x, p(j))
+
+end tpm

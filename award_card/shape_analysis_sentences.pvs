@@ -1,0 +1,16 @@
+% Shape analysis sentence for the Award Card Protocol
+
+% John D. Ramsdell -- The MITRE Corporation -- July 2013
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+shape_analysis_sentences: theory
+begin
+
+  importing strands
+
+  % There are no shape analysis sentences!
+
+end shape_analysis_sentences

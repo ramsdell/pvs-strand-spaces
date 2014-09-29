@@ -1,0 +1,35 @@
+% Compatibility
+
+% John D. Ramsdell -- The MITRE Corporation -- September 2014
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+compatibility[state: type, init?: setof[state],
+              (importing adversary) labels: setof[mesg],
+              trans: setof[[state, (labels), state]],
+              encode: (injective?[state, mesg])]: theory
+begin
+
+  importing computations[state, init?, (labels), trans]
+
+  init_card(b: bundle): nat =
+    card({n: node(b`space) | init_node?(b`space)(n)})
+
+  compat(b: bundle)
+        (cf: comp_fam,
+         f: (bijective?[(tran_node?(b`space)), pos(cf)])) : bool =
+    (forall(n0, n1: (tran_node?(b`space))):
+      prec?(b)(n0, n1) implies leadsto(cf)(f(n0), f(n1))) and
+    forall(n: (tran_node?(b`space))):
+      let t = tran_pos(cf)(f(n)) in
+      tran_at(b`space)(n) = (encode(t`1), encode(t`2))
+
+  % Is the transition relation compatible with bundle b?
+  compatible(b: bundle): bool =
+    exists(cf: comp_fam,
+           f: (bijective?[(tran_node?(b`space)), pos(cf)])):
+      compat(b)(cf, f)
+
+end compatibility

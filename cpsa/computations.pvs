@@ -1,0 +1,69 @@
+% Computations through labeled state transitions with an initial state
+
+% John D. Ramsdell -- The MITRE Corporation -- September 2014
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+computations[state: type, init?: setof[state], label: type,
+             trans: setof[[state, label, state]]]: theory
+begin
+
+  strand_spaces: library = "../strand_spaces"
+  importing strand_spaces@nonempty_finite_sequences
+
+  pre_comp: type =
+    [# path: nonempty_finite_sequence[state],
+       labs: {fs: finite_sequence[label] |
+              length(fs) = length(path) - 1} #]
+
+  comp?(c: pre_comp): bool =
+    init?(c`path(0)) and
+    forall(i: below[length(c`labs)]):
+      trans(c`path(i), c`labs(i), c`path(i+1))
+
+  comp: type = (comp?)
+
+  % Computation families
+
+  comp_fam: type = finite_sequence[comp]
+
+  % Position within a family of computations
+
+  pos(cf: comp_fam): type =
+    [c: below[length(cf)], below[length(cf(c)`labs)]]
+
+  % Sum the length of labels below j in computation family cf
+  labs_below(cf: comp_fam)(j: upto(length(cf))): recursive nat =
+    if j = 0 then
+      0
+    else
+      length(cf(j - 1)`labs) + labs_below(cf)(j - 1)
+    endif
+    measure j
+
+  % A key lemma about labs_below used to show the set of nodes
+  % associated with a strand space is finite.
+  labs_below_increasing:
+    lemma forall(cf: comp_fam, j: upto(length(cf)), p: pos(cf)):
+       p`1 < j implies labs_below(cf)(p`1) + p`2 < labs_below(cf)(j)
+
+  % For p in pos(cf), finite_node_witness(cf)(p) maps into
+  % below(labs_below(cf)(length(cf))) and is injective.
+  finite_pos_witness(cf: comp_fam)(p: pos(cf)):
+    below(labs_below(cf)(length(cf))) =
+      labs_below(cf)(p`1) + p`2
+
+  finite_pos_type: theorem
+    forall(cf: comp_fam): is_finite_type[pos(cf)]
+
+  auto_rewrite+ finite_pos_type
+
+  leadsto(cf: comp_fam)(p0, p1: pos(cf)): bool =
+    p0`1 = p1`1 and p0`2 = p1`2 + 1
+
+  tran_pos(cf: comp_fam)(p: pos(cf)): [state, state] =
+    (cf(p`1)`path(p`2), cf(p`1)`path(p`2 + 1))
+
+end computations

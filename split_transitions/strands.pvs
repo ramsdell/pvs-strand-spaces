@@ -1,0 +1,54 @@
+% Strands in the State Split Envelope Protocol
+
+% John D. Ramsdell -- The MITRE Corporation -- January 2014
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+strands: theory
+begin
+
+  importing protocol_roles
+
+  boot_inst_rew: lemma
+  forall(bu: bundle, z: strand(bu`space), st: state):
+    boot_inst(bu)(z, 1, st) iff
+      1 <= bu`space(z)`length and
+      prefix?[event](bu`space(z), boot_trace(st))
+
+  auto_rewrite+ boot_inst_rew
+
+  boot_transition_node: lemma
+  forall(bu: bundle, z: strand(bu`space), st: state):
+    boot_inst(bu)(z, 1, st) implies
+      tran_node?(bu`space)(z, 0)
+
+  extend_inst_rew: lemma
+  forall(bu: bundle, z: strand(bu`space), st: state, x: mesg):
+    extend_inst(bu)(z, 2, st, x) iff
+      2 <= bu`space(z)`length and
+      prefix?[event](bu`space(z), extend_trace(st, x))
+
+  auto_rewrite+ extend_inst_rew
+
+  extend_transition_node: lemma
+  forall(bu: bundle, z: strand(bu`space), st: state, x: mesg):
+    extend_inst(bu)(z, 2, st, x) implies
+      tran_node?(bu`space)(z, 1)
+
+  quote_inst_rew: lemma
+  forall(bu: bundle, z: strand(bu`space), st: state, nonce: text, aik: akey):
+    quote_inst(bu)(z, 3, st, nonce, aik) iff
+      3 <= bu`space(z)`length and
+      prefix?[event](bu`space(z), quote_trace(st, nonce, aik))
+
+  auto_rewrite+ quote_inst_rew
+
+  quote_transition_node: lemma
+  forall(bu: bundle, z: strand(bu`space),
+         h: nat, st: state, nonce: text, aik: akey):
+    quote_inst(bu)(z, h, st, nonce, aik) and h > 1 implies
+      tran_node?(bu`space)(z, 1)
+
+end strands

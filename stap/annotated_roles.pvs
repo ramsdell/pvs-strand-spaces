@@ -1,0 +1,323 @@
+% Roles of the Simple TPM Attester Protocol (STAP)
+
+% This theory is a translation of the roles specified for CPSA that
+% were used to produce the relevant shape analysis sentences axiom
+% and adds the annotations that link the TPM state with each role.
+
+% Each role is defined using the same pattern.  First, the trace, the
+% origination assumptions, and annotations are defined.  Next, the
+% role item is defined followed by the role predicate.  The role
+% predicate is always a singleton set of the role instance.  Then the
+% role is defined as the set of instances that satisfy the role
+% predicates.  Finally, a pair of useful lemmas are stated.
+
+% There probably is an automated way to produced many of a role's
+% definitions from its CPSA definition, but all of this translation
+% was done by hand.
+
+% John D. Ramsdell -- The MITRE Corporation -- June 2013
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+annotated_roles: theory
+begin
+
+  importing tpm
+
+  anno: type = setof[trans]
+
+  importing strand_spaces@adversary[anno]
+
+% (defprotocol stap basic
+%   (defrole tpm-power-on
+%     (vars (pcrkey skey))
+%     (trace (recv "power on") (send (enc "state" "0" (hash pcrkey))))
+%     (non-orig pcrkey))
+%   (defrole tpm-extend
+%     (vars (value current-value mesg) (pcrkey skey))
+%     (trace (recv (cat "extend" value))
+%       (recv (enc "state" current-value (hash pcrkey)))
+%       (send (enc "state" (hash value current-value) (hash pcrkey))))
+%     (non-orig pcrkey))
+%   (defrole tpm-create-key
+%     (vars (k aik akey) (pcrval mesg))
+%     (trace (recv (cat "create key" pcrval))
+%       (send (enc "created" k pcrval aik)))
+%     (non-orig aik (invk k))
+%     (uniq-orig k))
+%   (defrole tpm-decrypt
+%     (vars (m pcrvals mesg) (k aik akey) (pcrkey skey))
+%     (trace (recv (cat "decrypt" (enc m k)))
+%       (recv (enc "created" k pcrvals aik))
+%       (recv (enc "state" pcrvals (hash pcrkey))) (send m))
+%     (non-orig pcrkey aik))
+%   (defrole verifier
+%     (vars (k aik akey) (pcrval mesg) (n text))
+%     (trace (recv (enc "created" k pcrval aik))
+%       (send (cat "decrypt" (enc n k))) (recv n))
+%     (non-orig aik)
+%     (uniq-orig n)))
+
+  % Translations
+
+  % Tags
+
+  state: tag = tg(1)
+  power_on: tag = tg(2)
+  extend: tag = tg(3)
+  create_key: tag = tg(4)
+  created: tag = tg(5)
+  decrypt: tag = tg(6)
+  desired: tag = tg(7)
+
+  % PCR values
+
+  % "0"  --> pcr(boot)
+  % (hash value current-value) --> hs(pr(value, current_value))
+  % where tpm state = st, pcr(st) = current_value, and the new state
+  % is extend(value, st).
+
+  % STAP Roles
+
+  % TPM Power On
+
+  tpm_power_on_trace(pcrkey: skey): trace =
+    doubleton_seq(recv(power_on),
+                  send(en(pr(state, pcr(boot)), hs(pcrkey))))
+
+  tpm_power_on_rnon(pcrkey: skey): assumptions =
+    doubleton_seq(emptyset, singleton[mesg](pcrkey))
+
+  tpm_power_on_annotations(pcrkey: skey): annotations =
+    doubleton_seq(bottom, up({t: trans | pcr(t`2) = snd(plt(t(c(1))))}))
+    where
+      c = tpm_power_on_trace(pcrkey)
+
+  tpm_power_on_role_item(pcrkey: skey): role_item =
+    (# trace   := c,
+       rnon    := tpm_power_on_rnon(pcrkey),
+       runique := no_assumptions(c`length),
+       ranno   := tpm_power_on_annotations(pcrkey) #)
+    where
+      c = tpm_power_on_trace(pcrkey)
+
+  tpm_power_on_role(ri: role_item): bool =
+    exists(pcrkey: skey): ri = tpm_power_on_role_item(pcrkey)
+
+  tpm_power_on_anno: lemma
+    forall(bu: bundle, ra: role_assignment(bu), n: node(bu`space)):
+      ra(n`1) = tpm_power_on_role implies
+        not anno_node?(bu, ra)(n) or
+          n`2 = 1 and
+          annotations(bu, ra)(n)({t: trans | t`2 = boot})
+
+  tpm_power_on_inst(bu: bundle)
+                   (z: strand(bu`space), h: nat, pcrkey: skey): bool =
+    pred(bu`space)(z, h, tpm_power_on_role_item(pcrkey))
+
+  % TPM Extend
+
+  tpm_extend_trace(value, current_value: mesg, pcrkey: skey): trace =
+    tripleton_seq(recv(pr(extend, value)),
+                  recv(en(pr(state, current_value), hs(pcrkey))),
+    		  send(en(pr(state,
+                             hs(pr(value, current_value))),
+                          hs(pcrkey))))
+
+  tpm_extend_rnon(pcrkey: skey): assumptions =
+    tripleton_seq(emptyset,
+                  singleton[mesg](pcrkey),
+                  emptyset)
+
+  tpm_extend_annotations(value, current_value: mesg,
+                         pcrkey: skey): annotations =
+    tripleton_seq(bottom, bottom,
+                  up({t: trans |
+                      pcr(t`1) = snd(plt(t(c(1)))) and
+                      pcr(t`2) = snd(plt(t(c(2))))}))
+    where
+      c = tpm_extend_trace(value, current_value, pcrkey)
+
+  tpm_extend_role_item(value, current_value: mesg,
+                       pcrkey: skey): role_item =
+    (# trace   := c,
+       rnon    := tpm_extend_rnon(pcrkey),
+       runique := no_assumptions(c`length),
+       ranno   := tpm_extend_annotations(value, current_value, pcrkey) #)
+    where
+      c = tpm_extend_trace(value, current_value, pcrkey)
+
+  tpm_extend_role(ri: role_item): bool =
+    exists(value, current_value: mesg, pcrkey: skey):
+      ri = tpm_extend_role_item(value, current_value, pcrkey)
+
+  tpm_extend_anno: lemma
+    forall(bu: bundle, ra: role_assignment(bu), n: node(bu`space)):
+      ra(n`1) = tpm_extend_role implies
+        not anno_node?(bu, ra)(n) or
+          n`2 = 2 and
+          exists(value, current_value: mesg):
+            annotations(bu, ra)(n)({t: trans |
+                                    pcr(t`1) = current_value and
+                                    t`2 = extend(value, t`1)})
+
+  tpm_extend_inst(bu: bundle)
+                 (z: strand(bu`space), h: nat,
+ 		  value, current_value: mesg, pcrkey: skey): bool =
+    pred(bu`space)(z, h, tpm_extend_role_item(value, current_value, pcrkey))
+
+  % TPM Create Key
+
+  tpm_create_key_trace(k, aik: akey, pcrval: mesg): trace =
+    doubleton_seq(recv(pr(create_key, pcrval)),
+                  send(en(pr(created, pr(k, pcrval)), aik)))
+
+  tpm_create_key_rnon(k, aik: akey): assumptions =
+    doubleton_seq(emptyset,
+                  add[atom](invk(k), singleton[mesg](aik)))
+
+  tpm_create_key_runique(k: akey): assumptions =
+    doubleton_seq(emptyset, singleton[mesg](k))
+
+  tpm_create_key_role_item(k, aik: akey, pcrval: mesg): role_item =
+    (# trace   := c,
+       rnon    := tpm_create_key_rnon(k, aik),
+       runique := tpm_create_key_runique(k),
+       ranno   := no_annotations(c`length) #)
+    where
+      c = tpm_create_key_trace(k, aik, pcrval)
+
+  tpm_create_key_role(ri: role_item): bool =
+    exists(k, aik: akey, pcrval: mesg):
+      ri = tpm_create_key_role_item(k, aik, pcrval)
+
+  tpm_create_key_anno: lemma
+    forall(bu: bundle, ra: role_assignment(bu), n: node(bu`space)):
+      ra(n`1) = tpm_create_key_role implies
+        not anno_node?(bu, ra)(n)
+
+  tpm_create_key_inst(bu: bundle)
+                     (z: strand(bu`space), h: nat,
+ 		      k, aik: akey, pcrval: mesg): bool =
+    pred(bu`space)(z, h, tpm_create_key_role_item(k, aik, pcrval))
+
+  % TPM Decrypt
+
+  tpm_decrypt_trace(m, current_value: mesg,
+                    k, aik: akey, pcrkey: skey): trace =
+    tripleton_seq(recv(pr(decrypt, en(m, k))),
+                  recv(en(pr(created, pr(k, current_value)), aik)),
+                  recv(en(pr(state, current_value), hs(pcrkey))))
+    o
+    singleton_seq(send(m))
+
+  tpm_decrypt_rnon(aik: akey, pcrkey: skey): assumptions =
+    tripleton_seq(emptyset,
+                  singleton[mesg](aik),
+		  singleton[mesg](pcrkey))
+    o
+    singleton_seq(emptyset)
+
+  tpm_decrypt_annotations(m, current_value: mesg, k, aik: akey,
+                          pcrkey: skey): annotations =
+    tripleton_seq(bottom, bottom, bottom)
+    o
+    singleton_seq(up({t: trans |
+                      pcr(t`1) = snd(plt(t(c(2)))) and
+                      t`2 = t`1}))
+    where
+      c = tpm_decrypt_trace(m, current_value, k, aik, pcrkey)
+
+  tpm_decrypt_role_item(m, current_value: mesg, k, aik: akey,
+                        pcrkey: skey): role_item =
+    (# trace   := c,
+       rnon    := tpm_decrypt_rnon(aik, pcrkey),
+       runique := no_assumptions(c`length),
+       ranno   := tpm_decrypt_annotations(m, current_value, k, aik, pcrkey) #)
+    where
+      c = tpm_decrypt_trace(m, current_value, k, aik, pcrkey)
+
+  tpm_decrypt_role(ri: role_item): bool =
+    exists(m, current_value: mesg, k, aik: akey, pcrkey: skey):
+      ri = tpm_decrypt_role_item(m, current_value, k, aik, pcrkey)
+
+  tpm_decrypt_anno: lemma
+    forall(bu: bundle, ra: role_assignment(bu), n: node(bu`space)):
+      ra(n`1) = tpm_decrypt_role implies
+        not anno_node?(bu, ra)(n) or
+          n`2 = 3 and
+          exists(current_value: mesg):
+            annotations(bu, ra)(n)({t: trans |
+                                    pcr(t`1) = current_value and
+                                    t`2 = t`1})
+
+  tpm_decrypt_inst(bu: bundle)
+                  (z: strand(bu`space), h: nat,
+		   m, current_value: mesg, k, aik: akey,
+                   pcrkey: skey): bool =
+    pred(bu`space)(z, h,
+                   tpm_decrypt_role_item(m, current_value, k, aik, pcrkey))
+
+  % Verifier
+
+  verifier_trace(k, aik: akey, pcrval: mesg, n: text): trace =
+   tripleton_seq(recv(en(pr(created, pr(k, pcrval)), aik)),
+                 send(pr(decrypt, en(n, k))),
+                 recv(n))
+
+  verifier_rnon(aik: akey): assumptions =
+    tripleton_seq(singleton[mesg](aik),
+                  emptyset,
+	          emptyset)
+
+  verifier_runique(n: text): assumptions =
+    tripleton_seq(emptyset,
+                  singleton[mesg](n),
+ 		  emptyset)
+
+  verifier_role_item(k, aik: akey, pcrval: mesg, n: text): role_item =
+    (# trace   := c,
+       rnon    := verifier_rnon(aik),
+       runique := verifier_runique(n),
+       ranno   := no_annotations(c`length) #)
+    where
+      c = verifier_trace(k, aik, pcrval, n)
+
+  verifier_role(ri: role_item): bool =
+    exists(k, aik: akey, pcrval: mesg, n: text):
+      ri = verifier_role_item(k, aik, pcrval, n)
+
+  verifier_anno: lemma
+    forall(bu: bundle, ra: role_assignment(bu), n: node(bu`space)):
+      ra(n`1) = verifier_role implies
+        not anno_node?(bu, ra)(n)
+
+  verifier_inst(bu: bundle)(z: strand(bu`space), h: nat,
+                            k, aik: akey, pcrval: mesg, n: text): bool =
+    pred(bu`space)(z, h, verifier_role_item(k, aik, pcrval, n))
+
+  % The STAP roles include the adversary's roles.
+  annotated_roles: protocol =
+    add(tpm_power_on_role,
+        add(tpm_extend_role,
+            add(tpm_create_key_role,
+                add(tpm_decrypt_role,
+                    add(verifier_role,
+                        adversary_roles)))))
+
+  enumerate_annotated_roles: lemma
+  forall(r: role):
+    annotated_roles(r) iff
+      r = tpm_power_on_role or
+      r = tpm_extend_role or
+      r = tpm_create_key_role or
+      r = tpm_decrypt_role or
+      r = verifier_role or
+      adversary_roles(r)
+
+  % A STAP specific role assignment
+  assignment(b: bundle): type = protocol_assignment(annotated_roles, b)
+
+end annotated_roles

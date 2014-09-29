@@ -1,0 +1,71 @@
+% Connection between the protocol and state in the Exhaustible Award
+% Card Protocol
+
+% John D. Ramsdell -- The MITRE Corporation -- July 2013
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+state: theory
+begin
+
+  importing strands
+
+  state_induced_new_card_role: lemma
+  forall(bu: bundle, ra: assignment(bu), n: (anno_node?(bu, ra)),
+         i: nat, f: [(anno_node?(bu, ra)) -> below[i]], p: path):
+    compat(bu, ra)(i, f, p) and
+    p(1+f(n)) = boxes implies
+      ra(n`1) = new_card_role
+
+  % prefix_new: lemma
+  %   forall(p: path, i, k: nat):
+  %     i <= k implies
+  %       p(i) >= p(k) or
+  %       exists(j: nat): i < j and j <= k and p(j) = boxes
+
+  prefix_new_anno: lemma
+  forall(bu: bundle, ra: assignment(bu),
+         n0, n1: (anno_node?(bu, ra)), a0, a1: anno, s0, s1: state):
+    compatible(bu, ra) and
+    annotations(bu, ra)(n0)(a0) and
+    annotations(bu, ra)(n1)(a1) and
+    prec?(bu)(n0, n1) and
+    subset?(a0, {t: trans | t`2 = s0}) and
+    subset?(a1, {t: trans | t`1 = s1}) implies
+      s0 >= s1 or
+      exists(n: (anno_node?(bu, ra))):
+        annotations(bu, ra)(n)({t: trans | t`2 = boxes}) and
+        prec?(bu)(n, n1) and
+        prec?(bu)(n0, n)
+
+  cashier_inst_anno: lemma
+  forall(bu: bundle, ra: assignment(bu), z: strand(bu`space),
+         nc, nb: text, b, c: akey, k: skey):
+    cashier_inst(bu)(z, 5, nc, nb, b, c, k) implies
+      annotations(bu, ra)(z, 3) ({t: trans | t`1 = boxes and t`2 = 0})
+
+  exists_new_card_anno: lemma
+  forall(bu: bundle, ra: assignment(bu), n: (anno_node?(bu, ra))):
+    compatible(bu, ra) and
+    annotations(bu, ra)(n)({t: trans | t`2 = boxes}) implies
+      n`2 = 1 and
+      exists(b, c: akey, k: skey):
+        new_card_inst(bu)(n`1, 2, b, c, k)
+
+  two_cards_ordered: lemma
+  forall(bu: bundle, ra: assignment(bu)):
+    compatible(bu, ra) implies
+      forall(nc0, nc1, nb0, nb1: text, b0, b1, c0, c1: akey, k0, k1: skey,
+  	     z0, z1: strand(bu`space)):
+        cashier_inst(bu)(z0, 5, nc0, nb0, b0, c0, k0) and
+        cashier_inst(bu)(z1, 5, nc1, nb1, b1, c1, k1) and
+        prec?(bu)((z0, 3), (z1, 3))
+        implies
+          exists(z: strand(bu`space), b, c: akey, k: skey):
+            new_card_inst(bu)(z, 2, b, c, k) and
+            prec?(bu)((z0, 3), (z, 0)) and
+            prec?(bu)((z, 1), (z1, 2))
+
+end state

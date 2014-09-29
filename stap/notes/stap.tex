@@ -1,0 +1,164 @@
+\documentclass[12pt]{article}
+
+%\renewcommand{\pagename}{Draft of \today{}, Page}
+
+\usepackage{graphics}
+\usepackage[matrix,arrow,curve]{xy}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{url}
+%\usepackage{hyperref}\hypersetup{colorlinks=true,}
+
+\newtheorem{thm}{Theorem}
+\newcommand{\cpsa}{\textsc{cpsa}}
+\newcommand{\pvs}{\textsc{pvs}}
+\newcommand{\cn}[1]{\ensuremath{\operatorname{\mathsf{#1}}}}
+\newcommand{\dom}[1]{\ensuremath{\operatorname{\mathbf{#1}}}}
+\newcommand{\fn}[1]{\ensuremath{\operatorname{\mathit{#1}}}}
+\newcommand{\sdom}{\fn{Dom}}
+\newcommand{\sran}{\fn{Ran}}
+\newcommand{\seq}[1]{\ensuremath{\langle#1\rangle}}
+\newcommand{\enc}[2]{\ensuremath{\{\!|#1|\!\}_{#2}}}
+\newcommand{\inv}[1]{{#1}^{-1}}
+\newcommand{\inbnd}{\mathord -}
+\newcommand{\outbnd}{\mathord +}
+\newcommand{\srt}[1]{\ensuremath{\mathsf{#1}}}
+\newcommand{\nat}{\ensuremath{\mathbb{N}}}
+\newcommand{\all}[1]{\forall#1\mathpunct.}
+\newcommand{\some}[1]{\exists#1\mathpunct.}
+\newcommand{\pow}[1]{\wp(#1)}
+\newcommand{\prefix}[2]{#1\mid#2}
+\newcommand{\init}{\fn{init}}
+\newcommand{\resp}{\fn{resp}}
+\newcommand{\form}{\mathcal{K}}
+\newcommand{\sent}{\mathcal{S}}
+\newcommand{\lang}{\mathcal{L}}
+\newcommand{\alg}[1]{\ensuremath{\mathfrak#1}}
+\newcommand{\alga}{\alg{A}}
+\newcommand{\tr}{\ensuremath{\mathfrak C}}
+\newcommand{\rl}{\fn{rl}}
+\newcommand{\skel}{\mathsf{k}}
+\newcommand{\insta}{\mathsf{i}}
+\newcommand{\nodes}{\fn{nodes}}
+\newcommand{\evt}{\fn{evt}}
+\newcommand{\role}{\mathsf{r}}
+\newcommand{\orig}{\mathcal{O}}
+
+\newcommand{\boot}{\cn{bt}}
+\newcommand{\extend}{\cn{ex}(\cn{d},\boot)}
+\newcommand{\tran}{\ensuremath{\tau}}
+\newcommand{\pth}{\ensuremath{\pi}}
+\newcommand{\type}{\ensuremath{\mathfrak T}}
+\newcommand{\up}{\mathord\uparrow}
+\newcommand{\down}{\mathord\downarrow}
+
+\title{Notes About the \\ Simple TPM Attester Protocol}
+\author{John D.\ Ramsdell}
+
+\begin{document}
+\maketitle
+
+See the associated MITRE Technical Report (MTR) before looking at
+these notes.
+
+\begin{figure}
+$$\begin{array}{ll@{{}\colon{}}ll}
+\mbox{Sorts:}&
+\multicolumn{3}{l}{\mbox{$\top$, $\srt{A}$, $\srt{S}$, $\srt{D}$,
+ $\srt{E}$, \srt{M}}}\\
+\mbox{Subsorts:}&
+\multicolumn{3}{l}{\mbox{$\srt{A}<\top$, $\srt{S}<\top$,
+    $\srt{D}<\top$, $\srt{E}<\top$}}\\
+\mbox{Operations:}&(\cdot,\cdot)&\top\times\top\to\top& \mbox{Pairing}\\
+&\enc{\cdot}{(\cdot)}&\top\times\srt{A}\to\top&\mbox{Asymmetric encryption}\\
+&\enc{\cdot}{(\cdot)}&\top\times\srt{S}\to\top&\mbox{Symmetric encryption}\\
+&\inv{(\cdot)}&\srt{A}\to\srt{A}& \mbox{Asymmetric key inverse}\\
+&\inv{(\cdot)}&\srt{S}\to\srt{S}& \mbox{Symmetric key inverse}\\
+&\#&\srt{\top}\to\srt{S}& \mbox{Hashing}\\
+&\cn{a}_i,\cn{b}_i&\srt{A}& \mbox{Asymmetric key constants}\\
+&\cn{s}_i&\srt{S}& \mbox{Symmetric key constants}\\
+&\cn{d}_i&\srt{D}& \mbox{Data constants}\\
+&\cn{e}_i&\srt{E}& \mbox{Text constants}\\
+&\cn{g}_i&\top& \mbox{Tag constants}\\
+&\boot&\srt{M}&\mbox{TPM boot}\\
+&\cn{ex}&\top\times\srt{M}\to\srt{M}&\mbox{TPM extend}\\
+\mbox{Equations:}&\multicolumn{2}{l}{\inv{\cn{a}_i}=\cn{b}_i\quad
+\inv{\cn{b}_i}=\cn{a}_i}
+&(i\in\nat)\\
+&\multicolumn{2}{l}{\all{k\colon\srt{A}}\inv{(\inv{k})}=k}
+&\all{k\colon\srt{S}}\inv{k}=k
+\end{array}$$
+\caption{Crypto Algebra with State Signature}\label{fig:signature}
+\end{figure}
+
+\begin{figure}
+  \begin{center}
+    \includegraphics{stap-0.mps}
+  \end{center}
+  \caption{STAP Message-Passing and State History}\label{fig:shape}
+\end{figure}
+
+The Simple TPM Attester Protocol (STAP) message algebra displayed in
+Figure~\ref{fig:signature} extents the one in the MTR by adding
+hashing and tags.  It also adds the sort~\srt{M} for the state of the
+TPM, and two operations~\cn{bt} and~\cn{ex}, for boot and extend.
+Thus a state is a term of sort~\srt{M}.
+
+$$\begin{array}{ll@{{}\colon{}}ll}
+\mbox{Sorts:}&\multicolumn{3}{l}{\srt{M}}\\
+\mbox{Operations:}&\boot&\srt{M}& \mbox{Boot}\\
+&\cn{ex}&\top\times\srt{M}\to\srt{M}&\mbox{PCR extension}
+\end{array}$$
+
+The \emph{transition relation} is~$\tran$, where $(m_0,m_1)\in\tran$
+iff $m_1=\boot$ (boot), $\some{t\colon\top}m_1=\cn{ex}(t,m_0)$
+(extend), or $m_0 = m_1$ (observe).  An infinite sequence~$\pth$ is a
+\emph{path} if $\all{i\in\nat}(\pth(i),\pth(i+1))\in\tran$.
+
+The encoding of TPM states as messages follows.
+$$\begin{array}{r@{{}={}}l}
+\multicolumn{2}{c}{\fn{pcr}\colon\srt{M}\to\srt{S}}\\
+\fn{pcr}(\boot)&\cn{s}_0\\
+\fn{pcr}(\cn{ex}(t, m))&\#(t,\fn{pcr}(m))
+\end{array}$$
+
+  %% stable_boot_extend: lemma
+  %%   forall(p: path, x: mesg, i, k: nat):
+  %%     i < k and boot?(p(i)) and p(k) = extend(x, boot) implies
+  %%       exists(j: nat):
+  %%         i <= j and j < k and p(j) = boot and
+  %%         forall(l: nat):
+  %%           j < l and l <= k implies
+  %%             p(l) = extend(x, boot)
+
+Theorem~\ref{thm:stable boot extend} in the state world is
+imported into the strand space world as a bridge lemma.
+\begin{thm}[Stable Boot Extend]\label{thm:stable boot extend}
+$$\begin{array}{l}
+\all{\pi\in\fn{path},t\colon\top,i,j\in\nat}\\
+\quad i<j\wedge\pi(i)=\boot\wedge\pi(k)=\cn{ex}(t,\boot)\supset{}\\
+\qquad\some{j\in\nat}\\
+\qquad\quad i\leq j\wedge j<k\wedge\pi(j)=\boot\wedge{}\\
+\qquad\quad\all{\ell\in\nat}
+j<\ell\wedge l\leq k\supset\pi(\ell)=\cn{ex}(t,\boot)
+\end{array}$$
+\end{thm}
+
+\emph{Much text has yet to written following this point\ldots}
+
+\paragraph{Annotated STAP Roles.}
+
+Some of the tags used in the protocol.
+$$\begin{array}{r@{{}={}}ll}
+\cn{st}&\cn{g_0}&\mbox{State}\\
+\cn{cd}&\cn{g_1}&\mbox{Key Created}\\
+\cn{de}&\cn{g_2}&\mbox{Decrypt}\\
+\cn{d}&\cn{g_3}&\mbox{Desired PCR Value}
+\end{array}$$
+
+\paragraph{STAP Shape.}
+
+The shape and its connection to state is in Figure~\ref{fig:shape}.
+
+\end{document}

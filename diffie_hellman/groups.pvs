@@ -1,0 +1,27 @@
+% A theory of groups from the PVS Language Reference
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+groups [G : type,
+        e : G,
+        o : [G, G -> G],
+        inv : [G -> G] ] : theory
+begin
+  assuming
+    a, b, c: var G
+
+    associativity : assumption associative?(o)
+
+    unit : assumption identity?(o)(e)
+
+    inverse : assumption inverses?(o)(inv)(e)
+
+  endassuming
+
+  left_cancellation: theorem a o b = a o c implies b = c
+
+  right_cancellation: theorem b o a = c o a implies b = c
+
+END groups

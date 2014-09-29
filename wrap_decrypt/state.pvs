@@ -1,0 +1,116 @@
+% Wrap-Decrypt Device Model
+
+% A model of a device that contains symmetric keys that can be used
+% for wrapping a key or decrypting data.
+
+% An attribute is one of INIT, WRAP, or DECRYPT.
+
+% The state is a sequence of attributes.  The addresses in state s are
+% the domain ofa s.  For address a, the key at a is sk(a), it's
+% attribute is s(a), and the key's handle is the hash of the key.
+
+% The state transition relation implements the policy that a key's
+% attribute cannot be changed from WRAP to DECRYPT or vice versa.
+
+% John D. Ramsdell -- The MITRE Corporation -- June 2014
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+state: theory
+begin
+
+  strand_spaces: library = "../strand_spaces"
+  importing strand_spaces@init_alg
+
+  % The attributes associated with a handle
+  attr: datatype
+  begin
+    init_attr: init_attr?
+    wrap_attr: wrap_attr?
+    decrypt_attr: decrypt_attr?
+  end attr
+
+  % The state is a partial map from addresses to attributes
+  state: type = finite_sequence[attr]
+
+  addr(st: state): type = below[length(st)]
+
+  % The key given by an address is a symmetric key constant
+  key(st: state)(a: addr(st)): skey = sk(a)
+
+  % The handle is the hash of the key
+  handle(st: state)(a: addr(st)): mesg = hs(key(st)(a))
+
+  % The initial state is the empty map
+  init?: setof[state] = singleton(empty_seq[attr])
+
+  % The state transition relation implements the policy that a key's
+  % attribute cannot be changed from WRAP to DECRYPT or vice versa.
+
+  trans(st: state, nx: state): bool =
+    nx = add(init_attr, st) or                       % Make
+    exists(a: addr(st)):
+      (st(a) /= decrypt_attr and
+       nx = st with [`seq(a) := wrap_attr]) or       % Set wrap
+      (st(a) /= wrap_attr and
+       nx = st with [`seq(a) := decrypt_attr]) or    % Set decrypt
+      (nx = st and st(a) = wrap_attr) or             % Wrap
+      (nx = st and st(a) = decrypt_attr)             % Decrypt
+
+  % Facts about keys in states
+
+  has_key?(st: state, k: skey)(a: addr(st)): bool =
+    k = key(st)(a)
+
+  has_key_unique_address: lemma
+    forall(st: state, k: skey, a0, a1: addr(st)):
+      has_key?(st, k)(a0) and has_key?(st, k)(a1) implies a0 = a1
+
+  has_key_epsilon: lemma
+    forall(st: state, k: skey, a: addr(st)):
+      has_key?(st, k)(a) implies
+        a = epsilon(has_key?(st, k))
+
+  % The encoding function ensures states do not carry any key, but
+  % their handles are carried.
+
+  encode_keys(st: state)(a: upto[length(st)]): recursive mesg =
+    if a = 0 then
+      tg(0)
+    else
+      pr(handle(st)(a - 1), encode_keys(st)(a - 1))
+    endif
+    measure a by <
+
+  % This encoding function is not injective
+
+  encode(st: state): mesg =
+    encode_keys(st)(length(st))
+
+  % Facts about paths through state space
+
+  transitions: library = "../transitions"
+  importing transitions@paths[state, init?, trans]
+
+  sticky_attr_trans: lemma
+    forall(p: path, i: nat, a: addr(p(i)), r: attr):
+      p(i)(a) = r implies
+        r = init_attr or
+        p(i+1)(a) = r
+
+  % These two theorems are imported into the bundle theory.
+
+  state_length_nondecreasing: theorem
+    forall(p: path, i, j: nat):
+      i <= j implies
+        length(p(i)) <= length(p(j))
+
+  sticky_attr: theorem
+    forall(p: path, i, j: nat, a: addr(p(i)), r: attr):
+      i <= j and p(i)(a) = r implies
+        r = init_attr or
+        p(j)(a) = r
+
+end state

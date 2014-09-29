@@ -1,0 +1,177 @@
+% TPM model using labels
+
+% A model of a TPM with only one PCR and its values are messages.  The
+% state of the PCR is either the boot state or the result of extending
+% the current state.  The state is reflected into the algebra by
+% associating a state with a message.  The proofs use the fact that
+% the encoding function is injective.
+
+% Note: this theory uses tg(0) for the initial value of a PCR so that
+% constant should not be used for other purposes.  It also uses tg(1),
+% tg(2), and tg(3) for labels.
+
+% John D. Ramsdell -- The MITRE Corporation -- January 2014
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+state: theory
+begin
+
+  strand_spaces: library = "../strand_spaces"
+  importing strand_spaces@init_alg
+
+  % The state of the PCR is either the boot state or the result of
+  % extending the PCR.
+  state: datatype
+  begin
+    boot: boot?
+    extend(m: mesg, st: state): extend?
+  end state
+
+  % Encode extended PCR values with a hash.
+  % Encode the initial PCR value with tag t(0).
+  pcr(st: state): recursive mesg =
+    cases st of
+      boot: tg(0),
+      extend(m, st): hs(pr(m, pcr(st)))
+    endcases
+    measure st by <<
+
+  pcr_injective: lemma
+    forall(st0, st1: state):
+      pcr(st0) = pcr(st1) iff st0 = st1
+
+  auto_rewrite+ pcr_injective
+
+  label: datatype
+  begin
+    btl: btl?
+    exl(m: mesg): exl?
+    obl(m: mesg): obl?
+  end label
+
+  lab(l: label): mesg =
+    cases l of
+      btl: tg(1),
+      exl(m): pr(tg(2), m),
+      obl(m): pr(tg(3), m)
+    endcases
+
+  lab_injective: lemma
+    forall(l0, l1: label):
+      lab(l0) = lab(l1) iff l0 = l1
+
+  auto_rewrite+ lab_injective
+
+  % Tags for labels
+  boot_tag: tag = tg(1)
+  extend_tag: tag = tg(2)
+  observe_tag: tag = tg(3)
+
+  % Labels
+  bt: mesg = lab(btl)
+  ex(m: mesg): mesg = lab(exl(m))
+  ob(m: mesg): mesg = lab(obl(m))
+
+  trans(st: state, lb: mesg, nx: state): bool =
+    exists(l: label):
+      lb = lab(l) and
+      cases l of
+        btl: nx = boot,
+        exl(m): nx = extend(m, st),
+	obl(m): nx = st and m = pcr(st)
+      endcases
+
+  neutral_nodes: library = "../neutral_nodes"
+  importing neutral_nodes@paths[state, mesg, boot?, trans]
+
+  % Used to show a PCR extension differs from a PCR observation.
+  no_circularity_in_extend: lemma
+    forall(m: mesg, st: state):
+      st /= extend(m, st)
+
+  no_circularity_in_double_extend: lemma
+    forall(m0, m1: mesg, st: state):
+      st /= extend(m0, extend(m1, st))
+
+  subterm_extend: lemma
+    forall(x: mesg, st0, st1: state):
+      subterm(extend(x, st0), st1) implies subterm(st0, st1)
+
+  no_subterm_circularity: lemma
+    forall(x: mesg, st: state):
+      not subterm(extend(x, st), st)
+
+  % Facts about paths through the TPM transition relation.
+
+  init_extend: lemma
+    forall(p: path, x: mesg, st: state, k: nat):
+      p(k)`1 = extend(x, st) implies
+        exists(j: nat):
+          j < k and p(j)`1 = st and p(j+1)`1 = extend(x, st)
+
+  prefix_extend: lemma
+    forall(p: path, x: mesg, st: state, i, k: nat):
+      i <= k and p(k)`1 = extend(x, st) implies
+        subterm(p(i)`1, p(k)`1) or
+        exists(j: nat):
+          i <= j and j < k and p(j)`1 = st and p(j+1)`1 = extend(x, st)
+
+  state_split_helper: lemma
+    forall(p: path, x, x0, x1: mesg, st: state, i, k: nat):
+      i <= k and x0 /= x1 and
+      p(i)`1 = extend(x0, extend(x, st)) and
+      p(k)`1 = extend(x1, extend(x, st)) implies
+        exists(j: nat):
+          i < j and j < k and
+          p(j)`1 = st and p(j+1)`1 = extend(x, st)
+
+  state_split: lemma
+    forall(p: path, x, x0, x1: mesg, st: state, i, k: nat):
+      i <= k and x0 /= x1 and
+      p(i)`1 = extend(x0, extend(x, st)) and
+      p(k)`1 = extend(x1, extend(x, st)) implies
+        exists(j0, j1: nat):
+          j0 < i and i < j1 and j1 < k and
+          p(j0)`1 = st and p(j0+1)`1 = extend(x, st) and
+          p(j1)`1 = st and p(j1+1)`1 = extend(x, st)
+
+  % If a state is not extended from a previous state, there must have
+  % been a intervening boot.
+  prefix_boot: lemma
+    forall(p: path, i, k: nat):
+      i <= k implies
+        subterm(p(i)`1, p(k)`1) or
+        exists(j: nat): i <= j and j <= k and boot?(p(j)`1)
+
+  has(st: state, x: mesg): recursive bool =
+    cases st of
+      boot: false,
+      extend(m, st): m = x or has(st, x)
+    endcases
+    measure st by <<
+
+  % If a state is extended from one involving a message, and a
+  % previous state is a boot state, there must have been an
+  % intervening transition that extends with the message.
+  boot_extend: lemma
+    forall(p: path, x: mesg, i, k: nat):
+      i < k and boot?(p(i)`1) and has(p(k)`1, x) implies
+        exists(j: nat):
+          i <= j and j < k and p(j+1)`1 = extend(x, p(j)`1)
+
+  % This is the composition of the above two lemmas.
+
+  % If a state is extended from one involving a message and is not
+  % extended from a previous state, there must have been an
+  % intervening transition that extends with the message.
+  prefix_boot_extend: lemma
+    forall(p: path, x: mesg, i, k: nat):
+      i <= k and has(p(k)`1, x) implies
+        subterm(p(i)`1, p(k)`1) or
+        exists(j: nat):
+          i <= j and j < k and p(j+1)`1 = extend(x, p(j)`1)
+
+end state

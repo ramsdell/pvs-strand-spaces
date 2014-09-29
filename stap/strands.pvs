@@ -1,0 +1,109 @@
+% Strands in the Simple TPM Attestation Protocol
+
+% Strands in the STAP shape that are instances of the same role have
+% the same length.  This theory exploits this fact and provides useful
+% rewrite rules associated with the strands.  The *_assumes lemmas are
+% just helper lemmas used to prove the rewrite rules.
+
+% John D. Ramsdell -- The MITRE Corporation -- June 2013
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+strands: theory
+begin
+
+  importing annotated_roles
+
+  tpm_power_on_inst_assumes: lemma
+  forall(bu:bundle, z: strand(bu`space), pcrkey: skey):
+    tpm_power_on_inst(bu)(z, 2, pcrkey) implies
+      non(bu`space)(pcrkey)
+
+  tpm_power_on_inst_rew: lemma
+  forall(bu:bundle, z: strand(bu`space), pcrkey: skey):
+    tpm_power_on_inst(bu)(z, 2, pcrkey) iff
+      2 <= bu`space(z)`length and
+      prefix?[event](bu`space(z), tpm_power_on_trace(pcrkey)) and
+      non(bu`space)(pcrkey)
+
+  auto_rewrite+ tpm_power_on_inst_rew
+
+  tpm_extend_inst_assumes: lemma
+  forall(bu: bundle, z: strand(bu`space),
+ 	 value, current_value: mesg, pcrkey: skey):
+    tpm_extend_inst(bu)(z, 3, value, current_value, pcrkey) implies
+      non(bu`space)(pcrkey)
+
+  tpm_extend_inst_rew: lemma
+  forall(bu: bundle, z: strand(bu`space),
+ 	 value, current_value: mesg, pcrkey: skey):
+    tpm_extend_inst(bu)(z, 3, value, current_value, pcrkey) iff
+      3 <= bu`space(z)`length and
+      prefix?[event](bu`space(z),
+                     tpm_extend_trace(value, current_value, pcrkey)) and
+      non(bu`space)(pcrkey)
+
+  auto_rewrite+ tpm_extend_inst_rew
+
+  tpm_create_key_inst_assumes: lemma
+  forall(bu:bundle, z: strand(bu`space),
+ 	 k, aik: akey, pcrval: mesg):
+    tpm_create_key_inst(bu)(z, 2, k, aik, pcrval) implies
+      non(bu`space)(invk(k)) and
+      non(bu`space)(aik) and
+      uniq(bu`space)(k, (z, 1))
+
+  tpm_create_key_inst_rew: lemma
+  forall(bu:bundle, z: strand(bu`space),
+ 	 k, aik: akey, pcrval: mesg):
+    tpm_create_key_inst(bu)(z, 2, k, aik, pcrval) iff
+      2 <= bu`space(z)`length and
+      prefix?[event](bu`space(z),
+                     tpm_create_key_trace(k, aik, pcrval)) and
+      non(bu`space)(invk(k)) and
+      non(bu`space)(aik) and
+      uniq(bu`space)(k, (z, 1))
+
+  auto_rewrite+ tpm_create_key_inst_rew
+
+  tpm_decrypt_inst_assumes: lemma
+  forall(bu:bundle, z: strand(bu`space),
+	 m, current_value: mesg, k, aik: akey, pcrkey: skey):
+    tpm_decrypt_inst(bu)(z, 4, m, current_value, k, aik, pcrkey) implies
+      non(bu`space)(aik) and
+      non(bu`space)(pcrkey)
+
+  tpm_decrypt_inst_rew: lemma
+  forall(bu:bundle, z: strand(bu`space),
+	 m, current_value: mesg, k, aik: akey, pcrkey: skey):
+    tpm_decrypt_inst(bu)(z, 4, m, current_value, k, aik, pcrkey) iff
+      4 <= bu`space(z)`length and
+      prefix?[event](bu`space(z),
+                     tpm_decrypt_trace(m, current_value, k, aik, pcrkey)) and
+      non(bu`space)(aik) and
+      non(bu`space)(pcrkey)
+
+  auto_rewrite+ tpm_decrypt_inst_rew
+
+  verifier_inst_assumes: lemma
+  forall(bu: bundle, z: strand(bu`space),
+         k, aik: akey, pcrval: mesg, n: text):
+    verifier_inst(bu)(z, 3, k, aik, pcrval, n) implies
+      non(bu`space)(aik) and
+      uniq(bu`space)(n, (z, 1))
+
+  verifier_inst_rew: lemma
+  forall(bu: bundle, z: strand(bu`space),
+         k, aik: akey, pcrval: mesg, n: text):
+    verifier_inst(bu)(z, 3, k, aik, pcrval, n) iff
+      3 <= bu`space(z)`length and
+      prefix?[event](bu`space(z),
+                     verifier_trace(k, aik, pcrval, n)) and
+      non(bu`space)(aik) and
+      uniq(bu`space)(n, (z, 1))
+
+  auto_rewrite+ verifier_inst_rew
+
+end strands

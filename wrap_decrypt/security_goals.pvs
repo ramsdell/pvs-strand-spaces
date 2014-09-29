@@ -1,0 +1,25 @@
+% Security goals for the Wrap-Decrypt Protocol
+
+% John D. Ramsdell -- The MITRE Corporation -- June 2014
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+security_goals: theory
+begin
+
+  importing bridge
+
+  % A key cannot be used both for wrapping and decrypting.
+
+  wrap_and_decrypt_disjoint: theorem
+    forall(bu: bundle, z0, z1: strand(bu`space),
+           h0, h1: nat, st0, st1: state, k0, k1: skey, x: mesg):
+      h0 >= 3 and h1 >= 3 and
+      wrap_inst(bu)(z0, h0, st0, k0, k1) and
+      decrypt_inst(bu)(z1, h1, st1, x, k1)
+        implies
+          false
+
+end security_goals

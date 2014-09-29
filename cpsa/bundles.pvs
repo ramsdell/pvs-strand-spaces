@@ -1,0 +1,243 @@
+% Bundles
+
+% John D. Ramsdell -- The MITRE Corporation -- September 2014
+
+% This theory defines bundles and proves several theorems such as the
+% fact that a message is carried in a bundle iff it originates in the
+% bundle.
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+bundles[mesg: type, carried_by?: [mesg, mesg -> bool]]: theory
+begin
+
+  importing strand_spaces[mesg, carried_by?]
+  importing strand_spaces@finite_strict_orders
+
+  % A bundle is a strand space, a set of communication edges that
+  % satisfy some properties, and a set of next transition edges.  The
+  % properties follow the declaration.  The left node of the comm
+  % relation is the message source, and the right node is the message
+  % destination.  The left node of the next relation is current
+  % transition and the right node is the next transition.
+  pre_bundle: type = [# space: strand_space,
+                        comm: [node(space), node(space) -> bool],
+			next: [node(space), node(space) -> bool] #]
+
+  % A communication edge is well formed if it relates a send event
+  % in one strand to a receive event in another strand, and the two
+  % events agree on their term.
+  well_formed_comm?(b: pre_bundle): bool =
+    forall(n0, n1: node(b`space)):
+      b`comm(n0, n1) implies
+      (n0`1 /= n1`1 and                      % Not on same strand
+       cases event_at(b`space)(n0) of        % Source node
+         send(t0):
+           cases event_at(b`space)(n1) of    % Destination node
+	     recv(t1): t0 = t1
+           else
+             false
+           endcases
+       else
+         false
+       endcases)
+
+  % For each receive node, there exists a unique send node
+  well_formed_recv?(b: pre_bundle): bool =
+    forall(n0: node(b`space)):
+      recv?(event_at(b`space)(n0)) implies
+      exists1!(n1: node(b`space)): b`comm(n1, n0)
+
+  well_formed_next?(b: pre_bundle): bool =
+    % The next relation applies only to state nodes
+    % Okay: T -> T, T -> O, I -> T, I -> O, O -> T
+    % Not okay: O -> O, O -> I, T -> I, I -> I
+    (forall(n0, n1: node(b`space)):
+      b`next(n0, n1) implies
+        nxt_node?(b`space)(n0) and
+        cur_node?(b`space)(n1) and
+        not (obsv_node?(b`space)(n0) and obsv_node?(b`space)(n1))) and
+    % State is passed on a next edge
+    (forall(n0: (nxt_node?(b`space)), n1: (cur_node?(b`space))):
+      b`next(n0, n1) implies
+        nxt_at(b`space)(n0) = cur_at(b`space)(n1)) and
+    % There is at most one next node that is a transition
+    (forall(n0: (nxt_node?(b`space)), n1, n2: (tran_node?(b`space))):
+      b`next(n0, n1) and b`next(n0, n2) implies n1 = n2) and
+    % A transition in preceded by a transition or initialization
+    % Same for an observation
+    (forall(n1: (cur_node?(b`space))):
+      exists(n0: (path_node?(b`space))):
+        b`next(n0, n1)) and
+    % Infer next by observation
+    (forall(n0: (path_node?(b`space)),
+            n1: (tran_node?(b`space)),
+            n2: (obsv_node?(b`space))):
+      b`next(n0, n1) and b`next(n0, n2) implies
+        b`next(n2, n1))
+
+  % A node immediately precedes another if it is related by
+  % communication, next, or strand succession.
+  before?(b: pre_bundle)(n0, n1: node(b`space)): bool =
+    b`comm(n0, n1) or b`next(n0, n1) or
+    (n0`1 = n1`1 and n0`2 + 1 = n1`2)
+
+  % A node is before another if they are related by the transitive
+  % closure of of the before? relation.
+  prec?(b: pre_bundle)(n0, n1: node(b`space)): bool =
+    TC(before?(b))(n0, n1)
+
+  % Causality requires that the prec? relation be a strict ordering.
+  acyclic?(b: pre_bundle): bool = strict_order?(prec?(b))
+
+  bundle?(b: pre_bundle): bool =
+    well_formed_comm?(b) and well_formed_recv?(b) and
+    well_formed_next?(b) and acyclic?(b)
+
+  bundle: type = (bundle?)
+
+  % Node ordering properties
+
+  prec_is_strict: lemma forall(b: bundle): strict_order?(prec?(b))
+
+  auto_rewrite+ prec_is_strict
+
+  % Derived properties of the communication relation
+  left_comm_send:
+    lemma forall(b: bundle, n0, n1: node(b`space)):
+      b`comm(n0, n1) implies send?(event_at(b`space)(n0))
+
+  right_comm_recv:
+    lemma forall(b: bundle, n0, n1: node(b`space)):
+      b`comm(n0, n1) implies recv?(event_at(b`space)(n1))
+
+  comm_injective:
+    lemma forall(b: bundle, n0, n1, n2: node(b`space)):
+      b`comm(n0, n2) and b`comm(n1, n2) implies n0 = n1
+
+  % Derived properties of the prec? relation
+
+  prec_is_transitive:
+    lemma forall(b: bundle, x, y, z: node(b`space)):
+      prec?(b)(x, y) and prec?(b)(y, z) implies
+        prec?(b)(x, z)
+
+  comm_prec:
+    lemma forall(b: bundle, n0, n1: node(b`space)):
+      b`comm(n0, n1) implies
+        prec?(b)(n0, n1)
+
+  next_prec:
+    lemma forall(b: bundle, n0, n1: node(b`space)):
+      b`next(n0, n1) implies
+        prec?(b)(n0, n1)
+
+  strand_succession_prec:
+    lemma forall(b: bundle, n0, n1: node(b`space)):
+      n0`1 = n1`1 and n0`2 < n1`2 implies
+        prec?(b)(n0, n1)
+
+  % A measure used on bundles is left_card[node(b`space), prec?(b)].
+
+  prec_increases:
+    lemma forall(b: bundle, n0, n1: node(b`space)):
+      prec?(b)(n0, n1) implies
+        left_card[node(b`space), prec?(b)](n0) <
+          left_card[node(b`space), prec?(b)](n1)
+
+  % Lemmas and definitions in support of the proof that a message is
+  % carried in a bundle iff it originates in the bundle.
+
+  carried_recv_implies_send:
+    lemma forall(b: bundle, m: mesg, n0: node(b`space)):
+      recv?(event_at(b`space)(n0)) and
+      carried_by?(m, t(event_at(b`space)(n0))) implies
+        exists(n1: node(b`space)):
+          b`comm(n1, n0) and
+          carried_by?(m, t(event_at(b`space)(n1)))
+
+  carried_send_implies_recv:
+    lemma forall(b: bundle, m: mesg, n0: node(b`space)):
+      send?(event_at(b`space)(n0)) and
+      carried_by?(m, t(event_at(b`space)(n0))) implies
+        originates_at?(b`space)(m, n0) or
+        exists(n1: node(b`space)):
+          n1`1 = n0`1 and n1`2 < n0`2 and
+          carried_by_event?(m, event_at(b`space)(n1))
+
+  carried_cur_implies_sync:
+    lemma forall(b: bundle, m: mesg, n0: (cur_node?(b`space))):
+      carried_by?(m, cur_at(b`space)(n0)) implies
+        exists(n1: node(b`space)):
+	  b`next(n1, n0) and
+          carried_by?(m, nxt_at(b`space)(n1))
+
+  carried_init_implies_prec:
+    lemma forall(b: bundle, m: mesg, n0: (init_node?(b`space))):
+      carried_by?(m, nxt_at(b`space)(n0)) implies
+        originates_at?(b`space)(m, n0) or
+        exists(n1: node(b`space)):
+          n1`1 = n0`1 and n1`2 < n0`2 and
+          carried_by_event?(m, event_at(b`space)(n1))
+
+  carried_tran_implies_prec:
+    lemma forall(b: bundle, m: mesg, n0: (tran_node?(b`space))):
+      carried_by?(m, nxt_at(b`space)(n0)) implies
+        carried_by?(m, cur_at(b`space)(n0)) or
+        originates_at?(b`space)(m, n0) or
+        exists(n1: node(b`space)):
+          n1`1 = n0`1 and n1`2 < n0`2 and
+          carried_by_event?(m, event_at(b`space)(n1))
+
+  carried_implies_origination:
+    lemma forall(b: bundle, n0: node(b`space), m: mesg):
+      carried_by_event?(m, event_at(b`space)(n0)) implies
+        exists(n1: node(b`space)): originates_at?(b`space)(m, n1)
+
+  never_carried_iff_non_origination:
+    theorem forall(b: bundle, m: mesg):
+      never_carried?(b`space)(m) iff non(b`space)(m)
+
+  uniquely_originating_node_prec:
+    theorem forall(b: bundle, m: mesg, n0, n1: node(b`space)):
+      uniq(b`space)(m, n0) and
+      carried_by_event?(m, event_at(b`space)(n1)) implies
+        n0 = n1 or prec?(b)(n0, n1)
+
+  % Definitions to support induction in the other order
+
+  after?(b: bundle)(n0, n1: node(b`space)): bool =
+    prec?(b)(n1, n0)
+
+  after_is_strict: lemma forall(b: bundle): strict_order?(after?(b))
+
+  auto_rewrite+ after_is_strict
+
+  prec_decreases:
+    lemma forall(b: bundle, n0, n1: node(b`space)):
+      prec?(b)(n0, n1) implies
+        left_card[node(b`space), after?(b)](n0) >
+          left_card[node(b`space), after?(b)](n1)
+
+  % Before transitivity using precedes.  This is a key lemma whose
+  % proof uses measure induction on the after? order.
+  prec_trans_precedes:
+    lemma forall(b: bundle, n0, n2: node(b`space)):
+      prec?(b)(n0, n2) implies
+        before?(b)(n0, n2) or
+        exists(n1: node(b`space)):
+          prec?(b)(n0, n1) and before?(b)(n1, n2)
+
+  after_send_implies_after_previous_start:
+    lemma forall(b: bundle, n0, n1: node(b`space)):
+      prec?(b)(n0, n1) and send?(event_at(b`space)(n1)) implies
+        n1`2 > 0
+
+  after_send_implies_after_previous:
+    theorem forall(b: bundle, n0, n1: node(b`space)):
+      prec?(b)(n0, n1) and send?(event_at(b`space)(n1)) implies
+        n0`1 = n1`1 or n1`2 > 0 and prec?(b)(n0, (n1`1, n1`2 - 1))
+
+end bundles

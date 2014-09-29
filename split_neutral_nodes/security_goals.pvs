@@ -1,0 +1,29 @@
+% Security goals for the Split State Protocol
+
+% John D. Ramsdell -- The MITRE Corporation -- January 2014
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+security_goals: theory
+begin
+
+  importing shape_analysis_sentences
+  importing bridge
+
+  split_implies_ordered: theorem
+  forall(bu: run(protocol_roles), n0, n1: node(bu`space),
+         t0, t1: text, s: skey, aik: akey):
+      split_pov(bu)(n0, n1, t0, t1, s, aik)
+      implies
+        exists(z0, z1, z2, z3: strand(bu`space)):
+          split_shape(bu)(n0, n1, t0, t1, s, aik)(z0, z1) and
+          extend_inst(bu)(z2, 2, obtain) and
+	  prec?(bu)((z2, 1), (z0, 1)) and
+	  extend_inst(bu)(z3, 2, refuse) and
+	  prec?(bu)((z3, 1), (z1, 1)) and
+	  (prec?(bu)((z2, 1), (z3, 1)) or
+	   prec?(bu)((z3, 1), (z2, 1)))
+
+end security_goals

@@ -1,0 +1,56 @@
+(|nonempty_finite_sequences|
+ (|index_TCC1| 0
+  (|index_TCC1-1| NIL 3565949038 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL))
+ (|singleton_seq_lem| 0
+  (|singleton_seq_lem-1| NIL 3565308786
+   ("" (SKOLEM 1 "x")
+    (("" (GRIND)
+      ((""
+        (LEMMA "extensionality_postulate[below(1),T]"
+         ("f" "(LAMBDA (i: below(1)): x)" "g"
+          "(LAMBDA (x: below[0]): epsilon! (t: T): TRUE) WITH [(0) := x]"))
+        (("1" (GRIND) NIL NIL) ("2" (GRIND) NIL NIL)) NIL))
+      NIL))
+    NIL)
+   ((|add| CONST-DECL "finseq[T]" |more_finseq| NIL)
+    (|empty_seq| CONST-DECL "finseq" |finite_sequences| NIL)
+    (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences| NIL)
+    (T FORMAL-TYPE-DECL NIL |nonempty_finite_sequences| NIL)
+    (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL)
+    (< CONST-DECL "bool" |reals| NIL)
+    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
+    (>= CONST-DECL "bool" |reals| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
+    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
+    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (TRUE CONST-DECL "bool" |booleans| NIL)
+    (|epsilon| CONST-DECL "T" |epsilons| NIL)
+    (|pred| TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|below| TYPE-EQ-DECL NIL |nat_types| NIL)
+    (FALSE CONST-DECL "bool" |booleans| NIL)
+    (|extensionality_postulate| FORMULA-DECL NIL |functions| NIL))
+   SHOSTAK))
+ (|doubleton_seq_TCC1| 0
+  (|doubleton_seq_TCC1-1| NIL 3565308403 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|add| CONST-DECL "finseq[T]" |more_finseq| NIL)
+    (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences| NIL))
+   NIL))
+ (|tripleton_seq_TCC1| 0
+  (|tripleton_seq_TCC1-1| NIL 3565308403 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|add| CONST-DECL "finseq[T]" |more_finseq| NIL)
+    (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences| NIL))
+   NIL))
+ (|sextupleton_seq_TCC1| 0
+  (|sextupleton_seq_TCC1-1| NIL 3565478517 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|add| CONST-DECL "finseq[T]" |more_finseq| NIL)
+    (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences| NIL))
+   NIL)))
+

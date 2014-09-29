@@ -1,0 +1,40 @@
+% Shape analysis sentences for the Split State Protocol
+
+% John D. Ramsdell -- The MITRE Corporation -- January 2014
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+shape_analysis_sentences: theory
+begin
+
+  importing protocol_roles
+
+  split_pov(bu: bundle)(n0, n1: node(bu`space), st: state,
+                        t0, t1: text, aik: akey): bool =
+    outbound_at?(bu`space)
+                (make_quote(t0, pcr(extend(obtain, st)), aik),
+                 n0) and
+    outbound_at?(bu`space)
+                (make_quote(t1, pcr(extend(refuse, st)), aik),
+                 n1) and
+    non(bu)(aik)
+
+  split_shape(bu: bundle)(n0, n1: node(bu`space), st: state,
+                          t0, t1: text, aik: akey)
+                         (z0, z1: strand(bu`space)): bool =
+    n0 = (z0, 2) and n1 = (z1, 2) and
+    split_pov(bu)(n0, n1, st, t0, t1, aik) and
+    quote_inst(bu)(z0, 3, extend(obtain, st), t0, aik) and
+    quote_inst(bu)(z1, 3, extend(refuse, st), t1, aik)
+
+  split_shape_analysis_sentence: axiom
+  forall(bu: run(protocol_roles)):
+    forall(n0, n1: node(bu`space), st: state, t0, t1: text, aik: akey):
+      split_pov(bu)(n0, n1, st, t0, t1, aik)
+      implies
+        exists(z0, z1: strand(bu`space)):
+          split_shape(bu)(n0, n1, st, t0, t1, aik)(z0, z1)
+
+end shape_analysis_sentences

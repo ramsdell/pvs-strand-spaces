@@ -1,0 +1,337 @@
+% Blanchet's Simple Example Protocol
+
+% John D. Ramsdell -- The MITRE Corporation -- December 2012
+
+% This theory defines the roles for Blanchet's Simple Example Protocol
+% and then displays a shape analysis sentence in this formalism
+% extracted from the output of CPSA.
+
+% See "Deducing Security Goals From Shape Analysis Sentences", John
+% D. Ramsdell, <http://arxiv.org/abs/1204.0480>.
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+blanchet: theory
+begin
+
+  % Role annotations are not used, so the type is uninterpreted.
+  anno: type
+
+  strand_spaces: library = "../strand_spaces"
+  importing strand_spaces@adversary[anno]
+
+  % (defrole init
+  %   (vars (a b akey) (s skey) (d data))
+  %   (trace
+  %    (send (enc (enc s (invk a)) b))
+  %    (recv (enc d s)))
+  %   (uniq-orig s))
+
+  % The initiator trace
+  init_trace(a, b: akey, s: skey, d: data): trace =
+    doubleton_seq(send(en(en(s, invk(a)), b)), recv(en(d, s)))
+
+  init_runique(s: skey): assumptions =
+    doubleton_seq(singleton[atom](s), emptyset)
+
+  init_role_item(a, b: akey, s: skey, d: data): role_item =
+    (# trace   := c,
+       rnon    := no_assumptions(c`length),
+       runique := init_runique(s),
+       ranno   := no_annotations(c`length) #)
+    where
+      c = init_trace(a, b, s, d)
+
+  % The role
+  init_role(ri: role_item): bool =
+    exists(a, b: akey, s: skey, d: data):
+      ri = init_role_item(a, b, s, d)
+
+  % The predicate
+  init_inst(ss: strand_space)
+           (z: strand(ss), h: nat,
+     	    a, b: akey, s: skey, d: data): bool =
+    pred(ss)(z, h, init_role_item(a, b, s, d))
+
+  % (defrole resp
+  %   (vars (a b akey) (s skey) (d data))
+  %   (trace
+  %    (recv (enc (enc s (invk a)) b))
+  %    (send (enc d s))))
+
+  % The responder trace
+  resp_trace(a, b: akey, s: skey, d: data): trace =
+    doubleton_seq(recv(en(en(s, invk(a)), b)), send(en(d, s)))
+
+  % The role
+  resp_role(ri: role_item): bool =
+    exists(a, b: akey, s: skey, d: data):
+      ri = simple_role_item(resp_trace(a, b, s, d))
+
+  % The predicate
+  resp_inst(ss: strand_space)
+           (z: strand(ss), h: nat,
+     	    a, b: akey, s: skey, d: data): bool =
+    pred(ss)(z, h, simple_role_item(resp_trace(a, b, s, d)))
+
+  prot: protocol =
+    add(init_role,
+        add(resp_role,
+            adversary_roles))
+
+% When CPSA is given the following point of view,
+
+% (defskeleton blanchet
+%   (vars (d data) (s skey) (a b akey))
+%   (defstrand resp 2 (d d) (s s) (a a) (b b))
+%   (non-orig (invk a) (invk b))
+%   (comment "Analyze from the responder's perspective")
+%   (traces ((recv (enc (enc s (invk a)) b)) (send (enc d s))))
+%   (label 9)
+%   (unrealized (0 0))
+%   (origs)
+%   (comment "1 in cohort - 1 not yet seen"))
+
+% it produces one shape.
+
+% (defskeleton blanchet
+%   (vars (d data) (s skey) (a b b-0 akey))
+%   (defstrand resp 2 (d d) (s s) (a a) (b b))
+%   (defstrand init 1 (s s) (a a) (b b-0))
+%   (precedes ((1 0) (0 0)))
+%   (non-orig (invk a) (invk b))
+%   (uniq-orig s)
+%   (operation encryption-test (added-strand init 1) (enc s (invk a))
+%     (0 0))
+%   (traces ((recv (enc (enc s (invk a)) b)) (send (enc d s)))
+%     ((send (enc (enc s (invk a)) b-0))))
+%   (label 10)
+%   (parent 9)
+%   (unrealized)
+%   (shape)
+%   (maps ((0) ((a a) (b b) (s s) (d d))))
+%   (origs (s (1 0))))
+
+% The generated shape analysis sentence is:
+
+% (forall
+%   ((d data) (s skey) (a b akey) (z nat))
+%   (implies
+%     (and (strand "blanchet" "resp" 2 "d" z d)
+%       (strand "blanchet" "resp" 2 "s" z s)
+%       (strand "blanchet" "resp" 2 "a" z a)
+%       (strand "blanchet" "resp" 2 "b" z b)
+%       (non (invk a)) (non (invk b)))
+%     (exists ((d-0 data) (s-0 skey) (a-0 b-0 b-1 akey) (z-0 z-1 nat))
+%       (and (equal z z-0) (equal a a-0) (equal b b-0) (equal s s-0)
+%         (equal d d-0)
+%         (strand "blanchet" "resp" 2 "d" z-0 d-0)
+%         (strand "blanchet" "resp" 2 "s" z-0 s-0)
+%         (strand "blanchet" "resp" 2 "a" z-0 a-0)
+%         (strand "blanchet" "resp" 2 "b" z-0 b-0)
+%         (strand "blanchet" "init" 1 "s" z-1 s-0)
+%         (strand "blanchet" "init" 1 "a" z-1 a-0)
+%         (strand "blanchet" "init" 1 "b" z-1 b-1)
+%         (prec z-1 0 z-0 0)
+%         (non (invk a-0)) (non (invk b-0))
+%         (uniq s-0)                  ; Redundant
+%         (orig s-0 z-1 0)))))
+
+  % The shape analysis sentence in this formalism.  CPSA says one can
+  % assert this as an axiom.
+
+  shape_analysis_sentence: axiom
+  forall(bu: run(prot)):
+    forall(a, b: akey, s: skey, d: data, z: strand(bu`space)):
+      resp_inst(bu`space)(z, 2, a, b, s, d) and
+      non(bu`space)(invk(a)) and non(bu`space)(invk(b))
+      implies
+      exists(a0, b0, b1: akey, s0: skey, d0: data, z0, z1: strand(bu`space)):
+        z = z0 and a = a0 and b = b0 and s = s0 and d = d0 and % Homomorphism
+	resp_inst(bu`space)(z0, 2, a0, b0, s0, d0) and
+        init_inst(bu`space)(z1, 1, a0, b1, s0, d0) and
+        prec?(bu)((z1, 0), (z0, 0)) and
+        non(bu`space)(invk(a0)) and
+        non(bu`space)(invk(b0)) and
+        uniq(bu`space)(s0, (z1, 0))
+
+  % In Lemma blanchet_false_security_goal, there is a security goal
+  % that cannot be derived from the above axiom.  Without a semantic
+  % embedding of shape analysis sentences, as is done here, that is
+  % all one can say about the security goal.
+  %
+  % With this framework, one can prove the security goal is false by
+  % presenting a counterexample bundle and role assignment.  The
+  % counterexample models the shape analysis sentence but does not
+  % model the security goal.
+
+  % Counterexample atoms
+
+  ca: akey = ak(0)
+  cb: akey = ak(1)
+  cb1: akey = ak(2)
+  cs: skey = sk(0)
+  cd: data = dt(0)
+
+  % Counterexample Strand Space
+
+  css: strand_space =
+    sextupleton_seq(resp_trace(ca, cb, cs, cd),               % 0
+                    create_trace(cb),                         % 1
+                    enc_trace(en(cs, invk(ca)), cb),          % 2
+                    create_trace(invk(cb1)),                  % 3
+                    dec_trace(en(cs, invk(ca)), cb1),         % 4
+                    init_trace(ca, cb1, cs, cd) ^^ (0, 1))    % 5
+
+  % A lemma used to prove the next lemma that enumates all the nodes
+  % in css.
+  css_nodes_decomposed: lemma
+    forall(n: node(css)):
+      n`1 = 0 and (n`2 = 0 or n`2 = 1) or
+      n`1 = 1 and n`2 = 0 or
+      n`1 = 2 and (n`2 = 0 or n`2 = 1 or n`2 = 2) or
+      n`1 = 3 and n`2 =  0 or
+      n`1 = 4 and (n`2 = 0 or n`2 = 1 or n`2 = 2) or
+      n`1 = 5 and n`2 =  0
+
+  % A lemma used to make PVS consider each and every node in css.
+  css_nodes_enumerated: lemma
+    forall(n: node(css)):
+      n = (0, 0) or n = (0, 1) or
+      n = (1, 0) or
+      n = (2, 0) or n = (2, 1) or n = (2, 2) or
+      n = (3, 0) or
+      n = (4, 0) or n = (4, 1) or n = (4, 2) or
+      n = (5, 0)
+
+  % Communication messages
+  %
+  % (5, 0) -> (4, 0): enc(enc(cs, invk(ca)), cb1)
+  % (3, 0) -> (4, 1): invk(cb1)
+  % (4, 2) -> (2, 0): enc(cs, invk(ca))
+  % (1, 0) -> (2, 1): cb
+  % (2, 2) -> (0, 0): enc(enc(cs, invk(ca)), cb)
+
+  pre_cbu: pre_bundle =
+    (# space := css,
+       comm  :=
+       {(s: node(css), r: node(css)) |
+        s = (5, 0) and r = (4, 0) or
+        s = (3, 0) and r = (4, 1) or
+        s = (4, 2) and r = (2, 0) or
+        s = (1, 0) and r = (2, 1) or
+        s = (2, 2) and r = (0, 0)} #)
+
+  % Lemmas used to show that pre_cbu is a bundle.
+
+  cbu_well_formed_comm: lemma well_formed_comm?(pre_cbu)
+
+  % A total ordering of nodes consistent with the prec? relation
+  % Used to show prec? is irreflexive
+  cbu_node_order(n: node(css)): below(11) =
+    if n = (5, 0) then 0        % cond .. endcond would have better
+    elsif n = (4, 0) then 1
+    elsif n = (3, 0) then 2
+    elsif n = (4, 1) then 3
+    elsif n = (4, 2) then 4
+    elsif n = (2, 0) then 5
+    elsif n = (1, 0) then 6
+    elsif n = (2, 1) then 7
+    elsif n = (2, 2) then 8
+    elsif n = (0, 0) then 9
+    else 10 % for n = (0, 1)
+    endif
+
+  % The before? relation respects the above node order.
+  cbu_precedes_total_order: lemma
+    forall(n0, n1: node(pre_cbu`space)):
+      before?(pre_cbu)(n0, n1) implies cbu_node_order(n0) < cbu_node_order(n1)
+
+  % The prec? relation respects the above node order.
+  cbu_prec_total_order: lemma
+    forall(n0, n1: node(pre_cbu`space)):
+      prec?(pre_cbu)(n0, n1) implies cbu_node_order(n0) < cbu_node_order(n1)
+
+  cbu_acyclic: lemma acyclic?(pre_cbu)
+
+  inbnd?(ss: strand_space)(n: node(ss)): bool =
+    recv?(event_at(ss)(n))
+
+  % Returns the sender associated with each reception node.
+  % Used to instantiate an existential quantifier in the next lemma.
+  sender(n: (inbnd?(pre_cbu`space))): node(pre_cbu`space) =
+    if n = (4, 0) then
+      (5, 0)
+    elsif n = (4, 1) then
+      (3, 0)
+    elsif n = (2, 0) then
+      (4, 2)
+    elsif n = (2, 1) then
+      (1, 0)
+    else % n = (0, 0)
+      (2, 2)
+    endif
+
+  cbu_well_formed_recv: lemma well_formed_recv?(pre_cbu)
+
+  cbu: bundle = pre_cbu
+
+  % Counterexample origination properties
+
+  invk_ca_never_originates: lemma non(cbu`space)(invk(ca))
+
+  invk_cb_never_originates: lemma non(cbu`space)(invk(cb))
+
+  cs_uniquely_originates_at: lemma uniq(cbu`space)(cs, (5, 0))
+
+  % Bundle cbu models the hypothesis of the shape analysis sentence.
+  cbu_models_hypothesis: theorem
+    resp_inst(cbu`space)(0, 2, ca, cb, cs, cd) and
+    non(cbu`space)(invk(ca)) and
+    non(cbu`space)(invk(cb))
+
+  % The role assignment
+  cra_pre(s: strand(cbu`space)): role =
+    cond
+      s = 0 -> resp_role,
+      s = 1 -> create_role,
+      s = 2 -> enc_role,
+      s = 3 -> create_role,
+      s = 4 -> dec_role,
+      s = 5 -> init_role
+    endcond
+
+  % The specific role items used the proof of the cra_role_assignment lemma
+  cri(s: strand(cbu`space)): role_item =
+    cond
+      s = 0 -> simple_role_item(resp_trace(ca, cb, cs, cd)),
+      s = 1 -> simple_role_item(create_trace(cb)),
+      s = 2 -> simple_role_item(enc_trace(en(cs, invk(ca)), cb)),
+      s = 3 -> simple_role_item(create_trace(invk(cb1))),
+      s = 4 -> simple_role_item(dec_trace(en(cs, invk(ca)), cb1)),
+      s = 5 -> init_role_item(ca, cb1, cs, cd)
+    endcond
+
+  cra_role_assignment: lemma role_assignment?(cbu)(cra_pre)
+
+  cra: role_assignment(cbu) = cra_pre
+
+  cpa_protocol_assignment: lemma protocol_assignment?(prot)(cbu)(cra)
+
+  cpa: protocol_assignment(prot, cbu) = cra
+
+  % The security goal is not only underivable from the shape analysis
+  % sentence, but in this formalism, it is provably false.
+  false_security_goal: theorem not    % Notice the NOT!
+  forall(bu: run(prot)):
+    forall(a, b: akey, s: skey, d: data, z: strand(bu`space)):
+      resp_inst(bu`space)(z, 2, a, b, s, d) and
+      non(bu`space)(invk(a)) and
+      non(bu`space)(invk(b))
+      implies
+      exists(a1: akey, s1: skey, d1: data, z1: strand(bu`space)):
+        init_inst(bu`space)(z1, 1, a1, b, s1, d1)
+
+end blanchet

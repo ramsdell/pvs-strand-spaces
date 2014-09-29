@@ -1,0 +1,182 @@
+\documentclass[12pt]{article}
+
+\newif\ifbaseatoms
+\baseatomsfalse % \baseatomstrue
+
+\usepackage{graphics}
+\usepackage[matrix,arrow,curve]{xy}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{url}
+%\usepackage{hyperref}\hypersetup{colorlinks=true,}
+
+\newtheorem{thm}{Theorem}
+\newtheorem{lem}{Lemma}
+\newcommand{\cpsa}{\textsc{cpsa}}
+\newcommand{\pvs}{\textsc{pvs}}
+\newcommand{\acp}{\textsc{acp}}
+\newcommand{\cn}[1]{\ensuremath{\operatorname{\mathsf{#1}}}}
+\newcommand{\dom}[1]{\ensuremath{\operatorname{\mathbf{#1}}}}
+\newcommand{\fn}[1]{\ensuremath{\operatorname{\mathit{#1}}}}
+\newcommand{\srt}[1]{\ensuremath{\mathsf{#1}}}
+\newcommand{\typ}{\mathbin:}
+\newcommand{\sdom}{\fn{Dom}}
+\newcommand{\sran}{\fn{Ran}}
+\newcommand{\seq}[1]{\ensuremath{\langle#1\rangle}}
+\newcommand{\enc}[2]{\ensuremath{\{\!|#1|\!\}_{#2}}}
+\newcommand{\inv}[1]{{#1}^{-1}}
+\newcommand{\inbnd}{\mathord -}
+\newcommand{\outbnd}{\mathord +}
+\newcommand{\nat}{\ensuremath{\mathbb{N}}}
+\newcommand{\zed}{\ensuremath{\mathbb{Z}}}
+\newcommand{\all}[1]{\forall#1\mathpunct.}
+\newcommand{\some}[1]{\exists#1\mathpunct.}
+%\newcommand{\pow}[1]{\wp(#1)}
+\newcommand{\pow}[1]{\mathcal P(#1)}
+\newcommand{\prefix}[2]{#1\mid#2}
+\newcommand{\init}{\fn{init}}
+\newcommand{\resp}{\fn{resp}}
+\newcommand{\run}{\mathcal{R}}
+\newcommand{\pt}{\fn{pt}}
+\newcommand{\form}{\mathcal{K}}
+\newcommand{\sent}{\mathcal{S}}
+\newcommand{\lang}{\mathcal{L}}
+\newcommand{\interp}{\mathcal{I}}
+\newcommand{\alg}[1]{\ensuremath{\mathfrak#1}}
+\newcommand{\tr}{\ensuremath{\mathfrak C}}
+\newcommand{\rl}{\fn{rl}}
+\newcommand{\skel}{\mathsf{k}}
+\newcommand{\insta}{\mathsf{i}}
+\newcommand{\nodes}{\fn{nodes}}
+\newcommand{\evt}{\fn{evt}}
+\newcommand{\role}{\mathsf{r}}
+\newcommand{\orig}{\mathcal{O}}
+
+\newcommand{\boot}{\cn{b}}
+\newcommand{\extend}{\cn{ex}(\cn{d},\boot)}
+\newcommand{\tran}{\ensuremath{\tau}}
+\newcommand{\pth}{\ensuremath{\pi}}
+\newcommand{\type}{\ensuremath{\mathfrak T}}
+\newcommand{\up}{\mathord\uparrow}
+\newcommand{\down}{\mathord\downarrow}
+\newcommand{\mcb}{\mathbin{\bar{\sqsubseteq}}}
+
+\title{Diffie-Hellman Algebra}
+\author{John D.\ Ramsdell}
+
+\begin{document}
+\maketitle
+
+To analyze Diffie-Hellman protocols, an exponentiation operation is
+added to the message algebra.  The Diffie-Hellman Signature is in
+Figure~\ref{fig:dh signature}.  Messages of sort~\srt{G} are
+exponents, and messages of sort~\srt{B} are exponentiations of
+constant~\cn{g}.  Messages of sort~$\srt{A}$ (asymmetric keys),
+sort~$\srt{S}$ (symmetric keys), sort~$\srt{D}$ (data), and
+sort~\srt{E} (basis elements), are Diffie-Hellman algebra
+\ifbaseatoms
+\emph{atoms}, along with messages of the form~$\cn{g}^x$ when~$x$ is a
+variable of sort~\srt{E}.
+\else
+\emph{atoms}.
+\fi
+
+\begin{figure}
+$$\begin{array}{ll@{{}\typ{}}ll}
+\mbox{Sorts:}&
+\multicolumn{3}{l}{\mbox{$\top$, $\srt{D}$, $\srt{K}$, $\srt{A}$, $\srt{S}$,
+    $\srt{B}$, $\srt{F}$, $\srt{G}$, $\srt{E}$}}\\
+\mbox{Subsorts:}&
+\multicolumn{3}{l}{\mbox{$\srt{D}<\top$, $\srt{K}<\top$,
+    $\srt{A}<\srt{K}$, $\srt{S}<\srt{K}$, $\srt{B}<\srt{K}$,}}\\
+&\multicolumn{3}{l}{\mbox{$\srt{G}<\top$,
+    $\srt{E}<\srt{G}$}}\\
+\ifbaseatoms
+\else
+\mbox{Atoms:}&
+\multicolumn{3}{l}{\mbox{\srt{D}, \srt{A}, \srt{S}, \srt{E}}}\\
+\fi
+\mbox{Operations:}&(\cdot,\cdot)&\top\times\top\to\top& \mbox{Pairing}\\
+&\enc{\cdot}{(\cdot)}&\top\times\srt{K}\to\top&\mbox{Encryption}\\
+&\inv{(\cdot)}&\srt{K}\to\srt{K}& \mbox{Key inverse}\\
+&\cn{d}_i&\srt{D}& \mbox{Data constants}\\
+&\cn{a}_i,\cn{b}_i&\srt{A}& \mbox{Asymmetric key constants}\\
+&\cn{s}_i&\srt{S}& \mbox{Symmetric key constants}\\
+&\cn{g}^{(\cdot)}&\srt{G}\to\srt{B}& \mbox{Generated symmetric keys}\\
+&(\cdot)^{(\cdot)}&\srt{B}\to\srt{G}\to\srt{B}&\mbox{Exponentiation}\\
+&(\cdot\cdot)&\srt{G}\times\srt{G}\to\srt{G}&\mbox{Group operation}\\
+&1&\srt{G}&\mbox{Group identity}\\
+&\inv{(\cdot)}&\srt{G}\to\srt{G}&\mbox{Group inverse}\\
+&\cn{e}_j&\srt{E}&\mbox{Basis elements ($j<|E|$)}\\
+\mbox{Equations:}&\multicolumn{2}{l}{\inv{\cn{a}_i}=\cn{b}_i\quad
+\inv{\cn{b}_i}=\cn{a}_i}
+&\inv{\cn{s}_i}=\cn{s}_i\quad(i\in\nat)\\
+&\multicolumn{2}{l}{\all{x,y\typ\srt{G}}
+(\cn{g}^x)^y=\cn{g}^{xy}}&\all{h\typ\srt{B}}\inv{h}=h\\
+&\multicolumn{2}{l}{\mbox{Group equations\ldots}}
+\end{array}$$
+\caption{Diffie-Hellman Algebra Signature}\label{fig:dh signature}
+\end{figure}
+
+The exponent is a free abelian group using multiplicative notation.
+The group equations are: $(xy)z=x(yz)$ (associativity), $1x=x1=x$
+(identity element), $\inv{x}x=x\inv{x}=1$ (inverse element), and
+$xy=yx$ (commutativity).  The Diffie-Hellman message algebra \alg{A}
+is the initial quotient term algebra over the signature.
+The atoms are $\alg{B}\subset\alg{A}$.
+
+Let~\alg{G} be the carrier set associated with sort~\srt{G}, the
+abelian group.  Because~\alg{G} is free, there is a basis
+$E\subseteq\alg{G}$ with the property that there is a unique way to
+write every element of the group as a finite linear combination of
+elements of the basis with integer coefficients.
+
+Function $\epsilon\typ E\to\zed$ is a \emph{representation function}
+if $\epsilon(x)\neq 0$ for only a finite number of elements in its
+domain.  An abelian group~\alg{G} is \emph{free with basis}~$E$ if
+$\all{x\in\alg{G}}\some{!\epsilon}x=\prod_{y\in E}y^{\epsilon(y)}$,
+where~$\epsilon$ is a representation function.  Each member of the
+basis~$\cn{e}_i\in E$ is in the Diffie-Hellman Signature with
+sort~\srt{E}.
+
+The \emph{carried by} relation $\sqsubseteq$ on messages is the
+smallest reflexive, transitive relation such that $t_0\sqsubseteq
+t_0$, $t_0\sqsubseteq t_1$ if~$t_0=t_1$, $t_0\sqsubseteq (t_0, t_1)$,
+$t_1\sqsubseteq (t_0, t_1)$, and $t_0\sqsubseteq\enc{t_0}{t_1}$.
+
+\begin{figure}
+$$\begin{array}{r@{{}={}}l}
+\fn{create}(t\in\alg{B})&\seq{\outbnd t}\\
+\fn{build}(t\in\{1,\cn{g}^1\})&\seq{\outbnd t}\\
+\fn{pair}(t_0\typ\top, t_1\typ\top)&
+\seq{\inbnd t_0,\inbnd t_1,\outbnd (t_0,t_1)}\\
+\fn{sep}(t_0\typ\top, t_1\typ\top)&
+\seq{\inbnd (t_0, t_1),\outbnd t_0,\outbnd t_1}\\
+\fn{enc}(t\typ\top, k\typ\srt{K})&
+\seq{\inbnd t,\inbnd k,\outbnd \enc{t}{k}}\\
+\fn{dec}(t\typ\top, k\typ\srt{K})&
+\seq{\inbnd \enc{t}{k},\inbnd\inv{k},\outbnd t}\\
+\fn{mul}(x\typ\srt{G}, y\typ\srt{G})&
+\seq{\inbnd x,\inbnd y,\outbnd xy}\\
+\fn{inv}(x\typ\srt{G})&
+\seq{\inbnd x,\outbnd \inv{x}}\\
+\fn{exp}(h\typ\srt{B}, x\typ\srt{G})&
+\seq{\inbnd h,\inbnd x,\outbnd h^x}
+\end{array}$$
+\caption{Diffie-Hellman Adversary Traces}\label{seq:dh adversary}
+\end{figure}
+
+Figure~\ref{seq:dh adversary} displays the trace of each adversary
+role.  The parameter of the \fn{create} role is restricted to atoms.
+In fact, the defining characteristic of an atom is it is that which
+the adversary can create out of thin air modulo origination
+assumptions.
+
+\iffalse
+The discrete logarithm problem is to find~$x$ given $\cn{g}^x$.  The
+computational Diffie-Hellman problem is to find~$\cn{g}^{xy}$
+given~$\cn{g}^x$ and~$\cn{g}^y$.  (\emph{Why is this here?})
+\fi
+
+\end{document}

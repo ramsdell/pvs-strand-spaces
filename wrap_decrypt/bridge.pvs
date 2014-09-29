@@ -1,0 +1,91 @@
+% Connection between the protocol and state
+
+% John D. Ramsdell -- The MITRE Corporation -- January 2014
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+bridge: theory
+begin
+
+  importing strands
+
+  % Used to prove a sticky attr bridge lemma TCC
+
+  % state_length_nondecreasing: lemma
+  %   forall(p: path, i, j: nat):
+  %     i <= j implies
+  %       length(p(i)) <= length(p(j))
+
+  state_length_nondecreasing_bridge: lemma
+    forall(bu: bundle, n0, n1: (tran_node?(bu`space))):
+      prec?(bu)(n0, n1) implies
+        length(sync_at(bu`space)(n0)`3) <=
+          length(sync_at(bu`space)(n1)`2)
+
+  % sticky_attr: theorem
+  %   forall(p: path, i, j: nat, a: addr(p(i)), r: attr):
+  %     i <= j and p(i)(a) = r implies
+  %       r = init_attr or
+  %       p(j)(a) = r
+
+  sticky_attr_bridge: lemma
+    forall(bu: bundle, n0, n1: (tran_node?(bu`space)),
+           a: addr(sync_at(bu`space)(n0)`3), r: attr):
+      prec?(bu)(n0, n1) and sync_at(bu`space)(n0)`3(a) = r implies
+        r = init_attr or
+        sync_at(bu`space)(n1)`2(a) = r
+
+  % Replace addresses with keys
+  sticky_attr_key: lemma
+    forall(bu: bundle, n0, n1: (tran_node?(bu`space)), k: skey, r: attr):
+      let apred = has_key?(sync_at(bu`space)(n0)`3, k) in
+      prec?(bu)(n0, n1) and nonempty?(apred) and
+      sync_at(bu`space)(n0)`3(epsilon(apred)) = r implies
+        r = init_attr or
+        sync_at(bu`space)(n1)`2(epsilon(apred)) = r
+
+  % Facts about wrap instances
+
+  wrap_observer: lemma
+    forall(bu: bundle, z: strand(bu`space),
+           h: nat, st: state, k0, k1: skey):
+      h >= 3 and wrap_inst(bu)(z, h, st, k0, k1) implies
+        sync_at(bu`space)(z, 2)`2 =
+          sync_at(bu`space)(z, 2)`3
+
+  wrap_has_key: lemma
+    forall(bu: bundle, z: strand(bu`space),
+           h: nat, st: state, k0, k1: skey):
+      h >= 3 and wrap_inst(bu)(z, h, st, k0, k1) implies
+        nonempty?(has_key?(st, k1))
+
+  wrap_attr: lemma
+    forall(bu: bundle, z: strand(bu`space),
+           h: nat, st: state, k0, k1: skey):
+      h >= 3 and wrap_inst(bu)(z, h, st, k0, k1) implies
+        sync_at(bu`space)(z, 2)`2(epsilon(has_key?(st, k1))) = wrap_attr
+
+  % Facts about decrypt instances
+
+  decrypt_observer: lemma
+    forall(bu: bundle, z: strand(bu`space),
+           h: nat, st: state, x: mesg, k: skey):
+      h >= 3 and decrypt_inst(bu)(z, h, st, x, k) implies
+        sync_at(bu`space)(z, 2)`2 =
+          sync_at(bu`space)(z, 2)`3
+
+  decrypt_has_key: lemma
+    forall(bu: bundle, z: strand(bu`space),
+           h: nat, st: state, x: mesg, k: skey):
+      h >= 3 and decrypt_inst(bu)(z, h, st, x, k) implies
+        nonempty?(has_key?(st, k))
+
+  decrypt_attr: lemma
+    forall(bu: bundle, z: strand(bu`space),
+           h: nat, st: state, x: mesg, k: skey):
+      h >= 3 and decrypt_inst(bu)(z, h, st, x, k) implies
+        sync_at(bu`space)(z, 2)`2(epsilon(has_key?(st, k))) = decrypt_attr
+
+end bridge

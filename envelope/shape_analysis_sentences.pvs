@@ -1,0 +1,240 @@
+% Shape analysis sentences for the Envelope Protocol
+
+% This theory is purely a translation of the non-role part of the
+% shape analysis sentences output produced by CPSA.  As with roles,
+% there probably is an automated way to transate the sentences, but
+% all of this translation was done by hand.  This translation required
+% great care.
+
+% This version is a modification of the shape analysis sentence
+% produced from the Envelope Protocol With Boot Origin.  The shape
+% analysis sentence generator only works on shapes, and Envelope
+% Protocol With Arbitrary Origin does not produce results in which
+% every node is realized due to the way we use priorities.
+
+% John D. Ramsdell -- The MITRE Corporation -- January 2013
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+shape_analysis_sentences: theory
+begin
+
+  importing strands
+
+  % Alice point of view
+
+% (defskeleton envelope
+%   (vars (v data) (k aik akey) (n text) (origin mesg))
+%   (deflistener (refuse n v k aik origin))
+%   (deflistener v)
+%   (defstrand alice 7 (n n) (v v) (k k) (aik aik) (origin origin))
+
+  % Alice shape analysis sentence before the addition of origin
+
+% (forall
+%   ((n text) (v tne data) (esk1 esk skey) (k aik tpmkey akey)
+%     (z z-0 z-1 nat))
+%   (implies
+%     (and
+%       (strand "envelope" "" 2 "x" z
+%         (enc "quote" (hash "refuse" (hash n "0")) (enc v k) aik))
+%       (strand "envelope" "" 2 "x" z-0 v)
+%       (strand "envelope" "alice" 6 "n" z-1 n)
+%       (strand "envelope" "alice" 6 "v" z-1 v)
+%       (strand "envelope" "alice" 6 "tne" z-1 tne)
+%       (strand "envelope" "alice" 6 "esk1" z-1 esk1)
+%       (strand "envelope" "alice" 6 "esk" z-1 esk)
+%       (strand "envelope" "alice" 6 "k" z-1 k)
+%       (strand "envelope" "alice" 6 "aik" z-1 aik)
+%       (strand "envelope" "alice" 6 "tpmkey" z-1 tpmkey) (prec z-1 5 z 0)
+%       (prec z-1 5 z-0 0) (non esk1) (non aik) (non (invk tpmkey))
+%       (uniq n) (uniq v) (uniq esk) (orig esk z-1 0)
+%       (orig v z-1 5) (orig n z-1 2))
+%     (exists
+%       ((n-0 text) (v-0 tne-0 tne-1 tne-2 data)
+%         (esk1-0 esk-0 pcrkey esk-1 esk-2 skey)
+%         (k-0 aik-0 tpmkey-0 tpmkey-1 tpmkey-2 akey)
+%         (z-2 z-3 z-4 z-5 z-6 z-7 z-8 z-9 z-10 z-11 nat))
+%       (and (equal z z-2) (equal z-0 z-3) (equal z-1 z-4) (equal v v-0)
+%         (equal k k-0) (equal aik aik-0) (equal n n-0) (equal tne tne-0)
+%         (equal esk1 esk1-0) (equal esk esk-0)
+%         (equal tpmkey tpmkey-0)
+%         (strand "envelope" "" 2 "x" z-2
+%           (enc "quote" (hash "refuse" (hash n-0 "0")) (enc v-0 k-0)
+%             aik-0)) (strand "envelope" "" 2 "x" z-3 v-0)
+%         (strand "envelope" "alice" 6 "n" z-4 n-0)
+%         (strand "envelope" "alice" 6 "v" z-4 v-0)
+%         (strand "envelope" "alice" 6 "tne" z-4 tne-0)
+%         (strand "envelope" "alice" 6 "esk1" z-4 esk1-0)
+%         (strand "envelope" "alice" 6 "esk" z-4 esk-0)
+%         (strand "envelope" "alice" 6 "k" z-4 k-0)
+%         (strand "envelope" "alice" 6 "aik" z-4 aik-0)
+%         (strand "envelope" "alice" 6 "tpmkey" z-4 tpmkey-0)
+%         (strand "envelope" "tpm-create-key" 2 "pcrval" z-5
+%           (hash "obtain" (hash n-0 "0")))
+%         (strand "envelope" "tpm-create-key" 2 "esk" z-5 esk1-0)
+%         (strand "envelope" "tpm-create-key" 2 "k" z-5 k-0)
+%         (strand "envelope" "tpm-create-key" 2 "aik" z-5 aik-0)
+%         (strand "envelope" "tpm-decrypt" 4 "m" z-6 v-0)
+%         (strand "envelope" "tpm-decrypt" 4 "pcrvals" z-6
+%           (hash "obtain" (hash n-0 "0")))
+%         (strand "envelope" "tpm-decrypt" 4 "pcrkey" z-6 pcrkey)
+%         (strand "envelope" "tpm-decrypt" 4 "k" z-6 k-0)
+%         (strand "envelope" "tpm-decrypt" 4 "aik" z-6 aik-0)
+%         (strand "envelope" "tpm-extend-enc" 5 "value" z-7 "obtain")
+%         (strand "envelope" "tpm-extend-enc" 5 "current-value" z-7
+%           (hash n-0 "0"))
+%         (strand "envelope" "tpm-extend-enc" 5 "tne" z-7 tne-1)
+%         (strand "envelope" "tpm-extend-enc" 5 "pcrkey" z-7 pcrkey)
+%         (strand "envelope" "tpm-extend-enc" 5 "esk" z-7 esk-1)
+%         (strand "envelope" "tpm-extend-enc" 5 "tpmkey" z-7 tpmkey-1)
+%         (strand "envelope" "tpm-extend-enc" 5 "value" z-8 n-0)
+%         (strand "envelope" "tpm-extend-enc" 5 "current-value" z-8 "0")
+%         (strand "envelope" "tpm-extend-enc" 5 "tne" z-8 tne-0)
+%         (strand "envelope" "tpm-extend-enc" 5 "pcrkey" z-8 pcrkey)
+%         (strand "envelope" "tpm-extend-enc" 5 "esk" z-8 esk-0)
+%         (strand "envelope" "tpm-extend-enc" 5 "tpmkey" z-8 tpmkey-0)
+%         (strand "envelope" "tpm-power-on" 2 "pcrkey" z-9 pcrkey)
+%         (strand "envelope" "tpm-quote" 3 "nonce" z-10 (enc v-0 k-0))
+%         (strand "envelope" "tpm-quote" 3 "current-value" z-10
+%           (hash "refuse" (hash n-0 "0")))
+%         (strand "envelope" "tpm-quote" 3 "pcrkey" z-10 pcrkey)
+%         (strand "envelope" "tpm-quote" 3 "aik" z-10 aik-0)
+%         (strand "envelope" "tpm-extend-enc" 5 "value" z-11 "refuse")
+%         (strand "envelope" "tpm-extend-enc" 5 "current-value" z-11
+%           (hash n-0 "0"))
+%         (strand "envelope" "tpm-extend-enc" 5 "tne" z-11 tne-2)
+%         (strand "envelope" "tpm-extend-enc" 5 "pcrkey" z-11 pcrkey)
+%         (strand "envelope" "tpm-extend-enc" 5 "esk" z-11 esk-2)
+%         (strand "envelope" "tpm-extend-enc" 5 "tpmkey" z-11 tpmkey-2)
+%         (prec z-4 0 z-8 0) (prec z-4 2 z-8 2) (prec z-4 3 z-5 0)
+%         (prec z-4 5 z-6 0) (prec z-4 5 z-10 0) (prec z-5 1 z-4 4)
+%         (prec z-6 3 z-3 0) (prec z-7 4 z-6 2) (prec z-8 1 z-4 1)
+%         (prec z-8 4 z-7 3) (prec z-8 4 z-11 3) (prec z-9 1 z-8 3)
+%         (prec z-10 2 z-2 0) (prec z-11 4 z-10 1) (non esk1-0)
+%         (non pcrkey) (non aik-0) (non (invk k-0)) (non (invk tpmkey-0))
+%         (non (invk tpmkey-1)) (non (invk tpmkey-2)) (uniq n-0)
+%         (uniq v-0) (uniq tne-0) (uniq tne-1) (uniq tne-2)
+%         (uniq esk-0) (uniq k-0) (orig tne-0 z-8 1) (orig tne-2 z-11 1)
+%         (orig n-0 z-4 2) (orig esk-0 z-4 0)
+%         (orig tne-1 z-7 1) (orig k-0 z-5 1) (orig v-0 z-4 5)))))
+
+% This translation factors out the homomorphisms induced variables
+% which is why many variables have been renamed.  Also, listener
+% strands disappeared because they are not used when using bundles.
+
+% Variable translations
+%
+% CPSA            PVS
+% v v-0           v
+% tne             tne
+% esk1 esk1-0     esk1
+% esk esk-0       esk
+% k k-0           k
+% aik aik-0       aik
+% tpmkey tpmkey-0 tpmkey
+% n n-0           n
+% tne-1           tne1
+% prckey          pcrkey
+% esk-1           esk2
+% tpmkey-1        tpmkey1
+% tne-2           tne2
+% esk-2           esk3
+% tpmkey-2        tpmkey2
+% z z-2
+% z-0 z-3
+% z-1 z-4         z
+% z-5             z0
+% ...             ...
+
+% Note that (prec z-6 3 z-3 0) and (prec z-10 2 z-2 0) disappear.
+
+  % Definitions used to build the axiom.
+
+  % The alice part of the point-of-view
+
+  alice_pov(bu: bundle)(z: strand(bu`space), nv, nr: node(bu`space),
+                        v, tne: data, esk1, esk: skey,
+  	                k, aik, tpmkey: akey, n: text, origin: mesg): bool =
+    % Listeners
+    outbound_at?(bu`space)(v, nv) and
+    outbound_at?(bu`space)(refusal(n, v, k, aik, origin), nr) and
+
+    % Alice
+    alice_inst(bu)(z, 7, v, tne, esk1, esk, k, aik, tpmkey, n, origin) and
+    prec?(bu)((z, 5), nv) and
+    prec?(bu)((z, 5), nr) and
+    non(bu`space)(esk1) and
+    non(bu`space)(aik) and
+    non(bu`space)(invk(tpmkey)) and
+    uniq(bu`space)(esk, (z, 1)) and
+    uniq(bu`space)(n, (z, 3)) and
+    uniq(bu`space)(v, (z, 6))
+
+  % The shape does not need listener assertions because there already
+  % are two nodes events that send the messages specified by the
+  % listeners in the point-of-view.  For all shapes, v is obtained at
+  % (z1, 3) and the refusal is at (z4, 2).
+
+  % The anotated nodes are (z1, 3), (z2, 4), (z3, 4), (z4, 2), and
+  % (z5, 4).
+
+  alice_shape(bu: bundle)(z: strand(bu`space), nv, nr: node(bu`space),
+                          v, tne: data, esk1, esk: skey,
+                          k, aik, tpmkey: akey, n: text, origin: mesg)
+                         (tne1: data, pcrkey, esk2: skey, tpmkey1: akey,
+                          tne2: data, esk3: skey, tpmkey2: akey,
+                          z0, z1, z2, z3, z4, z5: strand(bu`space)): bool =
+    nv = (z1, 3) and nr = (z4, 2) and
+    alice_pov(bu)(z, nv, nr, v, tne, esk1, esk,
+                  k, aik, tpmkey, n, origin) and
+    tpm_create_key_inst(bu)(z0, 2, k, aik, obtain_pcr(n, origin), esk1) and
+    tpm_decrypt_inst(bu)(z1, 4, v, obtain_pcr(n, origin), k, aik, pcrkey) and
+    tpm_extend_enc_inst(bu)(z2, 5, obtain, hs(pr(n, origin)), pcrkey,
+                            esk2, tne1, tpmkey1) and
+    tpm_extend_enc_inst(bu)(z3, 5, n, origin, pcrkey,
+                            esk, tne, tpmkey) and
+    tpm_quote_inst(bu)(z4, 3, en(v, k), refuse_pcr(n, origin), pcrkey, aik) and
+    tpm_extend_enc_inst(bu)(z5, 5, refuse, hs(pr(n, origin)), pcrkey,
+                            esk3, tne2, tpmkey2) and
+
+    prec?(bu)((z, 0), (z3, 0)) and
+    prec?(bu)((z, 2), (z3, 2)) and
+    prec?(bu)((z, 3), (z0, 0)) and
+    prec?(bu)((z, 5), (z1, 0)) and
+    prec?(bu)((z, 5), (z4, 0)) and
+    prec?(bu)((z0, 1), (z, 4)) and
+    prec?(bu)((z2, 4), (z1, 2)) and
+    prec?(bu)((z3, 1), (z, 1)) and
+    prec?(bu)((z3, 4), (z2, 3)) and
+    prec?(bu)((z3, 4), (z5, 3)) and
+    prec?(bu)((z5, 4), (z4, 1)) and
+
+    non(bu`space)(pcrkey) and
+    non(bu`space)(invk(tpmkey1)) and
+    non(bu`space)(invk(tpmkey2)) and
+    uniq(bu`space)(tne, (z3, 1)) and
+    uniq(bu`space)(tne2, (z5, 1)) and
+    uniq(bu`space)(tne1, (z2, 1)) and
+    uniq(bu`space)(k, (z0, 1))
+
+  alice_shape_analysis_sentence: axiom
+  forall(bu: run(annotated_roles)):
+    forall(z: strand(bu`space), nv, nr: node(bu`space),
+	   v, tne: data, esk1, esk: skey,
+           k, aik, tpmkey: akey, n: text, origin: mesg):
+      alice_pov(bu)(z, nv, nr, v, tne, esk1, esk,
+                    k, aik, tpmkey, n, origin)
+      implies
+        exists(tne1: data, pcrkey, esk2: skey, tpmkey1: akey,
+               tne2: data, esk3: skey, tpmkey2: akey,
+               z0, z1, z2, z3, z4, z5: strand(bu`space)):
+          alice_shape(bu)(z, nv, nr, v, tne, esk1, esk,
+                          k, aik, tpmkey, n, origin)
+                         (tne1, pcrkey, esk2, tpmkey1,
+                          tne2, esk3, tpmkey2,
+                          z0, z1, z2, z3, z4, z5)
+
+end shape_analysis_sentences

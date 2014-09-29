@@ -1,0 +1,36 @@
+(|traces|
+ (|cur_state_TCC1| 0
+  (|cur_state_TCC1-1| NIL 3618754486 ("" (CASES-TCC) NIL NIL)
+   ((|has_current?| CONST-DECL "bool" |traces| NIL)
+    (|event| TYPE-DECL NIL |traces| NIL)
+    (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
+   NIL))
+ (|nxt_state_TCC1| 0
+  (|nxt_state_TCC1-1| NIL 3618754486 ("" (CASES-TCC) NIL NIL)
+   ((|has_next?| CONST-DECL "bool" |traces| NIL)
+    (|event| TYPE-DECL NIL |traces| NIL)
+    (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
+   NIL))
+ (|carried_by_event?_TCC1| 0
+  (|carried_by_event?_TCC1-1| NIL 3607521755 ("" (SUBTYPE-TCC) NIL NIL) NIL
+   NIL))
+ (|originates_index?_TCC1| 0
+  (|originates_index?_TCC1-1| NIL 3618746091 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
+     NIL))
+   NIL))
+ (|originates_index?_TCC2| 0
+  (|originates_index?_TCC2-1| NIL 3618746091 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
+     NIL))
+   NIL))
+ (|originates_index?_TCC3| 0
+  (|originates_index?_TCC3-1| NIL 3618746091 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
+     NIL))
+   NIL)))
+

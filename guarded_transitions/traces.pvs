@@ -1,0 +1,64 @@
+% Events and Traces
+
+% John D. Ramsdell -- The MITRE Corporation -- November 2012
+
+% This theory defines events and traces, along with some predicates
+% about the relation of a message to a trace.  In particular, a message
+% may originate in a trace, which means the message is carried by some
+% event and the first event in the trace in which it is carried is
+% a send.  The concepts are defined by functions are not true
+% predicates, because when true, the position in the trace that
+% demonstrates the property is returned.
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+traces[state: type, trans: setof[[state, state]],
+       mesg: type, carried_by?: [mesg, mesg -> bool],
+       encode: [state -> mesg]]: theory
+begin
+
+  strand_spaces: library = "../strand_spaces"
+  importing strand_spaces@nonempty_finite_sequences
+
+  % A guarded transition adds a precondition for a transition.
+  gtrans(guard: bool, s0, s1: state): bool =
+    guard implies trans(s0, s1)
+
+  % A messaging event is either a message reception or a transmission.
+  event: datatype
+  begin
+    recv(t: mesg): recv?             % Inbound message
+    send(t: mesg): send?             % Outbound message
+    sync(t: (gtrans)): sync?  % A state synchronization event
+  end event
+
+  carried_by_event?(m: mesg, e: event): bool =
+    cases e of
+      sync(t): carried_by?(m, encode(t`2)) or carried_by?(m, encode(t`3))
+      else carried_by?(m, t(e))
+   endcases
+
+  % A traces is a nonempty finite sequence of events.
+  trace: type = nonempty_finite_sequence[event]
+
+  % Appearance
+
+  % In trace c, does m appear at index i?
+  appears_index?(c: trace, m: mesg, i: index(c)): bool =
+    cases c(i) of
+      send(ti):
+        carried_by?(m, ti) and
+        forall(j: below(i)):
+          not carried_by_event?(m, c(j)),
+      sync(ti):
+        carried_by?(m, encode(ti`3)) and
+        not carried_by?(m, encode(ti`2)) and
+        forall(j: below(i)):
+          not carried_by_event?(m, c(j))
+      else
+        false
+    endcases
+
+end traces

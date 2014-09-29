@@ -1,0 +1,98 @@
+% Connection between the protocol and state
+% John D. Ramsdell -- The MITRE Corporation -- January 2014
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+bridge: theory
+begin
+
+  importing strands
+
+  % % If a state is extended from one involving a message and is not
+  % % extended from a previous state, there must have been an
+  % % intervening transition that extends with the message.
+  % prefix_boot_extend: lemma
+  %   forall(p: path, x: mesg, i, k: nat):
+  %     i <= k and has(p(k), x) implies
+  %       subterm(p(i), p(k)) or
+  %       exists(j: nat):
+  %         i <= j and j < k and p(j+1) = extend(x, p(j))
+
+  prefix_boot_extend_bridge: lemma
+  forall(bu: bundle, n0, n1: (tran_node?(bu`space)), x: mesg):
+    let st0 = sync_at(bu`space)(n0)`2,
+        st1 = sync_at(bu`space)(n1)`1 in
+    prec?(bu)(n0, n1) and
+    has(st1, x) implies
+      subterm(st0, st1) or
+      exists(n: (tran_node?(bu`space)), st: state):
+        sync_at(bu`space)(n) = (st, extend(x, st)) and
+        prec?(bu)(n0, n) and prec?(bu)(n, n1)
+
+  % init_extend: lemma
+  %   forall(p: path, x: mesg, st: state, k: nat):
+  %     p(k) = extend(x, st) implies
+  %       exists(j: nat):
+  %         j < k and p(j) = st and p(j+1) = extend(x, st)
+
+  init_extend_bridge: lemma
+  forall(bu: bundle, n: (tran_node?(bu`space)), st: state, x: mesg):
+    sync_at(bu`space)(n)`1 = extend(x, st) implies
+      exists(n0: (tran_node?(bu`space))):
+        sync_at(bu`space)(n0) = (st, extend(x, st)) and
+        prec?(bu)(n0, n)
+
+  % prefix_extend: lemma
+  %   forall(p: path, x: mesg, st: state, i, k: nat):
+  %     i <= k and p(k) = extend(x, st) implies
+  %       subterm(p(i), p(k)) or
+  %       exists(j: nat):
+  %         i <= j and j < k and p(j) = st and p(j+1) = extend(x, st)
+
+  prefix_extend_bridge: lemma
+  forall(bu: bundle, n0, n1: (tran_node?(bu`space)), st: state, x: mesg):
+    let st0 = sync_at(bu`space)(n0)`2,
+        st1 = sync_at(bu`space)(n1)`1 in
+    prec?(bu)(n0, n1) and
+    st1 = extend(x, st) implies
+      subterm(st0, st1) or
+      exists(n: (tran_node?(bu`space))):
+        sync_at(bu`space)(n) = (st, extend(x, st)) and
+        prec?(bu)(n0, n) and
+        prec?(bu)(n, n1)
+
+  exists_extend_strand: lemma
+  forall(bu: run(protocol_roles), n: (tran_node?(bu`space)),
+         st: state, x: mesg):
+    sync_at(bu`space)(n) = (st, extend(x, st)) implies
+      exists(z: strand(bu`space)):
+        extend_inst(bu)(z, 2, st, x) and n = (z, 1)
+
+  % This is the key lemma for reasoning about TPM state
+  init_extend_implies_extend_strand: lemma
+  forall(bu: run(protocol_roles), n: (tran_node?(bu`space)),
+         st: state, x: mesg):
+    sync_at(bu`space)(n)`1 = extend(x, st) implies
+      exists(z: strand(bu`space)):
+        extend_inst(bu)(z, 2, st, x) and
+        prec?(bu)((z, 1), n)
+
+  quote_extend_implies_extend_strand: lemma
+  forall(bu: run(protocol_roles), z: strand(bu`space),
+         st: state, x: mesg, nonce: text, aik: akey):
+    quote_inst(bu)(z, 3, extend(x, st), nonce, aik) implies
+      exists(z0: strand(bu`space)):
+        extend_inst(bu)(z0, 2, st, x) and
+        prec?(bu)((z0, 1), (z, 1))
+
+  extend_extend_implies_extend_strand: lemma
+  forall(bu: run(protocol_roles), z1: strand(bu`space),
+         st: state, x0, x1: mesg):
+    extend_inst(bu)(z1, 2, extend(x0, st), x1) implies
+      exists(z0: strand(bu`space)):
+        extend_inst(bu)(z0, 2, st, x0) and
+        prec?(bu)((z0, 1), (z1, 1))
+
+end bridge

@@ -1,0 +1,63 @@
+% Are the members of type bas the basis that shows grp is a free
+% abelian group?
+
+% John D. Ramsdell -- The MITRE Corporation -- July 2013
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+basis[grp: type,
+      e: grp,
+      o: [grp, grp -> grp],
+      inv: [grp -> grp],
+      bas: type from grp]: theory
+
+begin
+  assuming
+    a, b, c: var grp
+
+    associativity : assumption associative?(o)
+
+    unit : assumption identity?(o)(e)
+
+    inverse : assumption inverses?(o)(inv)(e)
+
+    commutativity: assumption commutative?(o)
+
+  endassuming
+
+  importing finite_sets@finite_sets_sum
+
+  % When a basis exists, the representation of a group element in
+  % terms of basis elements consists of a finite set of basis
+  % elements, each of which has a non-zero coefficient.
+  representation: type = [# s: setof[bas], % set of basis elements
+                            f: [(s) -> nzint] #] % coefficients
+
+  % Add b n times
+  expand(b: bas, n: posint): recursive grp =
+    if n = 1 then
+      b
+    else
+      b o expand(b, n - 1)
+    endif
+    measure n
+
+  % Handle sign by inverting when needed
+  project(r: representation)(b: (r`s)): grp =
+    if r`f(b) < 0 then
+      inv(expand(b, -r`f(b)))
+    else
+      expand(b, r`f(b))
+    endif
+
+  % bas is a basis if for every group element, there exists a unique
+  % representation of it as a finite set of basis elements summed
+  % after multiplication by each element's non-zero coefficient.
+  is_basis: bool =
+    forall(g: grp):
+      exists1!(r: representation):
+        is_finite(r`s) and g = sum[(r`s), grp, e, o](r`s, project(r))
+
+end basis

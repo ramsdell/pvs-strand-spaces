@@ -1,0 +1,60 @@
+% Connection between the protocol and state
+% John D. Ramsdell -- The MITRE Corporation -- January 2014
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+bridge: theory
+begin
+
+  importing strands
+
+  % init_extend: lemma
+  %   forall(p: path, x: mesg, st: state, k: nat):
+  %     p(k) = extend(x, st) implies
+  %       exists(j: nat):
+  %         j < k and p(j) = st and p(j+1) = extend(x, st)
+
+  init_extend_observe_bridge: lemma
+  forall(bu: bundle, n: (neutral_node?(bu`space)), x: mesg, s: skey):
+    sync_at(bu`space)(n) = ob(hs(pr(x, s))) implies
+      exists(n0: (neutral_node?(bu`space))):
+        sync_at(bu`space)(n0) = ex(x) and
+        prec?(bu)(n0, n)
+
+  exists_extend_strand: lemma
+  forall(bu: run(protocol_roles), n: (neutral_node?(bu`space)), x: mesg):
+    sync_at(bu`space)(n) = ex(x) implies
+      exists(z: strand(bu`space)):
+        extend_inst(bu)(z, 2, x) and n = (z, 1)
+
+% This is the key lemma for reasoning about TPM state
+  init_extend_implies_extend_strand: lemma
+  forall(bu: run(protocol_roles), n: (neutral_node?(bu`space)),
+         x: mesg, s: skey):
+    sync_at(bu`space)(n) = ob(hs(pr(x, s))) implies
+      exists(z: strand(bu`space)):
+        extend_inst(bu)(z, 2, x) and
+        prec?(bu)((z, 1), n)
+
+  quote_extend_implies_extend_strand: lemma
+  forall(bu: run(protocol_roles), z: strand(bu`space),
+         x: mesg, s: skey, nonce: text, aik: akey):
+    quote_inst(bu)(z, 3, nonce, hs(pr(x, s)), aik) implies
+      exists(z0: strand(bu`space)):
+        extend_inst(bu)(z0, 2, x) and
+        prec?(bu)((z0, 1), (z, 1))
+
+  state_split_bridge: lemma
+  forall(bu: bundle, n0, n1: (neutral_node?(bu`space)),
+         x, x0, x1: mesg, s: skey):
+    sync_at(bu`space)(n0) = ob(hs(pr(x0, hs(pr(x, s))))) and
+    sync_at(bu`space)(n1) = ob(hs(pr(x1, hs(pr(x, s))))) and
+    prec?(bu)(n0, n1) and x0 /= x1 implies
+      exists(n2, n3: (neutral_node?(bu`space))):
+        sync_at(bu`space)(n2) = ex(x) and
+        sync_at(bu`space)(n3) = ex(x) and
+        (prec?(bu)(n2, n3) or prec?(bu)(n3, n2))
+
+end bridge

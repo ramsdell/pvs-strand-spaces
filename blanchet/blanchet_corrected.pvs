@@ -1,0 +1,172 @@
+% Blanchet's Corrected Simple Example Protocol
+
+% John D. Ramsdell -- The MITRE Corporation -- December 2012
+
+% This theory defines the roles for Blanchet's Corrected Simple
+% Example Protocol and then displays a shape analysis sentence in this
+% formalism extracted from the output of CPSA.
+
+% See "Deducing Security Goals From Shape Analysis Sentences", John
+% D. Ramsdell, <http://arxiv.org/abs/1204.0480>.
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+blanchet_corrected: theory
+begin
+
+  % Role annotations are not used, so the type is uninterpreted.
+  anno: type
+
+  strand_spaces: library = "../strand_spaces"
+  importing strand_spaces@adversary[anno]
+
+  % (defrole init
+  %   (vars (a b akey) (s skey) (d data))
+  %   (trace
+  %    (send (enc (enc s b (invk a)) b))
+  %    (recv (enc d s)))
+  %   (uniq-orig s))
+
+  % Notice that b is carried in the first message.
+
+  % The initiator trace
+  init_trace(a, b: akey, s: skey, d: data): trace =
+    doubleton_seq(send(en(en(pr(s, b), invk(a)), b)), recv(en(d, s)))
+
+  init_runique(s: skey): assumptions =
+    doubleton_seq(singleton[atom](s), emptyset)
+
+  init_role_item(a, b: akey, s: skey, d: data): role_item =
+    (# trace   := c,
+       rnon    := no_assumptions(c`length),
+       runique := init_runique(s),
+       ranno   := no_annotations(c`length) #)
+    where
+      c = init_trace(a, b, s, d)
+
+  % The role
+  init_role(ri: role_item): bool =
+    exists(a, b: akey, s: skey, d: data):
+      ri = init_role_item(a, b, s, d)
+
+  % The predicate
+  init_inst(ss: strand_space)
+           (z: strand(ss), h: nat,
+     	    a, b: akey, s: skey, d: data): bool =
+    pred(ss)(z, h, init_role_item(a, b, s, d))
+
+  % (defrole resp
+  %   (vars (a b akey) (s skey) (d data))
+  %   (trace
+  %    (recv (enc (enc s b (invk a)) b))
+  %    (send (enc d s))))
+
+  % Notice that b is carried in the first message.
+
+  % The responder trace
+  resp_trace(a, b: akey, s: skey, d: data): trace =
+    doubleton_seq(recv(en(en(pr(s, b), invk(a)), b)), send(en(d, s)))
+
+  % The role
+  resp_role(ri: role_item): bool =
+    exists(a, b: akey, s: skey, d: data):
+      ri = simple_role_item(resp_trace(a, b, s, d))
+
+  % The predicate
+  resp_inst(ss: strand_space)
+           (z: strand(ss), h: nat,
+     	    a, b: akey, s: skey, d: data): bool =
+    pred(ss)(z, h, simple_role_item(resp_trace(a, b, s, d)))
+
+  prot: protocol =
+    add(init_role,
+        add(resp_role,
+            adversary_roles))
+
+% When CPSA is given the following point of view,
+
+% (defskeleton blanchet-corrected
+%   (vars (d data) (s skey) (a b akey))
+%   (defstrand resp 2 (d d) (s s) (a a) (b b))
+%   (non-orig (invk a) (invk b))
+%   (comment "Analyze from the responder's perspective")
+%   (traces ((recv (enc (enc s b (invk a)) b)) (send (enc d s))))
+%   (label 23)
+%   (unrealized (0 0))
+%   (origs)
+%   (comment "1 in cohort - 1 not yet seen"))
+
+% it produces one shape.
+
+% (defskeleton blanchet-corrected
+%   (vars (d data) (s skey) (a b akey))
+%   (defstrand resp 2 (d d) (s s) (a a) (b b))
+%   (defstrand init 1 (s s) (a a) (b b))
+%   (precedes ((1 0) (0 0)))
+%   (non-orig (invk a) (invk b))
+%   (uniq-orig s)
+%   (operation encryption-test (added-strand init 1) (enc s b (invk a))
+%     (0 0))
+%   (traces ((recv (enc (enc s b (invk a)) b)) (send (enc d s)))
+%     ((send (enc (enc s b (invk a)) b))))
+%   (label 24)
+%   (parent 23)
+%   (unrealized)
+%   (shape)
+%   (maps ((0) ((a a) (b b) (s s) (d d))))
+%   (origs (s (1 0))))
+
+% The generated shape analysis sentence is:
+
+% (forall
+%   ((d data) (s skey) (a b akey) (z nat))
+%   (implies
+%     (and (strand "blanchet-corrected" "resp" 2 "d" z d)
+%       (strand "blanchet-corrected" "resp" 2 "s" z s)
+%       (strand "blanchet-corrected" "resp" 2 "a" z a)
+%       (strand "blanchet-corrected" "resp" 2 "b" z b) (non (invk a))
+%       (non (invk b)))
+%     (exists ((d-0 data) (s-0 skey) (a-0 b-0 akey) (z-0 z-1 nat))
+%       (and (equal z z-0) (equal a a-0) (equal b b-0) (equal s s-0)
+%         (equal d d-0) (strand "blanchet-corrected" "resp" 2 "d" z-0 d-0)
+%         (strand "blanchet-corrected" "resp" 2 "s" z-0 s-0)
+%         (strand "blanchet-corrected" "resp" 2 "a" z-0 a-0)
+%         (strand "blanchet-corrected" "resp" 2 "b" z-0 b-0)
+%         (strand "blanchet-corrected" "init" 1 "s" z-1 s-0)
+%         (strand "blanchet-corrected" "init" 1 "a" z-1 a-0)
+%         (strand "blanchet-corrected" "init" 1 "b" z-1 b-0)
+%         (prec z-1 0 z-0 0) (non (invk a-0)) (non (invk b-0)) (uniq s-0)
+%         (orig s-0 z-1 0)))))
+
+  % The shape analysis sentence in this formalism.  CPSA says one can
+  % assert this as an axiom.
+
+  shape_analysis_sentence: axiom
+  forall(bu: run(prot)):
+    forall(a, b: akey, s: skey, d: data, z: strand(bu`space)):
+      resp_inst(bu`space)(z, 2, a, b, s, d) and
+      non(bu`space)(invk(a)) and non(bu`space)(invk(b))
+      implies
+      exists(a0, b0: akey, s0: skey, d0: data, z0, z1: strand(bu`space)):
+        z = z0 and a = a0 and b = b0 and s = s0 and d = d0 and % Homomorphism
+	resp_inst(bu`space)(z0, 2, a0, b0, s0, d0) and
+        init_inst(bu`space)(z1, 1, a0, b0, s0, d0) and
+        prec?(bu)((z1, 0), (z0, 0)) and
+        non(bu`space)(invk(a0)) and
+        non(bu`space)(invk(b0)) and
+        uniq(bu`space)(s0, (z1, 0))
+
+  % This security goal easily follows from the shape analysis sentence.
+  security_goal: theorem
+  forall(bu: run(prot)):
+    forall(a, b: akey, s: skey, d: data, z: strand(bu`space)):
+      resp_inst(bu`space)(z, 2, a, b, s, d) and
+      non(bu`space)(invk(a)) and
+      non(bu`space)(invk(b))
+      implies
+      exists(a1: akey, s1: skey, d1: data, z1: strand(bu`space)):
+        init_inst(bu`space)(z1, 1, a1, b, s1, d1)
+
+end blanchet_corrected

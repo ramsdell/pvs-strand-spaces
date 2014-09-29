@@ -1,0 +1,153 @@
+% Connection between the protocol and state
+
+% John D. Ramsdell -- The MITRE Corporation -- June 2013
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+state: theory
+begin
+
+  importing strands
+  importing state_spaces@protocols_and_state[state, trans]
+
+  state_induced_tpm_extend_role: lemma
+  forall(bu: bundle, ra: assignment(bu),
+         i: nat, f: [(anno_node?(bu, ra)) -> below[i]], p: path,
+         n: (anno_node?(bu, ra)), x: mesg):
+    compat(bu, ra)(i, f, p) and
+    p(1+f(n)) = extend(x, p(f(n))) implies
+      ra(n`1) = tpm_extend_role
+
+  state_induced_tpm_decrypt_role: lemma
+  forall(bu: bundle, ra: assignment(bu),
+         i: nat, f: [(anno_node?(bu, ra)) -> below[i]], p: path,
+         n: (anno_node?(bu, ra)), x: mesg):
+    compat(bu, ra)(i, f, p) and
+    p(1+f(n)) = p(f(n)) implies
+      ra(n`1) = tpm_decrypt_role or
+      boot?(p(f(n))) and ra(n`1) = tpm_power_on_role
+
+  % This lemma connects the TPM theory with the Strand Space theory
+  % using the TPM's Stable Boot Extend Lemma.
+
+  % stable_boot_extend: lemma
+  %   forall(p: path, x: mesg, i, k: nat):
+  %     i < k and boot?(p(i)) and p(k) = extend(x, boot) implies
+  %       exists(j: nat):
+  %         i <= j and j < k and p(j) = boot and
+  %         forall(l: nat):
+  %           j < l and l <= k implies
+  %             p(l) = extend(x, boot)
+
+  stable_boot_extend_anno: lemma
+  forall(bu: bundle, ra: assignment(bu), x: mesg,
+         n0, n1: (anno_node?(bu, ra)), a0, a1: anno):
+    compatible(bu, ra) and
+    annotations(bu, ra)(n0)(a0) and
+    annotations(bu, ra)(n1)(a1) and
+    prec?(bu)(n0, n1) and
+    subset?(a0, {t: trans | t`2 = boot}) and
+    subset?(a1, {t: trans | t`1 = extend(x, boot)}) implies
+      exists(n: (anno_node?(bu, ra))):
+        annotations(bu, ra)(n)({t: trans |
+                                t`1 = boot and
+                                t`2 = extend(x, boot)}) and
+        prec?(bu)(n, n1) and
+        prec?(bu)(n0, n) and
+        forall(n2: (anno_node?(bu, ra))):
+	  prec?(bu)(n, n2) and prec?(bu)(n2, n1) implies
+            annotations(bu, ra)(n2)({t: trans |
+                                     t`1 = extend(x, boot) and
+                                     t`2 = t`1})
+
+  % Note that none of the remaining lemmas refer to the compat predicate.
+
+  % --------------------------------------------------------------------
+
+  % Lemmas about the implications of the existence of a full length
+  % TPM Power On and TPM Decrypt strands.
+
+  % The next lemma aids in the proof the role associated with a full
+  % length TPM Power On strand.
+
+  % Proof notes: the following indices were used to destinguish
+  % an instance of TPM Power On strand from other strands instantiated
+  % from other roles.
+
+  % tpm extend        1
+  % tpm create key    0
+  % tpm decrypt       1
+  % verifier          0
+  % create            length
+  % tag               length
+  % hash              1
+  % pair              1
+  % sep               0
+  % enc               1
+  % dec               1
+
+  tpm_power_on_inst_role_helper: lemma
+  forall(bu:bundle, r: (annotated_roles),
+         z0, z1: strand(bu`space),
+         pcrkey: skey):
+    (exists(ri: (r)): inst(bu`space)(z0, ri)) and
+    2 <= length(bu`space(z0)) and
+    tpm_power_on_inst(bu)(z1, 2, pcrkey) implies
+      r = tpm_power_on_role or
+      bu`space(z1)(0) /=  bu`space(z0)(0) or
+      bu`space(z1)(1) /=  bu`space(z0)(1)
+
+  % This lemma follows easily from the one above.
+
+  tpm_power_on_inst_role: lemma
+  forall(bu:bundle, ra: assignment(bu), z: strand(bu`space), pcrkey: skey):
+    tpm_power_on_inst(bu)(z, 2, pcrkey) implies
+      ra(z) = tpm_power_on_role
+
+  % tpm_extend_inst_role: lemma
+  % forall(bu:bundle, ra: assignment(bu), z: strand(bu`space),
+  % 	 value, current_value: mesg, pcrkey: skey):
+  %   tpm_extend_inst(bu)(z, 3, value, current_value, pcrkey) implies
+  %     ra(z) = tpm_extend_role
+
+  % This is lemma makes use of the fact that long strands can be the
+  % result of only one role to ease the task in proving the role
+  % associated with a full length TPM Decrypt strand.
+  long_strands_are_tpm_decrypt: lemma
+  forall(ss: strand_space, z: strand(ss), h: nat, r: (annotated_roles)):
+    h >= 4 and role_pred(ss)(z, h, r) implies
+      r = tpm_decrypt_role
+
+  tpm_decrypt_inst_role: lemma
+  forall(bu:bundle, ra: assignment(bu), z: strand(bu`space),
+	 m, current_value: mesg, k, aik: akey, pcrkey: skey):
+    tpm_decrypt_inst(bu)(z, 4, m, current_value, k, aik, pcrkey) implies
+      ra(z) = tpm_decrypt_role
+
+  % Lemmas about the annotations of instances of the TPM Power On and
+  % TPM Decrypt roles.
+
+  tpm_power_on_inst_anno: lemma
+  forall(bu:bundle, ra: assignment(bu), z: strand(bu`space), pcrkey: skey):
+    tpm_power_on_inst(bu)(z, 2, pcrkey) implies
+      annotations(bu, ra)(z, 1)({t: trans | t`2 = boot})
+
+  % tpm_extend_inst_anno: lemma
+  % forall(bu:bundle, ra: assignment(bu), z: strand(bu`space),
+  % 	 value, current_value: mesg, pcrkey: skey):
+  %   tpm_extend_inst(bu)(z, 3, value, current_value, pcrkey) implies
+  %     annotations(bu, ra)(z, 2)({t: trans |
+  %                                pcr(t`1) = current_value and
+  %                                t`2 = extend(value, t`1)})
+
+  tpm_decrypt_inst_anno: lemma
+  forall(bu:bundle, ra: assignment(bu), z: strand(bu`space),
+	 m, current_value: mesg, k, aik: akey, pcrkey: skey):
+    tpm_decrypt_inst(bu)(z, 4, m, current_value, k, aik, pcrkey) implies
+      annotations(bu, ra)(z, 3)({t: trans |
+                                 pcr(t`1) = current_value and
+                                 t`2 = t`1})
+
+end state

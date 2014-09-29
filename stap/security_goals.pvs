@@ -1,0 +1,62 @@
+% Proof of the Desired Path Security Goal
+
+% John D. Ramsdell -- The MITRE Corporation -- June 2013
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+security_goals: theory
+begin
+
+  importing shape_analysis_sentences
+  importing state
+
+  % The Desired Path Property is that for all paths that contain a boot
+  % state followed by an extension of the boot state with the message
+  % desired, there exists a step in the path at which the state is
+  % boot, and the remaining states are the extension of the boot state
+  % with the message desired.
+
+  desired_property(bu: bundle, ra: assignment(bu),
+                   z: strand(bu`space)): bool =
+    exists(n0, n1, n2: (anno_node?(bu, ra))):
+      3 <= bu`space(z)`length and
+      annotations(bu, ra)(n0)({t: trans | t`2 = boot}) and
+      annotations(bu, ra)(n1)({t: trans |
+                               t`1 = boot and
+                               t`2 = extend(desired, boot)}) and
+      annotations(bu, ra)(n2)({t: trans |
+                               t`1 = extend(desired, boot) and
+                               t`2 = t`1}) and
+      prec?(bu)(n0, n1) and
+      prec?(bu)(n1, n2) and
+      prec?(bu)(n2, (z, 2)) and
+      forall(n: (anno_node?(bu, ra))):
+        prec?(bu)(n1, n) and prec?(bu)(n, n2) implies
+          annotations(bu, ra)(n)({t: trans |
+                                  t`1 = extend(desired, boot) and
+                                  t`2 = t`1})
+
+  % Derived from several lemmas in the state theory.
+
+  desired_shape: theorem
+  forall(bu: bundle, ra: assignment(bu)):
+    compatible(bu, ra) implies
+    forall(z0: strand(bu`space), k, aik: akey, n: text):
+      forall(z1, z2, z3, z4: strand(bu`space), pcrkey: skey):
+        verifier_shape(bu)(z0, k, aik, n)(z1, z2, z3, z4, pcrkey) implies
+          desired_property(bu, ra, z0)
+
+  % ---------------------------------------------------------------
+
+  % Derived from the STAP Shape Analysis Sentence Axiom and the lemma above
+
+  desired_security_goal: theorem
+  forall(bu: bundle, ra: assignment(bu)):
+    compatible(bu, ra) implies
+    forall(z: strand(bu`space), k, aik: akey, v: text):
+      verifier_pov(bu)(z, k, aik, v) implies
+        desired_property(bu, ra, z)
+
+end security_goals

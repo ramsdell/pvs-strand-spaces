@@ -1,0 +1,15 @@
+(|traces|
+ (|carried_by_event?_TCC1| 0
+  (|carried_by_event?_TCC1-1| NIL 3607521755 ("" (SUBTYPE-TCC) NIL NIL) NIL
+   NIL))
+ (|appears_index?_TCC1| 0
+  (|appears_index?_TCC1-1| NIL 3607671283 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
+     NIL))
+   NIL))
+ (|appears_index?_TCC2| 0
+  (|appears_index?_TCC2-1| NIL 3607671283 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
+     NIL))
+   NIL)))
+

@@ -1,0 +1,52 @@
+#! /bin/sh
+
+# This script validates the libraries of PVS theories specified by the
+# AWK input below.  The first entry is the name of the library, a
+# directory.  The second entry is the name of the PVS file that is the
+# target of the prove-importchain function.  The optional third
+# argument is appended to the name of the log file, which normally is
+# the same as the name of the library.
+
+AWK='
+  { printf("(pvs-validate \"%s%s.log\" \"../%s\"\n"     \
+           "   (pvs-message \"Proving %s%s\")\n"            \
+           "   (prove-importchain \"%s\"))\n",              \
+           $1, $3, $1, $1, $3, $2)}'
+
+cat <<EOF | awk "$AWK" > batch.el
+strand_spaces derivability
+state_spaces protocols_and_state
+diffie_hellman adversary
+transitions adversary
+cpsa compatibility
+neutral_nodes adversary
+blanchet blanchet
+blanchet blanchet_corrected _corrected
+award_card security_goals
+exhaustible security_goals
+stap security_goals
+envelope security_goals
+split_transitions security_goals
+split_neutral_nodes security_goals
+guarded_transitions adversary
+wrap_decrypt security_goals
+EOF
+
+if pvs -batch -q -l batch.el
+then
+    rm batch.el
+    awk '/Grand Totals/{if ($3!=$7) print FILENAME ":" $0}' *.log
+    for i in *.log
+    do
+	if grep 'Grand Totals' "$i" > /dev/null
+	then
+	    : Grand totals found
+	else
+	    echo No grand totals in "$i"
+	fi
+    done
+else
+    echo "PVS failed"
+    exit 1
+fi
+

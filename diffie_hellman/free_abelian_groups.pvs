@@ -1,0 +1,46 @@
+% Defines the dot equals predicate on members of a free abelian group
+
+% John D. Ramsdell -- The MITRE Corporation -- August 2013
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+free_abelian_groups[grp: type,
+                    e: grp,
+                    o: [grp, grp -> grp],
+                    inv: [grp -> grp],
+                    bas: type from grp]: theory
+begin
+  assuming
+    a, b, c: var grp
+
+    associativity : assumption associative?(o)
+
+    unit : assumption identity?(o)(e)
+
+    inverse : assumption inverses?(o)(inv)(e)
+
+    commutativity: assumption commutative?(o)
+
+    importing basis[grp, e, o, inv, bas]
+
+    free: assumption is_basis
+
+  endassuming
+
+% A representation exists and is unique by the is_basis assumption.
+representation(g: grp): representation =
+  epsilon!(r: representation):
+    is_finite(r`s) and g = sum[(r`s), grp, e, o](r`s, project(r))
+
+% This is the inner product of the underlying vector space.
+dotequals(x, y: grp): bool =
+  0 /= sum[(sxy), int, 0, +](sxy, f)
+  where
+    rx = representation(x),
+    ry = representation(y),
+    sxy = intersection(rx`s, ry`s),
+    f(b: (sxy)): int = rx`f(b) * ry`f(b)
+
+end free_abelian_groups

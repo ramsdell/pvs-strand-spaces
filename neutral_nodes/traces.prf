@@ -1,0 +1,7 @@
+(|traces|
+ (|originates_index?_TCC1| 0
+  (|originates_index?_TCC1-1| NIL 3607879286 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
+     NIL))
+   NIL)))
+

@@ -1,0 +1,93 @@
+% Roles of the TPM Split Protocol
+
+% John D. Ramsdell -- The MITRE Corporation -- January 2014
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+protocol_roles: theory
+begin
+
+  importing state
+  importing transitions@adversary[state, boot?, trans, pcr]
+
+  quote: tag = tg(1)
+  obtain: tag = tg(2)
+  refuse: tag = tg(3)
+
+  make_quote(nonce: text, val: mesg, aik: akey): mesg =
+    en(hs(pr(quote, pr(val, nonce))), aik)
+
+  % Roles
+
+  % Boot
+
+  boot_trace(st: state): trace =
+    singleton_seq(sync(st, boot))
+
+  boot_role_item(st: state): role_item =
+    simple_role_item(boot_trace(st))
+
+  boot_role(ri: role_item): bool =
+    exists(st: state):
+      ri = boot_role_item(st)
+
+  boot_inst(bu: bundle)(z: strand(bu`space), h: nat, st: state): bool =
+    pred(bu)(z, h, boot_role_item(st))
+
+  % Extend
+
+  extend_trace(st: state, x: mesg): trace =
+    doubleton_seq(recv(x),
+                  sync(st, extend(x, st)))
+
+  extend_role_item(st: state, x: mesg): role_item =
+    simple_role_item(extend_trace(st, x))
+
+  extend_role(ri: role_item): bool =
+    exists(st: state, x: mesg):
+      ri = extend_role_item(st, x)
+
+  extend_inst(bu: bundle)(z: strand(bu`space), h: nat,
+                         st: state, x: mesg): bool =
+    pred(bu)(z, h, extend_role_item(st, x))
+
+  % Quote
+
+  quote_trace(st: state, nonce: text, aik: akey): trace =
+    tripleton_seq(recv(nonce),
+                  sync(st, st),
+		  send(make_quote(nonce, pcr(st), aik)))
+
+  quote_role_item(st: state, nonce: text, aik: akey): role_item =
+    simple_role_item(quote_trace(st, nonce, aik))
+
+  quote_role(ri: role_item): bool =
+    exists(st: state, nonce: text, aik: akey):
+      ri = quote_role_item(st, nonce, aik)
+
+  quote_inst(bu: bundle)(z: strand(bu`space), h: nat, st: state,
+                         nonce: text, aik: akey): bool =
+    pred(bu)(z, h, quote_role_item(st, nonce, aik))
+
+  % The protocol
+
+  protocol_roles: protocol =
+    add(boot_role,
+        add(extend_role,
+            add(quote_role,
+                adversary_roles)))
+
+  enumerate_protocol_roles: lemma
+  forall(r: role):
+    protocol_roles(r) iff
+      r = boot_role or
+      r = extend_role or
+      r = quote_role or
+      adversary_roles(r)
+
+  % An envelope specific role assignment
+  assignment(b: bundle): type = protocol_assignment(protocol_roles, b)
+
+end protocol_roles

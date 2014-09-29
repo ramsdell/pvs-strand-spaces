@@ -1,0 +1,36 @@
+% State for the Award Card Protocol
+
+% An award card that gets issued with empty boxes that are checked
+% each time one purchases an item.  When the boxes on the card are all
+% checked, the owner may exchange it for an award.
+
+% John D. Ramsdell -- The MITRE Corporation -- July 2013
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+award_card[boxes: nat]: theory
+begin
+
+  state: type = below(boxes + 1)
+
+  % Unchecked boxes on a new card
+  new: state = boxes
+
+  % The transition relation.  It is not reflexive as there are no
+  % state observers.
+
+  trans(st, nx: state): bool =
+    nx = boxes or st = nx + 1
+
+  state_spaces: library = "../state_spaces"
+  importing state_spaces@paths[state, trans]
+
+  prefix_new: lemma
+    forall(p: path, i, k: nat):
+      i <= k implies
+        p(i) >= p(k) or
+        exists(j: nat): i < j and j <= k and p(j) = boxes
+
+end award_card

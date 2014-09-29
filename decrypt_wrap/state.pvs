@@ -1,0 +1,39 @@
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+state: theory
+begin
+
+  strand_spaces: library = "../strand_spaces"
+  importing strand_spaces@init_alg
+
+  % The attributes associated with a handle
+  attr: datatype
+  begin
+    init_attr: init_attr?                 % Key freshly created
+    wrap_attr: wrap_attr?                 % Key enabled for wrapping
+    decrypt_attr: decrypt_attr?           % Key enabled for decrypting
+  end attr
+
+  % The state is a partial map from addresses to attributes
+  state: type = finite_sequence[attr]
+
+  addr(st: state): type = below[length(st)]
+
+  % The key given by an address is a symmetric key constant
+  key(st: state)(a: addr(st)): skey = sk(a)
+
+  % The initial state is the empty map
+  init?: setof[state] = singleton(empty_seq[attr])
+
+  % The transition relation
+  trans(st: state, nx: state): bool =
+    % Observe is used for wrapping and decrypting
+    nx = st or                                     % Observe
+    nx = add(init_attr, st) or                     % Create key
+    exists(a: addr(st)):
+      nx = st with [`seq(a) := wrap_attr] or       % Set wrap
+      nx = st with [`seq(a) := decrypt_attr]       % Set decrypt
+
+end state

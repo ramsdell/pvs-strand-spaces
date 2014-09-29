@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Strand Spaces in PVS</title>
+  <style type="text/css">
+    h1, address { text-align: center }
+  </style>
+</head>
+<body>
+
+<h1>Strand Spaces in PVS</h1>
+
+<address>
+  <a href="mailto:ramsdell@mitre.org">John D. Ramsdell</a><br/>
+  <a href="http://www.mitre.org/">The MITRE Corporation</a><br/>
+  September 2014
+</address>
+
+<p>This package contains several libraries
+  of <a href="http://pvs.csl.sri.com/">PVS</a> theories for reasoning
+  about strand spaces and security goals.  The theories are covered by
+  a BSD-style <a href="license.txt">license</a>.</p>
+
+<dl>
+  <dt><a href="strand_spaces"><code>strand_spaces</code></a></dt>
+  <dd>The foundational definitions. Defines strand spaces
+  and bundles.</dd>
+  <dt><a href="blanchet"><code>blanchet</code></a></dt>
+  <dd>An example of
+  using <a href="http://arxiv.org/abs/1403.3563">Shape Analysis
+  Sentences</a> within this formalism.</dd>
+  <dt><a href="state_spaces"><code>state_spaces</code></a></dt>
+  <dd>Defines the notion of compatibility between bundles and state
+  transitions.</dd>
+  <dt><a href="stap"><code>stap</code></a>
+  and <a href="envelope"><code>envelope</code></a></dt>
+  <dd>Show how to reason about protocol executions in the presence of
+  the long term state provided by a Trusted Platform Module.
+  The <code>stap</code> library contains a proof of a security goal
+  for the Simple TPM Attestation Protocol and
+  the <code>envelope</code> library has a more involved proof of a
+  security goal for
+  the <a href="http://arxiv.org/abs/1404.3899">Envelope
+  Protocol</a>.</dd>
+  <dt><a href="award_card"><code>award_card</code></a></dt>
+  <dd>A very simple example of state as boxes being checked on an
+  award card.</dd>
+  <dt><a href="diffie_hellman"><code>diffie_hellman</code></a></dt>
+  <dd>An algebra with an Abelian group for exponents.</dd>
+  <dt><a href="neutral_nodes"><code>neutral_nodes</code></a></dt>
+  <dd>Strands spaces augmented with labels as state synchronization
+  events.</dd>
+  <dt><a href="cpsa"><code>cpsa</code></a></dt>
+  <dd>Strands spaces with state as implemented in an experimental
+  version of CSPA.</dd>
+  <dt><a href="guarded_transitions"><code>guarded_transitions</code></a></dt>
+  <dd>Strands spaces augmented with guarded transitions as state
+  synchronization events.</dd>
+  <dt><a href="wrap_decrypt"><code>wrap_decrypt</code></a></dt>
+  <dd>An analysis of the Wrap-Decrypt protocol using guarded
+  transitions.</dd>
+  <dt><a href="log"><code>log</code></a></dt>
+  <dd>Contains a <a href="log/batch">script</a> that validates the
+  proofs in the various theory libraries.</dd>
+</dl>
+
+</body>
+</html>

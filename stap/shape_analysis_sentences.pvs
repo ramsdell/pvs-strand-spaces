@@ -1,0 +1,105 @@
+% Shape analysis sentence for the Simple TPM Attestation Protocol
+
+% This theory is purely a translation of the non-role part of the
+% shape analysis sentences output produced by CPSA.  As with roles,
+% there probably is an automated way to transate the sentences, but
+% all of this translation was done by hand.
+
+% John D. Ramsdell -- The MITRE Corporation -- June 2013
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+shape_analysis_sentences: theory
+begin
+
+  importing strands
+
+  % Verifier point of view
+
+% (defskeleton stap
+%   (vars)
+%   (defstrand verifier 3 (pcrval (hash "desired" "0"))))
+
+  % Verifier shape analysis sentence
+
+% (forall
+%   ((n text) (k aik akey) (z nat))
+%   (implies
+%     (and (strand "stap" "verifier" 3 "pcrval" z (hash "desired" "0"))
+%       (strand "stap" "verifier" 3 "n" z n)
+%       (strand "stap" "verifier" 3 "k" z k)
+%       (strand "stap" "verifier" 3 "aik" z aik) (non aik) (uniq n)
+%       (orig n z 1))
+%     (exists
+%       ((n-0 text) (pcrkey skey) (k-0 aik-0 akey)
+%         (z-0 z-1 z-2 z-3 z-4 nat))
+%       (and (equal z z-0) (equal k k-0) (equal aik aik-0) (equal n n-0)
+%         (strand "stap" "verifier" 3 "pcrval" z-0 (hash "desired" "0"))
+%         (strand "stap" "verifier" 3 "n" z-0 n-0)
+%         (strand "stap" "verifier" 3 "k" z-0 k-0)
+%         (strand "stap" "verifier" 3 "aik" z-0 aik-0)
+%         (strand "stap" "tpm-create-key" 2 "pcrval" z-1
+%           (hash "desired" "0"))
+%         (strand "stap" "tpm-create-key" 2 "k" z-1 k-0)
+%         (strand "stap" "tpm-create-key" 2 "aik" z-1 aik-0)
+%         (strand "stap" "tpm-decrypt" 4 "m" z-2 n-0)
+%         (strand "stap" "tpm-decrypt" 4 "pcrvals" z-2
+%           (hash "desired" "0"))
+%         (strand "stap" "tpm-decrypt" 4 "pcrkey" z-2 pcrkey)
+%         (strand "stap" "tpm-decrypt" 4 "k" z-2 k-0)
+%         (strand "stap" "tpm-decrypt" 4 "aik" z-2 aik-0)
+%         (strand "stap" "tpm-extend" 3 "value" z-3 "desired")
+%         (strand "stap" "tpm-extend" 3 "current-value" z-3 "0")
+%         (strand "stap" "tpm-extend" 3 "pcrkey" z-3 pcrkey)
+%         (strand "stap" "tpm-power-on" 2 "pcrkey" z-4 pcrkey)
+%         (prec z-0 1 z-2 0) (prec z-1 1 z-0 0) (prec z-2 3 z-0 2)
+%         (prec z-3 2 z-2 2) (prec z-4 1 z-3 1) (non pcrkey) (non aik-0)
+%         (non (invk k-0)) (uniq n-0) (uniq k-0) (orig k-0 z-1 1)
+%         (orig n-0 z-0 1)))))
+
+% This translation factors out the homomorphisms induced variables
+% which is why the *-0 variables have been renamed.
+
+  % Definitions used to build the axiom.
+
+  desired_pcr: mesg = pcr(extend(desired, boot))
+
+  % The verifier part of the point-of-view
+
+  verifier_pov(bu: bundle)(z: strand(bu`space),
+                           k, aik: akey, n: text): bool =
+
+    verifier_inst(bu)(z, 3, k, aik, desired_pcr, n) and
+    uniq(bu`space)(n, (z, 1))
+
+  verifier_shape(bu: bundle)(z0: strand(bu`space),
+                             k, aik: akey, n: text)
+			    (z1, z2, z3, z4: strand(bu`space),
+                             pcrkey: skey): bool =
+
+    verifier_pov(bu)(z0, k, aik, n) and
+    tpm_create_key_inst(bu)(z1, 2, k, aik, desired_pcr) and
+    tpm_decrypt_inst(bu)(z2, 4, n, desired_pcr, k, aik, pcrkey) and
+    tpm_extend_inst(bu)(z3, 3, desired, pcr(boot), pcrkey) and
+    tpm_power_on_inst(bu)(z4, 2, pcrkey) and
+    prec?(bu)((z0, 1), (z2, 0)) and
+    prec?(bu)((z1, 1), (z0, 0)) and
+    prec?(bu)((z2, 3), (z0, 2)) and
+    prec?(bu)((z3, 2), (z2, 2)) and
+    prec?(bu)((z4, 1), (z3, 1)) and
+    non(bu`space)(pcrkey) and
+    non(bu`space)(aik) and
+    non(bu`space)(invk(k)) and
+    uniq(bu`space)(k, (z1, 1)) and
+    uniq(bu`space)(n, (z0, 1))
+
+  stap_shape_analysis_sentence: axiom
+  forall(bu: run(annotated_roles)):
+    forall(z0: strand(bu`space), k, aik: akey, n: text):
+      verifier_pov(bu)(z0, k, aik, n) implies
+        exists(z1, z2, z3, z4: strand(bu`space), pcrkey: skey):
+          verifier_shape(bu)(z0, k, aik, n)(z1, z2, z3, z4, pcrkey)
+
+end shape_analysis_sentences

@@ -1,0 +1,177 @@
+% Derivability (unfinished)
+
+% John D. Ramsdell -- The MITRE Corporation -- November 2013
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+derivability[anno: type]: theory
+begin
+
+  importing finite_sets@finite_sets_sum
+  importing adversary[anno]
+
+  % Definition of derivability is based on bundles and the
+  % derivability protocol.
+
+  % The derivability protocol has one role.
+
+  % Publish a message
+
+  % This role is patterned after the create role, except it can send
+  % any message, not just atoms.
+
+  % The trace
+  publish_trace(x: mesg): trace =
+    singleton_seq(send(x))
+
+  % The role
+  publish_role(ri: role_item): bool =
+    exists(x: mesg): ri = simple_role_item(publish_trace(x))
+
+  publish_anno: lemma
+    forall(bu: bundle, ra: role_assignment(bu), n: node(bu`space)):
+      ra(n`1) = publish_role implies
+        not anno_node?(bu, ra)(n)
+
+  % The derivability protocol
+  prot: protocol =
+    add(publish_role, adversary_roles)
+
+  % Definition of derivability
+
+  % Given a set of public messages pub, and atoms to avoid avd, is
+  % message m derivable?
+
+  bundle_deriv?(pub: finite_set[mesg], avd: finite_set[atom], m: mesg): bool =
+    exists(b: bundle, pa: protocol_assignment(prot, b)):
+      % Publish role used only with public messages
+      (forall(s: strand(b`space)):
+        pa(s) = publish_role implies
+          exists(x: (pub)): outbound_at?(b`space)(x, (s, 0))) and
+      % Create role never used with atoms to avoid
+      (forall(s: strand(b`space)):
+        pa(s) = create_role implies
+          forall(x: (avd)): not outbound_at?(b`space)(x, (s, 0))) and
+      % Message is transmitted
+      (exists(n: node(b`space)): outbound_at?(b`space)(m, n))
+
+  % Can message m be built from the public messages in pub or from
+  % atoms that are not in the avoidance set avd?
+  buildable?(pub: finite_set[mesg], avd: finite_set[atom],
+             m: mesg): recursive bool =
+    member(m, pub) or
+    cases m of
+      hs(x): buildable?(pub, avd, x),             % hash_role
+      pr(f, s): buildable?(pub, avd, f) and       % pair_role
+                  buildable?(pub, avd, s),
+      en(p, k): buildable?(pub, avd, p) and       % enc_role
+                  buildable?(pub, avd, k)
+    else
+      tag?(m) or                                  % tag_role
+      atom?(m) and not member(m, avd)             % create_role
+    endcases
+    measure m by <<
+
+  % In a set of public messages, is m separable?
+
+  separable?(pub: finite_set[mesg])(m: (pub)): bool =
+    pair?(m) and (not member(fst(m), pub) or
+                  not member(snd (m), pub))
+
+  % In a set of public messages, is m decryptable?
+
+  decryptable?(pub: finite_set[mesg], avd: finite_set[atom])
+              (m: (pub)): bool =
+    enc?(m) and
+    not member(plt(m), pub) and
+    buildable?(pub, avd, invk(key(m)))
+
+  % Functions used to show recursive function deriv? in total.
+
+  % Returns the set of parts of a message.
+  parts(m: mesg): recursive finite_set[mesg] =
+    cases m of
+      pr(f, s): add(m, union(parts(f), parts(s))),
+      en(p, k): add(m, union(parts(p), parts(k)))
+    else singleton(m)
+    endcases
+    measure m by <<
+
+  % Returns all subterms in a set o public messages.
+  subterms(pub: finite_set[mesg]): finite_set[mesg] =
+    sum[mesg, finite_set[mesg], emptyset, union] (pub, parts)
+
+  subset_subterms: lemma
+    forall(pub: finite_set[mesg]):
+      subset?(pub, subterms(pub))
+
+  % Number of potential terms that might be added using separation or
+  % decryption.
+  pub_card(pub: finite_set[mesg]): nat =
+    card(difference(subterms(pub), pub))
+
+  % Lemmas used to show that deriv? terminates
+
+  deriv_sep_termination: lemma
+    forall(pub: finite_set[mesg], p: (separable?(pub))):
+      pub_card(add(fst(p), add(snd(p), pub))) < pub_card(pub)
+
+  deriv_dec_termination: lemma
+    forall(pub: finite_set[mesg], avd: finite_set[atom],
+           e: (decryptable?(pub, avd))):
+      pub_card(add(plt(e), pub)) < pub_card(pub)
+
+  deriv?(pub: finite_set[mesg], avd: finite_set[atom],
+         m: mesg): recursive bool =
+    (exists(p: (separable?(pub))):                % sep_role
+      deriv?(add(fst(p), add(snd(p), pub)), avd, m)) or
+    (exists(e: (decryptable?(pub, avd))):         % dec_role
+      deriv?(add(plt(e), pub), avd, m)) or
+    buildable?(pub, avd, m)
+    measure
+      (lambda(pub: finite_set[mesg], avd: finite_set[atom], m: mesg):
+        pub_card(pub))
+
+  % The target theorem is that deriv? is equal to the bundle_derive?
+  % function.
+
+  % To prove this, one needs a lemma that bundle_deriv? is equivalent
+  % to a similar function that separates and decrypts before it uses
+  % other roles.
+
+  % A proof would start with:
+  % (SKOLEM 1 ("pub" "avd" "_"))
+  % (MEASURE-INDUCT+ "m" "m" :ORDER "<<")
+
+  % buildable_implies_bundle_deriv: lemma
+  %   forall(pub: finite_set[mesg], avd: finite_set[atom], m: mesg):
+  %     empty?(separable?(pub)) and empty?(decryptable?(pub, avd)) and
+  %     buildable?(pub, avd, m) implies
+  %       bundle_deriv?(pub, avd, m)
+
+  % bundle_deriv_implies_buildable: lemma
+  %   forall(pub: finite_set[mesg], avd: finite_set[atom], m: mesg):
+  %     empty?(separable?(pub)) and empty?(decryptable?(pub, avd)) and
+  %     bundle_deriv?(pub, avd, m) implies
+  %       buildable?(pub, avd, m)
+
+  % deriv_implies_bundle_deriv: lemma
+  %   forall(pub: finite_set[mesg], avd: finite_set[atom], m: mesg):
+  %     deriv?(pub, avd, m) implies bundle_deriv?(pub, avd, m)
+
+  % bundle_deriv_implies_deriv: lemma
+  %   forall(pub: finite_set[mesg], avd: finite_set[atom], m: mesg):
+  %     bundle_deriv?(pub, avd, m) implies deriv?(pub, avd, m)
+
+  % deriv_buildable_equal: lemma
+  %   forall(pub: finite_set[mesg], avd: finite_set[atom], m: mesg):
+  %     empty?(separable?(pub)) and empty?(decryptable?(pub, avd)) implies
+  %       bundle_deriv?(pub, avd, m) = buildable?(pub, avd, m)
+
+  % derivs_equal: lemma
+  %   forall(pub: finite_set[mesg], avd: finite_set[atom], m: mesg):
+  %     bundle_deriv?(pub, avd, m) = deriv?(pub, avd, m)
+
+end derivability

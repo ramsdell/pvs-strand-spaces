@@ -1,0 +1,167 @@
+% Strands in the Alice shape of the Envelope Protocol
+
+% Strands in the Alice shape that are instances of the same role have
+% the same length.  This theory exploits this fact and provides useful
+% rewrite rules associated with the strands.  The *_assumes lemmas are
+% just helper lemmas used to prove the rewrite rules.
+
+% John D. Ramsdell -- The MITRE Corporation -- January 2013
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+strands: theory
+begin
+
+  importing annotated_roles
+
+  tpm_state_init_inst_assumes: lemma
+  forall(bu:bundle, z: strand(bu`space), pcrkey: skey):
+    tpm_state_init_inst(bu)(z, 2, pcrkey) implies
+      non(bu`space)(pcrkey)
+
+  tpm_state_init_inst_rew: lemma
+  forall(bu:bundle, z: strand(bu`space), pcrkey: skey):
+    tpm_state_init_inst(bu)(z, 2, pcrkey) iff
+      2 <= bu`space(z)`length and
+      prefix?[event](bu`space(z), tpm_state_init_trace(pcrkey)) and
+      non(bu`space)(pcrkey)
+
+  auto_rewrite+ tpm_state_init_inst_rew
+
+  tpm_power_on_inst_assumes: lemma
+  forall(bu:bundle, z: strand(bu`space), pcrkey: skey, current_value: mesg):
+    tpm_power_on_inst(bu)(z, 3, pcrkey, current_value) implies
+      non(bu`space)(pcrkey)
+
+  tpm_power_on_inst_rew: lemma
+  forall(bu:bundle, z: strand(bu`space), pcrkey: skey, current_value: mesg):
+    tpm_power_on_inst(bu)(z, 3, pcrkey, current_value) iff
+      3 <= bu`space(z)`length and
+      prefix?[event](bu`space(z),
+                     tpm_power_on_trace(pcrkey, current_value)) and
+      non(bu`space)(pcrkey)
+
+  auto_rewrite+ tpm_power_on_inst_rew
+
+  tpm_quote_inst_assumes: lemma
+  forall(bu:bundle, z: strand(bu`space),
+         nonce, current_value: mesg, pcrkey: skey, aik: akey):
+    tpm_quote_inst(bu)(z, 3, nonce, current_value, pcrkey, aik) implies
+      non(bu`space)(aik) and
+      non(bu`space)(pcrkey)
+
+  tpm_quote_inst_rew: lemma
+  forall(bu:bundle, z: strand(bu`space),
+         nonce, current_value: mesg, pcrkey: skey, aik: akey):
+    tpm_quote_inst(bu)(z, 3, nonce, current_value, pcrkey, aik) iff
+      3 <= bu`space(z)`length and
+      prefix?[event](bu`space(z),
+                     tpm_quote_trace(nonce, current_value,
+                                     pcrkey, aik)) and
+      non(bu`space)(aik) and
+      non(bu`space)(pcrkey)
+
+  auto_rewrite+ tpm_quote_inst_rew
+
+  tpm_extend_enc_inst_assumes: lemma
+  forall(bu: bundle, z: strand(bu`space),
+ 	 value, current_value: mesg, pcrkey, esk: skey,
+         tne: data, tpmkey: akey):
+    tpm_extend_enc_inst(bu)(z, 5, value, current_value,
+                             pcrkey, esk, tne, tpmkey) implies
+      non(bu`space)(pcrkey) and
+      non(bu`space)(invk(tpmkey)) and
+      uniq(bu`space)(tne, (z, 1))
+
+  tpm_extend_enc_inst_rew: lemma
+  forall(bu: bundle, z: strand(bu`space),
+ 	 value, current_value: mesg, pcrkey, esk: skey,
+         tne: data, tpmkey: akey):
+    tpm_extend_enc_inst(bu)(z, 5, value, current_value,
+                             pcrkey, esk, tne, tpmkey) iff
+      5 <= bu`space(z)`length and
+      prefix?[event](bu`space(z),
+                     tpm_extend_enc_trace(value, current_value, pcrkey,
+       	       	    	  	          esk, tne, tpmkey)) and
+      non(bu`space)(pcrkey) and
+      non(bu`space)(invk(tpmkey)) and
+      uniq(bu`space)(tne, (z, 1))
+
+  auto_rewrite+ tpm_extend_enc_inst_rew
+
+  tpm_create_key_inst_assumes: lemma
+  forall(bu:bundle, z: strand(bu`space),
+ 	 k, aik: akey, pcrval: mesg, esk: skey):
+    tpm_create_key_inst(bu)(z, 2, k, aik, pcrval, esk) implies
+      uniq(bu`space)(k, (z, 1)) and
+      non(bu`space)(invk(k)) and
+      non(bu`space)(aik) and
+      non(bu`space)(esk)
+
+  tpm_create_key_inst_rew: lemma
+  forall(bu:bundle, z: strand(bu`space),
+ 	 k, aik: akey, pcrval: mesg, esk: skey):
+    tpm_create_key_inst(bu)(z, 2, k, aik, pcrval, esk) iff
+      2 <= bu`space(z)`length and
+      prefix?[event](bu`space(z),
+                     tpm_create_key_trace(k, aik, pcrval, esk)) and
+      uniq(bu`space)(k, (z, 1)) and
+      non(bu`space)(invk(k)) and
+      non(bu`space)(aik) and
+      non(bu`space)(esk)
+
+  auto_rewrite+ tpm_create_key_inst_rew
+
+  tpm_decrypt_inst_assumes: lemma
+  forall(bu:bundle, z: strand(bu`space),
+	 m, current_value: mesg, k, aik: akey, pcrkey: skey):
+    tpm_decrypt_inst(bu)(z, 4, m, current_value, k, aik, pcrkey) implies
+      non(bu`space)(aik) and
+      non(bu`space)(pcrkey)
+
+  tpm_decrypt_inst_rew: lemma
+  forall(bu:bundle, z: strand(bu`space),
+	 m, current_value: mesg, k, aik: akey, pcrkey: skey):
+    tpm_decrypt_inst(bu)(z, 4, m, current_value, k, aik, pcrkey) iff
+      4 <= bu`space(z)`length and
+      prefix?[event](bu`space(z),
+                     tpm_decrypt_trace(m, current_value, k, aik, pcrkey)) and
+      non(bu`space)(aik) and
+      non(bu`space)(pcrkey)
+
+  auto_rewrite+ tpm_decrypt_inst_rew
+
+  alice_inst_assumes: lemma
+  forall(bu: bundle, z: strand(bu`space),
+         v, tne: data, esk1, esk: skey,
+  	 k, aik, tpmkey: akey, n: text, origin: mesg):
+    alice_inst(bu)(z, 7, v, tne, esk1, esk, k, aik, tpmkey, n, origin)
+      implies
+        uniq(bu`space)(esk, (z, 1)) and
+        uniq(bu`space)(n, (z, 3)) and
+        uniq(bu`space)(v, (z, 6)) and
+        non(bu`space)(esk1) and
+        non(bu`space)(aik) and
+        non(bu`space)(invk(tpmkey))
+
+  alice_inst_rew: lemma
+  forall(bu: bundle, z: strand(bu`space),
+         v, tne: data, esk1, esk: skey,
+  	 k, aik, tpmkey: akey, n: text, origin: mesg):
+    alice_inst(bu)(z, 7, v, tne, esk1, esk, k, aik, tpmkey, n, origin) iff
+      7 <= bu`space(z)`length and
+      prefix?[event](bu`space(z),
+                     alice_trace(v, tne, esk1, esk,
+                                 k, aik, tpmkey, n, origin)) and
+      uniq(bu`space)(esk, (z, 1)) and
+      uniq(bu`space)(n, (z, 3)) and
+      uniq(bu`space)(v, (z, 6)) and
+      non(bu`space)(esk1) and
+      non(bu`space)(aik) and
+      non(bu`space)(invk(tpmkey))
+
+  auto_rewrite+ alice_inst_rew
+
+end strands

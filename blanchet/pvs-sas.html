@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Proving Security Goals with CPSA and PVS</title>
+  <style type="text/css">
+    h1, address { text-align: center }
+  </style>
+</head>
+<body>
+
+<h1>Proving Security Goals with CPSA and PVS</h1>
+
+<address>
+  <a href="mailto:ramsdell@mitre.org">John D. Ramsdell</a><br/>
+  <a href="http://www.mitre.org/">The MITRE Corporation</a><br/>
+  December 2012
+</address>
+
+<p>The Cryptographic Protocol Shapes Analyzer
+  (<a href="http://hackage.haskell.org/package/cpsa">CPSA</a>)
+  attempts to enumerate all essentially different executions possible
+  for a cryptographic protocol.  We call them the shapes of the
+  protocol.  Naturally occurring protocols have only finitely many,
+  indeed very few shapes.  Authentication and secrecy properties are
+  easy to determine from them, as are attacks and anomalies.</p>
+
+<p>For each input problem, the CPSA program is given some initial
+  behavior, and it discovers what shapes are compatible with
+  it. Normally, the initial behavior is from the point of view of one
+  participant. The analysis reveals what the other participants must
+  have done, given the participant's view.</p>
+
+<p>A method for extracting a sentence in an order-sorted variant of
+  First-Order Logic that completely characterizes a run of CPSA was
+  presented in
+  [<a href="#arXiv.org:1204.0480">arXiv.org:1204.0480</a>].  The
+  sentence is modeled by realized skeletons.  The key result of the
+  paper is that if a security goal expressed in the same language is
+  derivable from the sentence, than it too is satisfied by all
+  realized skeletons, and therefore, the protocol satisfies the stated
+  security goal.</p>
+
+<p>CPSA comes with a program that extracts sentences from its runs as
+  S-expressions.  It also has a small program that translates the
+  S-expressions
+  into <a href="http://www.cs.unm.edu/~mccune/mace4/">Prover9</a>
+  syntax, although the sort information is ignored.  If Prover9 is
+  able deduce the Prover9 translation of the security goal from the
+  sentence, then once again, the protocol satisfies the stated
+  security goal.</p>
+
+<p>What can one conclude when a security goal cannot be derived
+  from a sentence?  Does it mean the security goal is false, or the
+  sentence is not relevant?  Or perhaps there is a general axiom about
+  Strand Spaces that is missing.  The set
+  of <a href="http://pvs.csl.sri.com/">PVS</a> theories enclosed
+  provides a way to answer such questions.</p>
+
+<p>The PVS theories specify the concept of a Strand Space bundle, the
+  Strand Space model of an execution of a protocol.  Unlike
+  [<a href="#arXiv.org:1204.0480">arXiv.org:1204.0480</a>], bundles
+  are used to model sentences, not realized skeletons.  The definition
+  of what an adversary can derive is unnecessary when bundles are used
+  to determine if a sentence is satisfied.</p>
+
+<p>The enclosed version of a bundle differs from the usual one in that
+  the message algebra is an initial algebra, and algebra variables
+  never occur.  Instead, logical variables often replace algebra
+  variables.  The advantage of eliminating algebra variables is there
+  is no need to specify the unification and matching algorithms used
+  by CPSA as PVS functions.  The use of an initial algebra makes is so
+  that PVS's built in unification and matching algorithms perform the
+  equivalent task.</p>
+
+<p>Replacing algebra variables by logical variables isn't always
+  straightforward.  Consider the situation for roles.  In CPSA, a role
+  includes a trace that is used as a template for strands instantiated
+  from the role.  In particular, the algebra variables in the trace
+  are mapped into messages in the strand to establish that the strand
+  is an instance of the given role.  The lack of algebra variables
+  makes the concept of role traces as a template unworkable.
+  The <tt>roles</tt> theory formalizes a role as a set of all possible
+  instantiations of the role.</p>
+
+<p>The recommended approach to the understanding theories within is to
+  begin with the <tt>blanchet</tt> theory with
+  [<a href="#arXiv.org:1204.0480">arXiv.org:1204.0480</a>] in view.
+  The theory first defines the roles in Blanchet's Simple Example
+  Protocol.  It then defines the shape analysis sentence produced by
+  CPSA as a result of a run from the responder's point-of-view.  Take
+  some time to compare this version of the sentence to the one in the
+  paper.</p>
+
+<p>The remainder of the theory proves that an underivable security
+  goal is in fact not satisfiable.  It does so by presenting a bundle
+  that serves as a counterexample.  That bundle is shown to satisfy
+  the hypothesis of the shape analysis sentence and the sentence
+  itself, so it is relevant.  Finally, the bundle is shown to model
+  the negation of the security goal.</p>
+
+<p>A short description of the other theories within follows.
+  The <tt>init_alg</tt> theory defines the initial algebra related to
+  the one in [<a href="#arXiv.org:1204.0480">arXiv.org:1204.0480</a>].
+  The <tt>traces</tt> theory defines a message event and sequences of
+  events.  It also defines the concept of message origination and
+  similar ideas.  The <tt>strand_spaces</tt> theory defines a Strand
+  Space as a finite sequence of traces, and the concept of an atom
+  that never originates within a Strand Space.  The <tt>bundles</tt>
+  theory defines a bundle and shows that an atom is never carried iff
+  it never originates.  The proof uses induction over the node
+  ordering relation implied by the bundle's before relation.  The
+  induction is well-founded because the underlying graph is acyclic.
+  The <tt>roles</tt> theory defines role traces as sets of instances
+  instead of templates as discussed above.  It also defines the notion
+  of a role assignment for a bundle.  The <tt>adversary</tt> theory
+  defines the adversary's roles.  It also specifies the adversary
+  derivability function associated with the initial algebra, however
+  this function is currently unused.  The remaining theories specify
+  finite strict orders and nonempty finite sequences.</p>
+
+<p>The current version of the theories provides no support for
+  listener strands.  In a framework in which bundles serves as models,
+  they are not needed.  One simply asserts the existences of nodes
+  that transmit desired values, and possibly orderings for those
+  nodes.</p>
+
+<h2>References</h2>
+
+<dl>
+  <dt id="arXiv.org:1204.0480">
+    <a href="http://arxiv.org/abs/1204.0480">arXiv.org:1204.0480</a>
+  </dt>
+  <dd>Ramsdell, John D.,
+    <em>Deducing Security Goals From Shape Analysis Sentences</em>,
+    April, 2011.
+  </dd>
+</dl>
+
+</body>
+</html>

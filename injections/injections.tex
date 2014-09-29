@@ -1,0 +1,205 @@
+\documentclass[12pt]{article}
+
+\newif\ifreleased
+\releasedtrue % \releasedfalse
+
+% For drafts:
+\ifreleased
+\else
+\pagestyle{myheadings}
+\markright{Draft of \today{}}
+\fi
+%\renewcommand{\pagename}{Draft of \today{}, Page}
+
+%\usepackage{graphics}
+%\usepackage[matrix,arrow,curve]{xy}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{url}
+\usepackage{hyperref}\hypersetup{colorlinks=true,}
+
+\newenvironment{note}{\begingroup\itshape}{\endgroup}
+\newcommand{\remark}[1]{\emph{[#1]}}
+\newtheorem{thm}{Theorem}
+\newtheorem{lem}{Lemma}
+\newtheorem{conj}[thm]{Conjecture}
+\newcommand{\cpsa}{\textsc{cpsa}}
+\newcommand{\pvs}{\textsc{pvs}}
+\newcommand{\cn}[1]{\ensuremath{\operatorname{\mathsf{#1}}}}
+\newcommand{\dom}[1]{\ensuremath{\operatorname{\mathbf{#1}}}}
+\newcommand{\fn}[1]{\ensuremath{\operatorname{\mathit{#1}}}}
+\newcommand{\srt}[1]{\ensuremath{\mathsf{#1}}}
+\newcommand{\typ}{\mathbin:}
+\newcommand{\sdom}{\fn{Dom}}
+\newcommand{\sran}{\fn{Ran}}
+\newcommand{\seq}[1]{\ensuremath{\langle#1\rangle}}
+\newcommand{\prefix}[2]{#1\mid#2}
+\newcommand{\append}{\cdot}
+\newcommand{\enc}[2]{\ensuremath{\{\!|#1|\!\}_{#2}}}
+\newcommand{\invk}[1]{{#1}^{-1}}
+\newcommand{\inbnd}{\mathord -}
+\newcommand{\outbnd}{\mathord +}
+\newcommand{\nat}{\ensuremath{\mathbb{N}}}
+\newcommand{\zed}{\ensuremath{\mathbb{Z}}}
+\newcommand{\all}[1]{\forall#1\mathpunct.}
+\newcommand{\some}[1]{\exists#1\mathpunct.}
+\newcommand{\funct}[1]{\lambda#1\mathpunct.}
+\newcommand{\dprod}[1]{\Pi_{(#1)}}
+\newcommand{\dpair}[1]{\Sigma_{(#1)}}
+\newcommand{\pow}[1]{\wp(#1)}
+
+\newcommand{\msg}{\ensuremath{\mathcal{M}}}
+\newcommand{\trc}{\ensuremath{\mathcal{T}}}
+\newcommand{\ssp}{\ensuremath{\mathcal{S}}}
+\newcommand{\bun}{\ensuremath{\mathcal{B}}}
+\newcommand{\strands}{\ensuremath{\mathcal{Z}}}
+%\newcommand{\nodes}{\ensuremath{\mathcal{N}}}
+\newcommand{\pos}{\ensuremath{\mathcal{P}}}
+
+\newcommand{\run}{\mathcal{R}}
+\newcommand{\pt}{\fn{pt}}
+\newcommand{\form}{\mathcal{K}}
+\newcommand{\sent}{\mathcal{S}}
+\newcommand{\lang}{\mathcal{L}}
+\newcommand{\interp}{\mathcal{I}}
+\newcommand{\alg}[1]{\ensuremath{\mathfrak#1}}
+\newcommand{\tr}{\ensuremath{\mathfrak C}}
+\newcommand{\rl}{\fn{rl}}
+\newcommand{\skel}{\mathsf{k}}
+\newcommand{\insta}{\mathsf{i}}
+\newcommand{\nodes}{\fn{nodes}}
+\newcommand{\evt}{\fn{evt}}
+\newcommand{\role}{\mathsf{r}}
+\newcommand{\orig}{\mathcal{O}}
+
+\newcommand{\boot}{\cn{b}}
+\newcommand{\extend}{\cn{ex}(\cn{d},\boot)}
+\newcommand{\tran}{\ensuremath{\tau}}
+\newcommand{\pth}{\ensuremath{\pi}}
+\newcommand{\type}{\ensuremath{\mathfrak T}}
+\newcommand{\up}{\mathord\uparrow}
+\newcommand{\down}{\mathord\downarrow}
+
+\title{Protocol Injections}
+\author{John D.\ Ramsdell}
+%\institute{The MITRE Corporation}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+
+\remark{Much more should be here someday.}
+
+\paragraph{Notation.}
+
+A finite sequence~$f$ is a function from an initial segment of the
+natural numbers.  The length of~$f$ is~$|f|$, and $f=\seq{f(0),\ldots,
+  f(n-1)}$ for $n=|f|$.  If~$S$ is a set, then~$S^\ast$ is the set of
+finite sequences over~$S$, and~$S^+$ is the non-empty finite sequences
+over~$S$.  The concatenation of sequences~$f_0$ and~$f_1$
+is~$f_0\append f_1$.  The prefix of sequence~$f$ of length~$n$
+is~$\prefix{f}{n}$.
+
+{\pvs} is based on classical, typed higher-order
+logic.  It has dependent types and parameterized theories.
+The dependent product type~$\dprod{x\in A}B(x)$ has the property that 
+$f\in\dprod{x\in A}B(x)$ implies that for~$x\in A$, $f(x)\in B(x)$.
+The dependent pair type~$\dpair{x\in A}B(x)$ has the property that 
+$(x,y)\in\dpair{x\in A}B(x)$ implies that~$x\in A$ and~$y\in B(x)$.
+
+\section{Strand Spaces}\label{sec:strand spaces}
+
+Based on~\cite{Ramsdell13}, this section describes the {\pvs}
+definition of strand spaces~\cite{ThayerHerzogGuttman99} in a style
+motivated by the {\pvs} language~\cite{cade92-pvs}, that is, the
+presentation attempts to minimize the gap between the actual proofs
+and this content.
+
+The parameters to the strand space theory are a set of messages
+(\msg), and a carried by relation
+(${\sqsubseteq}\subseteq\msg\times\msg$).
+
+The set of messages~{\msg} is often the carrier set of a message
+algebra.  Intuitively, a message~$m_0$ is carried by~$m_1$
+($m_0\sqsubseteq m_1$) if it is possible to extract~$m_0$ from~$m_1$.
+
+\paragraph{Strand Spaces.}
+A run of a protocol is viewed as an exchange of messages by a finite
+set of local sessions of the protocol.  Each local session is called a
+strand.  The behavior of a strand, its \emph{trace}, is a
+finite non-empty sequence of messaging events.  An \emph{event} is
+either a message transmission or a reception.  Outbound message
+$m\in\msg$ is written as~$\outbnd m$, and inbound message~$m$ is
+written as~$\inbnd m$.  The set of traces over $\msg$ is
+$\trc=(\pm\msg)^+$.  A message \emph{originates} in trace~$t$ at
+index~$i$ if it is carried by $t(i)$, $t(i)$ is outbound, and it is
+not carried by any event earlier in the trace.
+
+A \emph{strand space}~$s\in\ssp=\trc^+$ is a finite non-empty sequence
+of traces in $\trc$.  A \emph{strand}~$s$ is a member of the domain of
+$\ssp$, and its trace is $\ssp(s)$.  An atom~$t$ is
+\index{non-origination}\emph{non-originating} in a strand
+space~$\ssp$, written \index{non@\fn{non}}$\fn{non}(\ssp,t)$, if it
+originates on no strand.
+
+Message events occur at nodes in a strand space.  For each strand~$s$,
+there is a node for every event in~$\ssp(s)$.  The
+\index{nodes}\emph{nodes} of strand space $\ssp$ are $\{(s,i)\mid
+s\in\sdom(\ssp), 0\leq i < |\ssp(s)|\}$, and the event at a node
+is $\evt_\ssp(s,i)=\ssp(s)(i)$.  A node names an event in a strand
+space.  The relation~$\Rightarrow$ defined by
+$\{(s,i-1)\Rightarrow(s,i)\mid s\in\sdom(\ssp), 1\leq
+i<|\ssp(s)|\}$ is called the \index{strand succession}\emph{strand
+  succession relation}.  An atom~$t$ \index{unique
+  origination}\emph{uniquely originates} in a strand space~$\ssp$ at
+node~$n$, written \index{uniq@\fn{uniq}}$\fn{uniq}(\ssp,t,n)$, if it
+originates in the trace of exactly one strand~$s$ at index~$i$, and
+$n=(s,i)$.
+
+\paragraph{Bundles.}
+The pair $\bun=(\ssp,\to)$ is a \index{bundle}\emph{bundle} if
+it defines a directed acyclic graph, where the vertices are the nodes
+of $\ssp$, and an edge represents communication~($\rightarrow$) or
+strand succession~($\Rightarrow$) in~$\ssp$.  For communication, if
+$n_0\rightarrow n_1$, then there is a message~$t$ such
+that~$\evt_\ssp(n_0)=\outbnd t$ and~$\evt_\ssp(n_1)=\inbnd t$.
+For each reception node~$n_1$, there is a unique transmission
+node~$n_0$ with $n_0\rightarrow n_1$.
+
+Each acyclic graph has a transitive irreflexive
+relation~$\prec$\index{precedes@$\prec$~(precedes)} on its vertices.
+The relation specifies the causal ordering of nodes in a bundle.  A
+transitive irreflexive binary relation is also called a strict order.
+
+\paragraph{Runs of Protocols.}
+In a run of a protocol, the behavior of each strand is constrained by
+a role in a protocol.  Adversarial strands are constrained by roles as
+are non-adversarial strands.  A \index{role}\emph{role} is a set of
+\emph{role items} of the form $\role(C,N,U)$, where $C\in\trc$,
+$N\in\pow{\msg}^+$, $U\in\pow{\msg}^+$, and the lengths of $C$,
+$N$, and $U$ agree.  The trace of the role item is~$C$, its
+non-origination assumptions are~$N$, and its unique origination
+assumptions are~$U$.  A strand is an instance of a role item in a
+strand space, written $\fn{inst}(\ssp,s,\role(C,N,U))$, if for
+$h=|\ssp(s)|$,
+\begin{enumerate}
+\item $h\leq|C|$,
+\item $\prefix{C}{h}=\ssp(s)$,
+\item for all $i<h$, $t\in N(i)$ implies $\fn{non}(\ssp,t)$, and
+\item for all $i<h$, $t\in U(i)$ implies $\fn{uniq}(\ssp,t,(s,i))$.
+\end{enumerate}
+
+A \index{protocol}\emph{protocol} is a set of roles.  A
+bundle~$\bun=(\ssp,\to)$ is a \index{run of protocol}\emph{run of
+  protocol} $P$ if there is a role assignment
+$\rl\typ\sdom(\ssp)\to P$ such that for each $s\in\sdom(\ssp)$,
+there exists $\role(C,N,U)\in\rl(s)$ such that
+\index{inst@\fn{inst}}$\fn{inst}(\ssp,s,\role(C,N,U))$.  Let~$\run_P$ be
+the set of bundles that are runs of protocol~$P$.
+
+\bibliography{secureprotocols}
+\bibliographystyle{plain}
+
+\end{document}

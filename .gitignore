@@ -1,0 +1,12 @@
+*.mp?
+*.aux
+*.out
+*.toc
+*.log
+*.bbl
+*.blg
+*.bak
+*.prf~
+orphaned-proofs.prf
+.pvscontext
+pvsbin

@@ -62,4 +62,25 @@ begin
     endif
     measure m by <<
 
+  same_form?(m0, m1: mesg): recursive bool =
+    cases m0 of
+      pr(f0, s0):
+        cases m1 of
+          pr(f1, s1):
+            same_form?(f0, f1) and same_form?(s0, s1)
+          else
+            false
+          endcases,
+      en(t0, k0):
+        cases m1 of
+          en(t1, k1):
+            same_form?(t0, t1) and same_form?(k0, k1)
+          else
+            false
+          endcases
+      else
+        not pair?(m1) and not enc?(m1)
+    endcases
+    measure m0 by <<
+
 end positions

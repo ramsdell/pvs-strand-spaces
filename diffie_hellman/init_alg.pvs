@@ -61,7 +61,7 @@ begin
     dt(n: nat): data? : data
     tg(n: nat): tag?: tag
     pr(fst: mesg, snd: mesg): pair? : cmpd
-    en(plt: mesg, key: key): enc? : cmpd
+    en(plt: mesg, key: ky): enc? : cmpd
   end mesg
 
   base: type = (base?)

@@ -35,7 +35,7 @@ begin
     dt(n: nat): data? : data
     tg(n: nat): tag?: tag
     pr(fst: mesg, snd: mesg): pair? : cmpd
-    en(plt: mesg, key: key): enc? : cmpd
+    en(plt: mesg, ky: key): enc? : cmpd
   end mesg
 
   % Keys are further classified as being symmetric or asymmetric.

@@ -86,7 +86,7 @@ begin
               (m: (pub)): bool =
     enc?(m) and
     not member(plt(m), pub) and
-    buildable?(pub, avd, invk(key(m)))
+    buildable?(pub, avd, invk(ky(m)))
 
   % Functions used to show recursive function deriv? in total.
 

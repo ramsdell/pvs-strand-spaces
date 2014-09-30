@@ -18,7 +18,7 @@ begin
 
   asymkey: datatype
   begin
-    asym(n: nat): asymkey?
+    asym(n: nat): asymkey?         % Variable of sort akey
     invert(n: asymkey): invkey?
   end asymkey
 
@@ -33,14 +33,14 @@ begin
   mesg: datatype with subtypes key, text, data, tag, cmpd
   begin
     ak(kk: asymkey): akey? : key
-    sk(n: nat): skey? : key
+    sk(n: nat): skey? : key        % Variable of sort skey
     hs(n: mesg): hash? : key
-    tx(n: nat): text? : text
-    dt(n: nat): data? : data
+    tx(n: nat): text? : text       % Variable of sort text
+    dt(n: nat): data? : data       % Variable of sort data
     tg(n: nat): tag?: tag          % Tag constants
     vm(n: nat): mvar? : cmpd       % Variable of sort message
     pr(fst: mesg, snd: mesg): pair? : cmpd
-    en(plt: mesg, key: key): enc? : cmpd
+    en(plt: mesg, ky: key): enc? : cmpd
   end mesg
 
   % Keys are further classified as being symmetric or asymmetric.
@@ -127,6 +127,10 @@ begin
     forall(x: vari, s: subst):
       akey?(x) implies akey?(lookup(x, s))
 
+  lookup_skey: lemma
+    forall(x: vari, s: subst):
+      skey?(x) implies skey?(lookup(x, s))
+
   subst_akey(k: asymkey, s: subst): recursive (akey?) =
     cases k of
       asym(n): lookup(ak(k), s),
@@ -141,7 +145,7 @@ begin
     endcases
     measure k by <<
 
-  subst(m: mesg, s: subst): recursive mesg =
+  subst(m: mesg, s: subst): recursive {x: mesg | key(m) implies key(x)} =
     if akey?(m) then
       subst_akey(kk(m), s)
     elsif vari?(m) then
@@ -151,7 +155,7 @@ begin
     elsif pair?(m) then
       pr(subst(fst(m), s), subst(snd(m), s))
     elsif enc?(m) then
-      en(subst(plt(m), s), subst(key(m), s))
+      en(subst(plt(m), s), subst(ky(m), s))
     else
       hs(subst(n(m), s))
     endif

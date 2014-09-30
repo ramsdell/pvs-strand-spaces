@@ -59,12 +59,14 @@ begin
 
   invk_akey: lemma forall(n: nat): invk(ak(n)) = ik(n)
   invk_ikey: lemma forall(n: nat): invk(ik(n)) = ak(n)
-  invk_skey: lemma forall(n: nat): invk(sk(n)) = sk(n)
-  invk_hash: lemma forall(n: mesg): invk(hs(n)) = hs(n)
+  invk_skey: lemma forall(k: skey): invk(k) = k
+  invk_hash: lemma forall(h: (hash?)): invk(h) = h
 
   auto_rewrite+ invk_akey, invk_ikey, invk_skey, invk_hash
 
   invk_invk_identity: theorem forall(k: key): invk(invk(k)) = k
+
+  auto_rewrite+ invk_invk_identity
 
   invk_bijective: theorem bijective?(invk)
 

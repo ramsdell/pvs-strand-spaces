@@ -1,0 +1,160 @@
+% Message algebra as a free algebra
+
+% John D. Ramsdell -- The MITRE Corporation -- September 2014
+
+% This algebra is a simplification of the Basic Crypto Algebra in
+% which the sorts name has been dropped, tags have there own sort.
+% Base sorted messages are called atoms, and in this specification,
+% atom was used for the sort instead of base.
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+free_alg: theory
+begin
+
+  % Asymmetric keys
+
+  asymkey: datatype
+  begin
+    asym(n: nat): asymkey?
+    invert(n: asymkey): invkey?
+  end asymkey
+
+  invert_ax: axiom
+    forall(k: asymkey):
+      invert(invert(k)) = k
+
+  % The top algebra sort is mesg, and the base sorts are akey, skey,
+  % text, and data.  When specifying CPSA roles or shape analysis
+  % sentences, use only these sorts.  Subsort cmpd is for compound
+  % messages and is not used.
+  mesg: datatype with subtypes key, text, data, tag, cmpd
+  begin
+    ak(kk: asymkey): akey? : key
+    sk(n: nat): skey? : key
+    hs(n: mesg): hash? : key
+    tx(n: nat): text? : text
+    dt(n: nat): data? : data
+    tg(n: nat): tag?: tag          % Tag constants
+    vm(n: nat): mvar? : cmpd       % Variable of sort message
+    pr(fst: mesg, snd: mesg): pair? : cmpd
+    en(plt: mesg, key: key): enc? : cmpd
+  end mesg
+
+  % Keys are further classified as being symmetric or asymmetric.
+
+  % Symmetric keys
+  skey: type = (skey?)
+
+  % Asymmetric keys
+  akey: type = (akey?)
+
+  % The inverse of a key
+  invk(k: key): key =
+    cases k of
+      ak(a): ak(invert(a)),
+      sk(n): sk(n),
+      hs(n): hs(n)
+    endcases
+
+  invk_skey: lemma forall(k: skey): invk(k) = k
+  invk_hash: lemma forall(h: (hash?)): invk(h) = h
+
+  auto_rewrite+ invk_skey, invk_hash
+
+  invk_invk_identity: theorem forall(k: key): invk(invk(k)) = k
+
+  auto_rewrite+ invk_invk_identity
+
+  not_akey_invk_identity: theorem
+    forall(k: key): akey?(k) or invk(k) = k
+
+  % Atoms are the non-compound terms omitting hashing.
+  atom?(x: mesg): bool =
+    akey?(x) or skey?(x) or text?(x) or data?(x)
+  % This type is call base in other documents.
+  atom: type = (atom?)
+  judgement akey subtype_of atom
+  judgement skey subtype_of atom
+  judgement text subtype_of atom
+  judgement data subtype_of atom
+
+  % Is message x carried by message y?
+  carried_by?(x, y: mesg): recursive bool =
+  x = y or
+  cases y of
+    pr(f, s): carried_by?(x, f) or carried_by?(x, s),
+    en(p, k): carried_by?(x, p)
+  else false
+  endcases
+  measure y by <<
+
+  % Variables
+
+  vari?(m: mesg): bool =
+    akey?(m) and asymkey?(kk(m)) or
+    skey?(m) or text?(m) or data?(m) or mvar?(m)
+
+  vari: type = (vari?)
+
+  % Sort reserving mapping
+
+  mapping?(x: vari, m: mesg): bool =
+    akey?(x) and akey?(m) or
+    skey?(x) and skey?(m) or
+    text?(x) and text?(m) or
+    data?(x) and data?(m) or
+    mvar?(x)
+
+  subst: type = list[(mapping?)]
+
+  lookup(x: vari, s: subst): recursive mesg =
+    cases s OF
+      null: x,
+      cons(p, r):
+        let (y, m) = p in
+        if x = y then
+          m
+        else
+          lookup(x, r)
+        endif
+    endcases
+    measure length(s)
+
+  lookup_akey: lemma
+    forall(x: vari, s: subst):
+      akey?(x) implies akey?(lookup(x, s))
+
+  subst_akey(k: asymkey, s: subst): recursive (akey?) =
+    cases k of
+      asym(n): lookup(ak(k), s),
+      invert(k0):
+        cases subst_akey(k0, s) of
+          ak(k1):
+            cases k1 of
+              asym(n): ak(invert(asym(n))),
+              invert(k2): ak(k2)
+            endcases
+        endcases
+    endcases
+    measure k by <<
+
+  subst(m: mesg, s: subst): recursive mesg =
+    if akey?(m) then
+      subst_akey(kk(m), s)
+    elsif vari?(m) then
+      lookup(m, s)
+    elsif tag?(m) then
+      m
+    elsif pair?(m) then
+      pr(subst(fst(m), s), subst(snd(m), s))
+    elsif enc?(m) then
+      en(subst(plt(m), s), subst(key(m), s))
+    else
+      hs(subst(n(m), s))
+    endif
+    measure m by <<
+
+end free_alg

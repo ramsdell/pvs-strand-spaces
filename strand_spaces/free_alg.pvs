@@ -190,6 +190,73 @@ begin
     endif
     measure m by <<
 
+  % Matching
+
+  find(x: vari, s: subst): recursive lift[mesg] =
+    cases s of
+      null: bottom,
+      cons(p, r):
+        let (y, m) = p in
+        if x = y then
+          up(m)
+        else
+          find(x, r)
+        endif
+    endcases
+    measure length(s)
+
+  match_akey(p, t: asymkey, s: subst): recursive lift[subst] =
+    cases p of
+      asym(n):
+        cases find(ak(p), s) of
+          bottom: up(cons((ak(p), ak(t)), s)),
+          up(m): if m = ak(t) then up(s) else bottom endif
+        endcases,
+      invert(k):
+        if asymkey?(t) then
+          match_akey(k, invert(t), s)
+        else
+          match_akey(k, n(t), s)
+        endif
+    endcases
+    measure p by <<
+
+  match(p, t: mesg , s: subst): recursive lift[subst] =
+    if akey?(p) and akey?(t) then
+      match_akey(kk(p), kk(t), s)
+    elsif vari?(p) then
+      if mapping?(p, t) then
+        cases find(p, s) of
+          bottom: up(cons((p, t), s)),
+          up(m): if m = t then up(s) else bottom endif
+        endcases
+      else
+        bottom
+      endif
+    elsif tag?(p) then
+      if p = t then up(s) else bottom endif
+    elsif pair?(p) and pair?(t) then
+      cases match(fst(p), fst(t), s) of
+        bottom: bottom,
+        up(u): match(snd(p), snd(t), u)
+      endcases
+    elsif enc?(p) and enc?(t) then
+      cases match(plt(p), plt(t), s) of
+        bottom: bottom,
+        up(u): match(ky(p), ky(t), u)
+      endcases
+    elsif hash?(p) and hash?(t) then
+      match(n(p), n(t), s)
+    else
+      bottom
+    endif
+    measure p by <<
+
+  match_subst: lemma
+    forall(x, y: mesg, s: subst):
+      let t = match(x, y, s) in
+      up?(t) implies subst(x, down(t)) = y
+
   % Positions
 
   % The direction when traversing a binary term

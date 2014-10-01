@@ -139,7 +139,7 @@
      |real_props| NIL)
     (IMPLIES CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (|encode_injective| FORMULA-DECL NIL |annotated_roles| NIL)
-    (|key| ADT-ACCESSOR-DECL "[(enc?) -> key]" |init_alg| "../strand_spaces/")
+    (|ky| ADT-ACCESSOR-DECL "[(enc?) -> key]" |init_alg| "../strand_spaces/")
     (|zero| CONST-DECL "tag" |annotated_roles| NIL)
     (|plt| ADT-ACCESSOR-DECL "[(enc?) -> mesg]" |init_alg| "../strand_spaces/")
     (|tg| ADT-CONSTRUCTOR-DECL "[nat -> (tag?)]" |init_alg|
@@ -1033,7 +1033,7 @@
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
     (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
-    (|key| ADT-ACCESSOR-DECL "[(enc?) -> key]" |init_alg| "../strand_spaces/")
+    (|ky| ADT-ACCESSOR-DECL "[(enc?) -> key]" |init_alg| "../strand_spaces/")
     (|zero| CONST-DECL "tag" |annotated_roles| NIL)
     (|plt| ADT-ACCESSOR-DECL "[(enc?) -> mesg]" |init_alg| "../strand_spaces/")
     (|key| ADT-DEF-DECL "boolean" |init_alg| "../strand_spaces/")
@@ -2311,7 +2311,7 @@
     (|hash?| ADT-RECOGNIZER-DECL "[mesg -> boolean]" |init_alg|
      "../strand_spaces/")
     (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
-    (|key| ADT-ACCESSOR-DECL "[(enc?) -> key]" |init_alg| "../strand_spaces/")
+    (|ky| ADT-ACCESSOR-DECL "[(enc?) -> key]" |init_alg| "../strand_spaces/")
     (|tg| ADT-CONSTRUCTOR-DECL "[nat -> (tag?)]" |init_alg|
      "../strand_spaces/")
     (|plt| ADT-ACCESSOR-DECL "[(enc?) -> mesg]" |init_alg| "../strand_spaces/")

@@ -584,7 +584,7 @@
     (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (|plt| ADT-ACCESSOR-DECL "[(enc?) -> mesg]" |init_alg| "../strand_spaces/")
     (|epsilon| CONST-DECL "T" |epsilons| NIL)
-    (|key| ADT-ACCESSOR-DECL "[(enc?) -> key]" |init_alg| "../strand_spaces/")
+    (|ky| ADT-ACCESSOR-DECL "[(enc?) -> key]" |init_alg| "../strand_spaces/")
     (|fst| ADT-ACCESSOR-DECL "[(pair?) -> mesg]" |init_alg|
      "../strand_spaces/")
     (|snd| ADT-ACCESSOR-DECL "[(pair?) -> mesg]" |init_alg|
@@ -1001,7 +1001,7 @@
      "../strand_spaces/")
     (|tg| ADT-CONSTRUCTOR-DECL "[nat -> (tag?)]" |init_alg|
      "../strand_spaces/")
-    (|key| ADT-ACCESSOR-DECL "[(enc?) -> key]" |init_alg| "../strand_spaces/")
+    (|ky| ADT-ACCESSOR-DECL "[(enc?) -> key]" |init_alg| "../strand_spaces/")
     (|state| DEF-DECL "lift[state]" |annotated_roles| NIL)
     (|nil| CONST-DECL "bool" |annotated_roles| NIL)
     (|lift| TYPE-DECL NIL |lift_adt| NIL)
@@ -1206,7 +1206,7 @@
     (- CONST-DECL "[numfield, numfield -> numfield]" |number_fields| NIL)
     (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
      |real_props| NIL)
-    (|key| ADT-ACCESSOR-DECL "[(enc?) -> key]" |init_alg| "../strand_spaces/")
+    (|ky| ADT-ACCESSOR-DECL "[(enc?) -> key]" |init_alg| "../strand_spaces/")
     (|zero| CONST-DECL "tag" |annotated_roles| NIL)
     (|tag| TYPE-EQ-DECL NIL |init_alg| "../strand_spaces/")
     (|tag?| ADT-RECOGNIZER-DECL "[mesg -> boolean]" |init_alg|

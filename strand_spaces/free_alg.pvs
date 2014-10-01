@@ -205,6 +205,10 @@ begin
     endcases
     measure length(s)
 
+  find_lookup: lemma
+    forall(x: vari, s: subst):
+      up?(find(x, s)) implies down(find(x, s)) = lookup(x, s)
+
   match_akey(p, t: asymkey, s: subst): recursive lift[subst] =
     cases p of
       asym(n):
@@ -220,6 +224,15 @@ begin
         endif
     endcases
     measure p by <<
+
+  match_akey_invert: lemma
+    forall(x, y: asymkey, s: subst):
+      match_akey(invert(x), y, s) = match_akey(x, invert(y), s)
+
+  match_akey_subst: lemma
+    forall(x, y: asymkey, s: subst):
+      let t = match_akey(x, y, s) in
+      up?(t) implies subst(ak(x), down(t)) = ak(y)
 
   match(p, t: mesg , s: subst): recursive lift[subst] =
     if akey?(p) and akey?(t) then

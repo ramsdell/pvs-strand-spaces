@@ -229,10 +229,14 @@ begin
     forall(x, y: asymkey, s: subst):
       match_akey(invert(x), y, s) = match_akey(x, invert(y), s)
 
+  auto_rewrite+ match_akey_invert
+
   match_akey_subst: lemma
     forall(x, y: asymkey, s: subst):
       let t = match_akey(x, y, s) in
-      up?(t) implies subst(ak(x), down(t)) = ak(y)
+      up?(t) implies subst_akey(x, down(t)) = ak(y)
+
+  auto_rewrite- match_akey_invert
 
   match(p, t: mesg , s: subst): recursive lift[subst] =
     if akey?(p) and akey?(t) then
@@ -264,6 +268,18 @@ begin
       bottom
     endif
     measure p by <<
+
+  match_subst_var: lemma
+    forall(x: vari, y: mesg, s: subst):
+      let t = match(x, y, s) in
+      up?(t) implies subst(x, down(t)) = y
+
+  match_match_subst: lemma
+    forall(v, w, x, y: mesg, s: subst):
+      let t = match(v, w, s) in
+      up?(t) implies
+        let u = match(x, y, down(t)) in
+        up?(u) implies subst(v, down(u)) = w
 
   match_subst: lemma
     forall(x, y: mesg, s: subst):

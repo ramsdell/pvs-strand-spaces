@@ -99,6 +99,24 @@ begin
 
   vari: type = (vari?)
 
+  akey_var(k: asymkey): recursive (asymkey?) =
+    cases k of
+      invert(k0): akey_var(k0)
+      else k
+    endcases
+    measure k by <<
+
+  % The set of variables in a message
+  vars(m: mesg)(x: vari): recursive bool =
+    x = m or
+    cases m of
+      pr(f, s): vars(f)(x) or vars(s)(x),
+      en(t, k): vars(t)(x) or vars(k)(x),
+      hs(n): vars(n)(x)
+      else akey?(m) and x = ak(akey_var(kk(m)))
+    endcases
+    measure m by <<
+
   % Sort reserving mapping
 
   mapping?(x: vari, m: mesg): bool =
@@ -108,10 +126,21 @@ begin
     data?(x) and data?(m) or
     mvar?(x)
 
+  % Substitutions
+
   subst: type = list[(mapping?)]
 
+  % The domain of a substitution
+  dom(s: subst)(x: vari): recursive bool =
+    cases s of
+      null: false,
+      cons(p, r):
+        x = p`1 or dom(r)(x)
+    endcases
+    measure length(s)
+
   lookup(x: vari, s: subst): recursive mesg =
-    cases s OF
+    cases s of
       null: x,
       cons(p, r):
         let (y, m) = p in
@@ -159,6 +188,84 @@ begin
     else
       hs(subst(n(m), s))
     endif
+    measure m by <<
+
+  % Positions
+
+  % The direction when traversing a binary term
+  direction: datatype
+  begin
+    left: left?
+    right: right?
+  end direction
+
+  pre_position: type = list[direction]
+
+  akey_position?(k: asymkey)(p: pre_position): recursive bool =
+    cases p of
+      null: true,
+      cons(d, r):
+        cases k of
+          invert(k0): d = left and akey_position?(k0)(r)
+          else false
+        endcases
+    endcases
+    measure k by <<
+  
+  % A position navigates through binary terms to denote a term  
+  position?(m: mesg)(p: pre_position): recursive bool =
+    cases p of
+      null: true,
+      cons(d, r):
+        cases m of
+          pr(f, s):
+            cases d of
+  	      left: position?(f)(r),
+	      right: position?(s)(r)
+            endcases,
+          en(t, k):
+            cases d of
+	      left: position?(t)(r),
+	      right: position?(k)(r)
+            endcases,
+          hs(t):
+            d = left and position?(t)(r)
+          else
+            akey?(m) and akey_position?(kk(m))(p)
+        endcases
+    endcases
+    measure m by <<
+
+  position(m: mesg): type = (position?(m))
+
+  akey_term_at(k: asymkey, p: (akey_position?(k))): recursive asymkey =
+    cases p of
+      null: k,
+      cons(d, r): akey_term_at(n(k), r)
+    endcases
+    measure k by <<
+
+  % The term at a given position
+  term_at(m: mesg, p: position(m)): recursive mesg =
+    cases p of
+      null: m,
+      cons(d, r):
+        cases m of
+          pr(f, s):
+            cases d of
+   	      left: term_at(f, r),
+	      right: term_at(s, r)
+            endcases,
+          en(t, k):
+            cases d of
+	      left: term_at(t, r),
+	      right: term_at(k, r)
+            endcases,
+          hs(t): term_at(t, r)
+          else
+            ak(akey_term_at(kk(m), p))
+        endcases
+    endcases
     measure m by <<
 
 end free_alg

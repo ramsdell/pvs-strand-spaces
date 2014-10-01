@@ -3421,7 +3421,7 @@
     (|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
      NIL)
     (|odd_plus_even_is_odd| APPLICATION-JUDGEMENT "odd_int" |integers| NIL)
-    (|key| ADT-ACCESSOR-DECL "[(enc?) -> key]" |init_alg| "../strand_spaces/")
+    (|ky| ADT-ACCESSOR-DECL "[(enc?) -> key]" |init_alg| "../strand_spaces/")
     (|plt| ADT-ACCESSOR-DECL "[(enc?) -> mesg]" |init_alg| "../strand_spaces/")
     (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (|n| ADT-ACCESSOR-DECL "[key -> mesg]" |init_alg| "../strand_spaces/")

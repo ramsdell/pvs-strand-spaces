@@ -1751,8 +1751,6 @@
       NIL))
     NIL)
    ((NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
-    (|int_min| APPLICATION-JUDGEMENT "{k: int | k <= i AND k <= j}" |real_defs|
-     NIL)
     (|ca| CONST-DECL "akey" |blanchet| NIL)
     (|cb| CONST-DECL "akey" |blanchet| NIL)
     (|cs| CONST-DECL "skey" |blanchet| NIL)
@@ -1779,6 +1777,8 @@
     (|pre_cbu| CONST-DECL "pre_bundle" |blanchet| NIL)
     (|originates_index?| CONST-DECL "bool" |traces| "../strand_spaces/")
     (|originates_at?| CONST-DECL "bool" |strand_spaces| "../strand_spaces/")
+    (|int_min| APPLICATION-JUDGEMENT "{k: int | k <= i AND k <= j}" |real_defs|
+     NIL)
     (|posint_min| APPLICATION-JUDGEMENT "{k: posint | k <= i AND k <= j}"
      |real_defs| NIL)
     (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
@@ -3010,7 +3010,7 @@
     (|key| ADT-DEF-DECL "boolean" |init_alg| "../strand_spaces/")
     (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (|plt| ADT-ACCESSOR-DECL "[(enc?) -> mesg]" |init_alg| "../strand_spaces/")
-    (|key| ADT-ACCESSOR-DECL "[(enc?) -> key]" |init_alg| "../strand_spaces/")
+    (|ky| ADT-ACCESSOR-DECL "[(enc?) -> key]" |init_alg| "../strand_spaces/")
     (|hs| ADT-CONSTRUCTOR-DECL "[mesg -> (hash?)]" |init_alg|
      "../strand_spaces/")
     (|sk| ADT-CONSTRUCTOR-DECL "[nat -> (skey?)]" |init_alg|

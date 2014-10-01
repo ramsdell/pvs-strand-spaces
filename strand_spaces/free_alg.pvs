@@ -274,10 +274,11 @@ begin
       let t = match(x, y, s) in
       up?(t) implies subst(x, down(t)) = y
 
+  %%%%%% NOT PROVED
   match_match_subst: lemma
     forall(v, w, x, y: mesg, s: subst):
       let t = match(v, w, s) in
-      up?(t) implies
+      up?(t) and subst(v, down(t)) = w implies
         let u = match(x, y, down(t)) in
         up?(u) implies subst(v, down(u)) = w
 

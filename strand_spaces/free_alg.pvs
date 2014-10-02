@@ -209,6 +209,8 @@ begin
     forall(x: vari, s: subst):
       up?(find(x, s)) implies down(find(x, s)) = lookup(x, s)
 
+  auto_rewrite+ find_lookup
+
   match_akey(p, t: asymkey, s: subst): recursive lift[subst] =
     cases p of
       asym(n):
@@ -235,6 +237,13 @@ begin
     forall(x, y: asymkey, s: subst):
       let t = match_akey(x, y, s) in
       up?(t) implies subst_akey(x, down(t)) = ak(y)
+
+  match_match_akey: lemma
+    forall(v, w, x, y: asymkey, s: subst):
+      let t = match_akey(v, w, s) in
+      up?(t) and subst(ak(v), down(t)) = ak(w) implies
+        let u = match_akey(x, y, down(t)) in
+        up?(u) implies subst(ak(v), down(u)) = ak(w)
 
   auto_rewrite- match_akey_invert
 
@@ -269,11 +278,21 @@ begin
     endif
     measure p by <<
 
-  match_subst_var: lemma
-    forall(x: vari, y: mesg, s: subst):
-      let t = match(x, y, s) in
-      up?(t) implies subst(x, down(t)) = y
+  match_match_subst_var_var: lemma
+    forall(v: vari, w: mesg, x: vari, y: mesg, s: subst):
+      let t = match(v, w, s) in
+      up?(t) and subst(v, down(t)) = w implies
+        let u = match(x, y, down(t)) in
+        up?(u) implies subst(v, down(u)) = w
 
+  match_match_subst_var: lemma
+    forall(v, w: mesg, x: vari, y: mesg, s: subst):
+      let t = match(v, w, s) in
+      up?(t) and subst(v, down(t)) = w implies
+        let u = match(x, y, down(t)) in
+        up?(u) implies subst(v, down(u)) = w
+
+  auto_rewrite- find_lookup
   %%%%%% NOT PROVED
   match_match_subst: lemma
     forall(v, w, x, y: mesg, s: subst):
@@ -281,6 +300,11 @@ begin
       up?(t) and subst(v, down(t)) = w implies
         let u = match(x, y, down(t)) in
         up?(u) implies subst(v, down(u)) = w
+
+  match_subst_var: lemma
+    forall(x: vari, y: mesg, s: subst):
+      let t = match(x, y, s) in
+      up?(t) implies subst(x, down(t)) = y
 
   match_subst: lemma
     forall(x, y: mesg, s: subst):

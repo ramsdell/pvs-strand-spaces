@@ -285,15 +285,8 @@ begin
         let u = match(x, y, down(t)) in
         up?(u) implies subst(v, down(u)) = w
 
-  match_match_subst_var: lemma
-    forall(v, w: mesg, x: vari, y: mesg, s: subst):
-      let t = match(v, w, s) in
-      up?(t) and subst(v, down(t)) = w implies
-        let u = match(x, y, down(t)) in
-        up?(u) implies subst(v, down(u)) = w
-
-  %%%%%% NOT PROVED
-  match_match_subst: lemma
+  %%%%%% NOT PROVED!!!
+  match_match_subst: axiom
     forall(v, w, x, y: mesg, s: subst):
       let t = match(v, w, s) in
       up?(t) and subst(v, down(t)) = w implies

@@ -17,18 +17,20 @@ begin
 
   assumptions: type = nonempty_finite_sequence[setof[atom]]
 
-  pre_role: type = [# trace:   trace,
-                      rnon:    {c: assumptions |  % Non-origination
-                                length(c) = length(trace)},
-                      runique: {c: assumptions |  % Unique origination
-                                length(c) = length(trace)} #]
-
   % Ensure all variables of sort message are acquired
   all_acquired?(c: trace): bool =
     forall(x: (param?(c))):
       mvar?(x) implies 
         exists(i: index(c)): 
           acquired_index?(c, x, i)
+
+  role_trace: type = (all_acquired?)
+
+  pre_role: type = [# trace:   role_trace,
+                      rnon:    {c: assumptions |  % Non-origination
+                                length(c) = length(trace)},
+                      runique: {c: assumptions |  % Unique origination
+                                length(c) = length(trace)} #]
 
   % Variables in a non occur in the prefix
   all_non_vars_occur?(r: pre_role): bool =
@@ -45,7 +47,6 @@ begin
         originates_index?(r`trace, x, i)
 
   role?(r: pre_role): bool =
-    all_acquired?(r`trace) and
     all_non_vars_occur?(r) and
     all_uniq_orig?(r)
 
@@ -77,7 +78,7 @@ begin
       empty?(no_assumptions(n)(i))
 
   % A simple role item has only a trace
-  simple_role(c: (all_acquired?)): role =
+  simple_role(c: role_trace): role =
     (# trace   := c,
        rnon    := no_assumptions(c`length),
        runique := no_assumptions(c`length) #)
@@ -99,7 +100,7 @@ begin
      endcases
 
   simple_inst: lemma
-    forall(ss: strand_space, z: strand(ss), c: (all_acquired?)):
+    forall(ss: strand_space, z: strand(ss), c: role_trace):
       inst(ss)(z, simple_role(c)) iff
         length(ss(z)) <= length(c) and
         up?(instance(c, ss(z)))

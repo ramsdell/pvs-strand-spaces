@@ -352,8 +352,6 @@
     NIL)
    ((|role?| CONST-DECL "bool" |roles| NIL)
     (|all_uniq_orig?| CONST-DECL "bool" |roles| NIL)
-    (|i| SKOLEM-CONST-DECL "index[setof[atom]](no_assumptions(c`length))"
-     |roles| NIL)
     (|all_non_vars_occur?| CONST-DECL "bool" |roles| NIL)
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
@@ -393,9 +391,6 @@
     (|member| CONST-DECL "bool" |sets| NIL)
     (|empty?| CONST-DECL "bool" |sets| NIL)
     (|no_assumptions_length| FORMULA-DECL NIL |roles| NIL)
-    (|i| SKOLEM-CONST-DECL "index[setof[atom]](no_assumptions(c`length))"
-     |roles| NIL)
-    (|c| SKOLEM-CONST-DECL "(all_acquired?)" |roles| NIL)
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
     (|has_empty_assumptions| FORMULA-DECL NIL |roles| NIL))
@@ -408,7 +403,6 @@
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
     (|mapping?| CONST-DECL "bool" |free_alg| NIL)
-    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|vari| TYPE-EQ-DECL NIL |free_alg| NIL)
@@ -502,6 +496,7 @@
     (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL)
     (|strand| NONEMPTY-TYPE-EQ-DECL NIL |strand_spaces| NIL)
     (|strand_space| TYPE-EQ-DECL NIL |strand_spaces| NIL)
+    (|role_trace| TYPE-EQ-DECL NIL |roles| NIL)
     (|all_acquired?| CONST-DECL "bool" |roles| NIL)
     (|trace| TYPE-EQ-DECL NIL |traces| NIL)
     (|event| TYPE-DECL NIL |traces| NIL)
@@ -557,7 +552,7 @@
     (|bundle?| CONST-DECL "bool" |bundles| NIL)
     (|bundle| TYPE-EQ-DECL NIL |bundles| NIL)
     (|strand| NONEMPTY-TYPE-EQ-DECL NIL |strand_spaces| NIL)
-    (|trace| TYPE-EQ-DECL NIL |traces| NIL)
+    (|role_trace| TYPE-EQ-DECL NIL |roles| NIL)
     (|below| TYPE-EQ-DECL NIL |nat_types| NIL)
     (|mesg| TYPE-DECL NIL |free_alg| NIL)
     (|atom?| CONST-DECL "bool" |free_alg| NIL)

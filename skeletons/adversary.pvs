@@ -12,7 +12,7 @@ begin
 
   importing roles
 
-  % The five adversary roles
+  % The five classes of adversary roles
 
   % Create an atom
 
@@ -32,6 +32,15 @@ begin
 
   % What to do about tags?
 
+  create_tag(n: nat): role =
+    simple_role(singleton_seq(send(tg(n))))
+
+  % Here are a few create tag roles
+
+  create_tag0: role = create_tag(0)
+  create_tag1: role = create_tag(1)
+  create_tag2: role = create_tag(2)
+  
   % create_tag(x: tag): role =
   %   simple_role(singleton_seq(send(x)))
 
@@ -76,29 +85,43 @@ begin
       tripleton_seq(recv(en(vm(0), sk(0))), 
                     recv(sk(0)), send(vm(0))))
 
-  % % All the adversary roles as a finite set
-  % adversary_roles: protocol =
-  %   add(create_role,
-  %       add(tag_role,
-  %           add(hash_role,
-  %               add(pair_role,
-  %                   add(sep_role,
-  %                       add(enc_role,
-  %                           singleton(dec_role)))))))
+  % All the adversary roles as a finite set
+  adversary_roles: protocol =
+    add(create_akey,
+    add(create_skey,
+    add(create_text,
+    add(create_data,
+    add(create_tag0,
+    add(create_tag1,
+    add(create_tag2,
+    add(hash_role,
+    add(pair_role,
+    add(sep_role,
+    add(enc_akey,
+    add(enc_skey,
+    add(dec_akey,
+    singleton(dec_skey))))))))))))))
 
-  % enumerate_adversary_roles: lemma
-  % forall(r: role):
-  %   adversary_roles(r) iff
-  %     r = create_role or
-  %     r = tag_role or
-  %     r = hash_role or
-  %     r = pair_role or
-  %     r = sep_role or
-  %     r = enc_role or
-  %     r = dec_role
+  enumerate_adversary_roles: lemma
+    forall(r: role):
+      adversary_roles(r) iff
+        r = create_akey or
+        r = create_skey or
+        r = create_text or
+        r = create_data or
+        r = create_tag0 or
+        r = create_tag1 or
+        r = create_tag2 or
+        r = hash_role or
+        r = pair_role or
+        r = sep_role or
+        r = enc_akey or
+        r = enc_skey or
+        r = dec_akey or
+        r = dec_skey
 
-  % adversary_strands_are_short: lemma
-  %   forall(ss: strand_space, s: strand(ss), h: nat, r: (adversary_roles)):
-  %     h >= 4 implies not role_pred(ss)(s, h, r)
+  adversary_strands_are_short: lemma
+    forall(ss: strand_space, z: strand(ss), r: (adversary_roles)):
+      ss(z)`length >= 4 implies not inst(ss)(z, r)
 
 end adversary

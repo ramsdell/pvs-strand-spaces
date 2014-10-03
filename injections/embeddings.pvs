@@ -10,8 +10,8 @@ embeddings: theory
 begin
 
   importing increasing
-  importing positions
-  importing strand_spaces@traces[mesg, carried_by?]
+  skeletons: library = "../skeletons"
+  importing skeletons@traces
 
   % A trace map is an increasing function that respects event orientation
   tmap?(c0, c1: trace)(f: (increasing?(c0`length, c1`length))): bool =
@@ -27,6 +27,8 @@ begin
       pair?(m1)
     elsif enc?(m0) then
       enc?(m1)
+    elsif hash?(m0) then
+      hash?(m1)
     else
       m0 = m1
     endif

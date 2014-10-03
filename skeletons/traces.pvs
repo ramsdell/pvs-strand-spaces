@@ -1,0 +1,56 @@
+% Events and Traces
+
+% John D. Ramsdell -- The MITRE Corporation -- November 2012
+
+% This theory defines events and traces, along with some predicates
+% about the relation of a message to a trace.  In particular, a message
+% may originate in a trace, which means the message is carried by some
+% event and the first event in the trace in which it is carried is
+% a send.  The concepts are defined by functions are not true
+% predicates, because when true, the position in the trace that
+% demonstrates the property is returned.
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+traces: theory
+begin
+
+  strand_spaces: library = "../strand_spaces"
+  importing strand_spaces@nonempty_finite_sequences
+  importing free_alg
+
+  % A messaging event is either a message reception or a transmission.
+  event: datatype
+  begin
+    recv(t: mesg): recv?         % Inbound message
+    send(t: mesg): send?         % Outbound message
+  end event
+
+  % A traces is a nonempty finite sequence of events.
+  trace: type = nonempty_finite_sequence[event]
+
+  % Origination
+
+  % In trace c, does m originate at index i?
+  originates_index?(c: trace, m: mesg, i: index(c)): bool =
+    cases c(i) of
+      recv(ti): false,
+      send(ti):
+        carried_by?(m, ti) and
+        forall(j: below(i)): not carried_by?(m, t(c(j)))
+    endcases
+
+  % Acquired message (used with variables of sort message (mvar?))
+
+  % In trace c, is m acquired at index i?
+  acquired_index?(c: trace, m: mesg, i: index(c)): bool =
+    cases c(i) of
+      recv(ti): 
+        carried_by?(m, ti) and
+        forall(j: below(i)): not subterm(m, t(c(j))),
+      send(ti): false
+    endcases
+
+end traces

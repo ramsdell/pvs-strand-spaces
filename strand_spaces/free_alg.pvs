@@ -207,7 +207,7 @@ begin
 
   find_lookup: lemma
     forall(x: vari, s: subst):
-      up?(find(x, s)) implies down(find(x, s)) = lookup(x, s)
+      up?(find(x, s)) implies lookup(x, s) = down(find(x, s))
 
   auto_rewrite+ find_lookup
 
@@ -292,7 +292,6 @@ begin
         let u = match(x, y, down(t)) in
         up?(u) implies subst(v, down(u)) = w
 
-  auto_rewrite- find_lookup
   %%%%%% NOT PROVED
   match_match_subst: lemma
     forall(v, w, x, y: mesg, s: subst):

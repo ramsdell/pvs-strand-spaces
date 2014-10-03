@@ -1,0 +1,114 @@
+% The adversary model for the message algebra defined in the free_alg
+% theory.
+
+% John D. Ramsdell -- The MITRE Corporation -- October 2014
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+adversary: theory
+begin
+
+  importing roles
+
+  % The five adversary roles
+
+  % Create an atom
+
+  create_akey: role =
+    simple_role(singleton_seq(send(ak(asym(0)))))
+
+  create_skey: role =
+    simple_role(singleton_seq(send(sk(0))))
+
+  create_text: role =
+    simple_role(singleton_seq(send(tx(0))))
+
+  create_data: role =
+    simple_role(singleton_seq(send(dt(0))))
+
+  % Create a tag
+
+  % What to do about tags?
+
+  % create_tag(x: tag): role =
+  %   simple_role(singleton_seq(send(x)))
+
+  % Hash a message
+
+  hash_role: role =
+    simple_role(doubleton_seq(recv(vm(0)), send(hs(vm(0)))))
+
+  % Pair two messages
+
+  pair_role: role =
+    simple_role(
+      tripleton_seq(recv(vm(0)), recv(vm(1)), send(pr(vm(0), vm(1)))))
+
+  % Separate two messages in a pair
+
+  sep_role: role =
+    simple_role(
+      tripleton_seq(recv(pr(vm(0),vm(1))), send(vm(0)), send(vm(1))))
+
+  % Encrypt a message with a key
+
+  enc_akey: role =
+    simple_role(
+      tripleton_seq(recv(vm(0)), recv(ak(asym(0))), 
+                    send(en(vm(0), ak(asym(0))))))
+
+  enc_skey: role =
+    simple_role(
+      tripleton_seq(recv(vm(0)), recv(sk(0)), 
+                    send(en(vm(0), sk(0)))))
+
+  enc_hash: role =
+    simple_role(
+      tripleton_seq(recv(vm(0)), recv(hs(vm(1))),
+                    send(en(vm(0), hs(vm(1))))))
+
+  % Decrypt a message with the inverse of a key
+
+  dec_akey: role =
+    simple_role(
+      tripleton_seq(recv(en(vm(0), ak(asym(0)))),
+                    recv(ak(invert(asym(0)))), send(vm(0))))
+
+  dec_skey: role =
+    simple_role(
+      tripleton_seq(recv(en(vm(0), sk(0))), 
+                    recv(sk(0)), send(vm(0))))
+
+  dec_hash: role =
+    simple_role(
+      tripleton_seq(recv(en(vm(0), hs(vm(1)))),
+                    recv(hs(vm(1))), send(vm(0))))
+
+  % % All the adversary roles as a finite set
+  % adversary_roles: protocol =
+  %   add(create_role,
+  %       add(tag_role,
+  %           add(hash_role,
+  %               add(pair_role,
+  %                   add(sep_role,
+  %                       add(enc_role,
+  %                           singleton(dec_role)))))))
+
+  % enumerate_adversary_roles: lemma
+  % forall(r: role):
+  %   adversary_roles(r) iff
+  %     r = create_role or
+  %     r = tag_role or
+  %     r = hash_role or
+  %     r = pair_role or
+  %     r = sep_role or
+  %     r = enc_role or
+  %     r = dec_role
+
+  % adversary_strands_are_short: lemma
+  %   forall(ss: strand_space, s: strand(ss), h: nat, r: (adversary_roles)):
+  %     h >= 4 implies not role_pred(ss)(s, h, r)
+
+end adversary

@@ -1,6 +1,6 @@
 % Events and Traces
 
-% John D. Ramsdell -- The MITRE Corporation -- November 2012
+% John D. Ramsdell -- The MITRE Corporation -- October 2014
 
 % This theory defines events and traces, along with some predicates
 % about the relation of a message to a trace.  In particular, a message
@@ -31,6 +31,11 @@ begin
   % A traces is a nonempty finite sequence of events.
   trace: type = nonempty_finite_sequence[event]
 
+  % Parameters
+
+  param?(c: trace)(x: vari): bool =
+    exists(i: index(c)): vars(t(c(i)))(x)
+
   % Origination
 
   % In trace c, does m originate at index i?
@@ -52,5 +57,25 @@ begin
         forall(j: below(i)): not subterm(m, t(c(j))),
       send(ti): false
     endcases
+
+  instance_at(pat: trace, tgt: {c: trace | length(c) <= length(pat)},
+              i: below[length(tgt)], s: subst): recursive lift[subst] =
+    cases match(t(pat(i)), t(tgt(i)), s) of
+      bottom: bottom,
+      up(s):
+        if i + 1 < length(tgt) then
+          instance_at(pat, tgt, i + 1, s)
+        else
+          up(s)
+        endif
+    endcases
+    measure length(tgt) - i
+
+  % If target tgt is an instance of pattern pat, return the
+  % substition that demonstrates this fact.
+
+  instance(pat: trace, 
+           tgt: {c: trace | length(c) <= length(pat)}): lift[subst] =
+    instance_at(pat, tgt, 0, null)
 
 end traces

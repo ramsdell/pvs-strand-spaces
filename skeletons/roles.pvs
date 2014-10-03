@@ -1,0 +1,141 @@
+% Roles as templates
+
+% John D. Ramsdell -- The MITRE Corporation -- October 2014
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+roles: theory
+begin
+
+  importing bundles
+
+  % Assumptions are used to associate a set of messages with each
+  % position in a trace.  The purpose of assumptions is defined below
+  % in item_instance?.
+
+  assumptions: type = nonempty_finite_sequence[setof[atom]]
+
+  pre_role: type = [# trace:   trace,
+                      rnon:    {c: assumptions |  % Non-origination
+                                length(c) = length(trace)},
+                      runique: {c: assumptions |  % Unique origination
+                                length(c) = length(trace)} #]
+
+  % Ensure all variables of sort message are acquired
+  all_acquired?(c: trace): bool =
+    forall(x: (param?(c))):
+      mvar?(x) implies 
+        exists(i: index(c)): 
+          acquired_index?(c, x, i)
+
+  % Variables in a non occur in the prefix
+  all_non_vars_occur?(r: pre_role): bool =
+    forall(i: index(r`rnon)): 
+      forall(x: (r`rnon(i))):
+        forall(y: (vars(x))):
+          exists(j: below(i+1)):
+            subterm(y, t(r`trace(j)))
+
+  % Uniques originate at point in trace
+  all_uniq_orig?(r: pre_role): bool =
+    forall(i: index(r`runique)): 
+      forall(x: (r`runique(i))):
+        originates_index?(r`trace, x, i)
+
+  role?(r: pre_role): bool =
+    all_acquired?(r`trace) and
+    all_non_vars_occur?(r) and
+    all_uniq_orig?(r)
+
+  role: type = (role?)
+
+  % Handle special case in which there are no role origination assumptions
+
+  no_assumptions(n: posnat): recursive assumptions =
+    if n = 1 then
+      singleton_seq(emptyset)
+    else
+      add(emptyset, no_assumptions(n - 1))
+    endif
+    measure n
+
+  no_assumptions_length: lemma
+    forall(n: posnat): length(no_assumptions(n)) = n
+
+  auto_rewrite+ no_assumptions_length
+
+  no_assumptions?(c: assumptions): bool =
+    forall(i: index(c)): empty?(c(i))
+
+  has_no_assumptions: lemma
+    forall(n: posnat): no_assumptions?(no_assumptions(n))
+
+  has_empty_assumptions: lemma
+    forall(n: posnat, i: below[n]):
+      empty?(no_assumptions(n)(i))
+
+  % A simple role item has only a trace
+  simple_role(c: (all_acquired?)): role =
+    (# trace   := c,
+       rnon    := no_assumptions(c`length),
+       runique := no_assumptions(c`length) #)
+
+  % Is strand z in strand space s an instance of role r?
+  inst(ss: strand_space)(z: strand(ss), r: role): bool =
+    let c = ss(z) in
+    length(c) <= length(r`trace) and
+    cases instance(r`trace, c) of
+      bottom: false,
+      up(s): 
+        let h = length(c) in
+        (forall(j: below(h)):
+          forall(m: (r`rnon(j))):
+            non(ss)(subst(m, s))) and
+        (forall(j: below(h)):
+          forall(m: (r`runique(j))):
+            uniq(ss)(subst(m, s), (z, j)))
+     endcases
+
+  simple_inst: lemma
+    forall(ss: strand_space, z: strand(ss), c: (all_acquired?)):
+      inst(ss)(z, simple_role(c)) iff
+        length(ss(z)) <= length(c) and
+        up?(instance(c, ss(z)))
+
+  auto_rewrite+ simple_inst
+
+  pre_role_assignment(b: bundle): type = [strand(b`space) -> role]
+
+  % Function ra is a role assignment for bundle b if each trace is an
+  % instance of the assigned role.
+  role_assignment?(b: bundle)(ra: pre_role_assignment(b)): bool =
+    forall(s: strand(b`space)):
+      inst(b`space)(s, ra(s))
+
+  role_assignment(b: bundle): type = (role_assignment?(b))
+
+  % Protocols
+
+  protocol: type = finite_set[role]
+
+  % The range of the role assignment is the protocol
+  protocol_assignment?(p: protocol)(b: bundle)(ra: role_assignment(b)): bool =
+    forall(s: strand(b`space)): p(ra(s))
+
+  protocol_assignment(p: protocol, b: bundle): type =
+    (protocol_assignment?(p)(b))
+
+  % Bundle b is a run of protocol p if there exists a protocol assignment
+  run?(p: protocol)(b: bundle): bool =
+    exists(pa: protocol_assignment(p, b)): true
+
+  % The obvious lemma about bundles with protocol assigments and runs:
+  bundles_with_assignments_are_runs: lemma
+    forall(p: protocol, b: bundle, pa: protocol_assignment(p, b)):
+      run?(p)(b)
+
+  run(p: protocol): type = (run?(p))
+
+end roles

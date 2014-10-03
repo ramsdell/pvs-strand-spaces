@@ -8,5 +8,17 @@
   (|acquired_index?_TCC1-1| NIL 3621335105 ("" (SUBTYPE-TCC) NIL NIL)
    ((|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL))
-   NIL)))
+   NIL))
+ (|instance_at_TCC1| 0
+  (|instance_at_TCC1-1| NIL 3621347594 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL))
+ (|instance_at_TCC2| 0
+  (|instance_at_TCC2-1| NIL 3621347594 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL))
+ (|instance_at_TCC3| 0
+  (|instance_at_TCC3-1| NIL 3621347594 ("" (TERMINATION-TCC) NIL NIL)
+   ((|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
+     NIL))
+   NIL))
+ (|instance_TCC1| 0
+  (|instance_TCC1-1| NIL 3621347594 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL)))
 

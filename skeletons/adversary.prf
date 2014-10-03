@@ -57,8 +57,8 @@
    ((|vars| DEF-DECL "bool" |free_alg| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
-    (|sk| ADT-CONSTRUCTOR-DECL "[nat -> (skey?)]" |free_alg| NIL)
-    (|skey?| ADT-RECOGNIZER-DECL "[mesg -> boolean]" |free_alg| NIL)
+    (|sk| ADT-CONSTRUCTOR-DECL "[nat -> (svar?)]" |free_alg| NIL)
+    (|svar?| ADT-RECOGNIZER-DECL "[mesg -> boolean]" |free_alg| NIL)
     (>= CONST-DECL "bool" |reals| NIL)
     (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
     (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
@@ -440,7 +440,7 @@
     (|send?| ADT-RECOGNIZER-DECL "[event -> boolean]" |traces| NIL)
     (|send| ADT-CONSTRUCTOR-DECL "[mesg -> (send?)]" |traces| NIL)
     (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (|skey?| ADT-RECOGNIZER-DECL "[mesg -> boolean]" |free_alg| NIL)
+    (|svar?| ADT-RECOGNIZER-DECL "[mesg -> boolean]" |free_alg| NIL)
     (|hash?| ADT-RECOGNIZER-DECL "[mesg -> boolean]" |free_alg| NIL)
     (|key| TYPE-EQ-DECL NIL |free_alg| NIL)
     (|enc?| ADT-RECOGNIZER-DECL "[mesg -> boolean]" |free_alg| NIL)
@@ -509,8 +509,8 @@
     (>= CONST-DECL "bool" |reals| NIL)
     (|mvar?| ADT-RECOGNIZER-DECL "[mesg -> boolean]" |free_alg| NIL)
     (|vm| ADT-CONSTRUCTOR-DECL "[nat -> (mvar?)]" |free_alg| NIL)
-    (|skey?| ADT-RECOGNIZER-DECL "[mesg -> boolean]" |free_alg| NIL)
-    (|sk| ADT-CONSTRUCTOR-DECL "[nat -> (skey?)]" |free_alg| NIL)
+    (|svar?| ADT-RECOGNIZER-DECL "[mesg -> boolean]" |free_alg| NIL)
+    (|sk| ADT-CONSTRUCTOR-DECL "[nat -> (svar?)]" |free_alg| NIL)
     (|send?| ADT-RECOGNIZER-DECL "[event -> boolean]" |traces| NIL)
     (|send| ADT-CONSTRUCTOR-DECL "[mesg -> (send?)]" |traces| NIL)
     (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
@@ -537,8 +537,6 @@
     (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
     (|all_acquired?| CONST-DECL "bool" |roles| NIL))
    NIL))
- (|enc_hash_TCC1| 0
-  (|enc_hash_TCC1-1| NIL 3621351777 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL))
  (|dec_akey_TCC1| 0
   (|dec_akey_TCC1-1| NIL 3621351777
    ("" (EXPAND "all_acquired?")
@@ -579,7 +577,7 @@
     (|recv| ADT-CONSTRUCTOR-DECL "[mesg -> (recv?)]" |traces| NIL)
     (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (|akey?| ADT-RECOGNIZER-DECL "[mesg -> boolean]" |free_alg| NIL)
-    (|skey?| ADT-RECOGNIZER-DECL "[mesg -> boolean]" |free_alg| NIL)
+    (|svar?| ADT-RECOGNIZER-DECL "[mesg -> boolean]" |free_alg| NIL)
     (|hash?| ADT-RECOGNIZER-DECL "[mesg -> boolean]" |free_alg| NIL)
     (|key| TYPE-EQ-DECL NIL |free_alg| NIL)
     (|enc?| ADT-RECOGNIZER-DECL "[mesg -> boolean]" |free_alg| NIL)
@@ -658,7 +656,7 @@
     (|recv| ADT-CONSTRUCTOR-DECL "[mesg -> (recv?)]" |traces| NIL)
     (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (|akey?| ADT-RECOGNIZER-DECL "[mesg -> boolean]" |free_alg| NIL)
-    (|skey?| ADT-RECOGNIZER-DECL "[mesg -> boolean]" |free_alg| NIL)
+    (|svar?| ADT-RECOGNIZER-DECL "[mesg -> boolean]" |free_alg| NIL)
     (|hash?| ADT-RECOGNIZER-DECL "[mesg -> boolean]" |free_alg| NIL)
     (|key| TYPE-EQ-DECL NIL |free_alg| NIL)
     (|enc?| ADT-RECOGNIZER-DECL "[mesg -> boolean]" |free_alg| NIL)
@@ -670,7 +668,7 @@
     (>= CONST-DECL "bool" |reals| NIL)
     (|mvar?| ADT-RECOGNIZER-DECL "[mesg -> boolean]" |free_alg| NIL)
     (|vm| ADT-CONSTRUCTOR-DECL "[nat -> (mvar?)]" |free_alg| NIL)
-    (|sk| ADT-CONSTRUCTOR-DECL "[nat -> (skey?)]" |free_alg| NIL)
+    (|sk| ADT-CONSTRUCTOR-DECL "[nat -> (svar?)]" |free_alg| NIL)
     (|send?| ADT-RECOGNIZER-DECL "[event -> boolean]" |traces| NIL)
     (|send| ADT-CONSTRUCTOR-DECL "[mesg -> (send?)]" |traces| NIL)
     (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences|
@@ -690,7 +688,5 @@
     (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL)
     (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
     (|all_acquired?| CONST-DECL "bool" |roles| NIL))
-   NIL))
- (|dec_hash_TCC1| 0
-  (|dec_hash_TCC1-1| NIL 3621351777 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL)))
+   NIL)))
 

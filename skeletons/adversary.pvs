@@ -64,11 +64,6 @@ begin
       tripleton_seq(recv(vm(0)), recv(sk(0)), 
                     send(en(vm(0), sk(0)))))
 
-  enc_hash: role =
-    simple_role(
-      tripleton_seq(recv(vm(0)), recv(hs(vm(1))),
-                    send(en(vm(0), hs(vm(1))))))
-
   % Decrypt a message with the inverse of a key
 
   dec_akey: role =
@@ -80,11 +75,6 @@ begin
     simple_role(
       tripleton_seq(recv(en(vm(0), sk(0))), 
                     recv(sk(0)), send(vm(0))))
-
-  dec_hash: role =
-    simple_role(
-      tripleton_seq(recv(en(vm(0), hs(vm(1)))),
-                    recv(hs(vm(1))), send(vm(0))))
 
   % % All the adversary roles as a finite set
   % adversary_roles: protocol =

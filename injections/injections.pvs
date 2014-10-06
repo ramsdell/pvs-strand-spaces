@@ -1,0 +1,32 @@
+injections: theory
+begin
+
+  skeletons: library = "../skeletons"
+  importing skeletons@roles
+  importing increasing
+
+  % A trace map is an increasing function that respects event orientation
+  tmap?(c0, c1: trace)(f: (increasing?(c0`length, c1`length))): bool =
+    subset?(param?(c0), param?(c1)) and
+    forall(i: below[c0`length]):
+      recv?(c0(i)) iff recv?(c1(f(i)))
+
+  tmap(c0, c1: trace): type = (tmap?(c0, c1))
+
+  inj(src, dst: protocol): type =
+    [s: (src) -> [d: (dst), tmap(s`trace, d`trace)]]
+
+  sound_inj?(src, dst: protocol)(f: inj(src, dst)): bool =
+    forall(bd: bundle, pad: protocol_assignment(dst, bd)):
+      exists(bs: bundle, pas: protocol_assignment(src, bs)):
+        exists(g: (injective?[strand(bs`space), strand(bd`space)])):
+          forall(zd: strand(bd`space), zs: strand(bs`space)):
+            g(zs) = zd implies
+              f(pas(zs))`1 = pad(zd) and
+              instantiate(pas(zs)`trace, length(bs`space(zs)),
+                down(instance(pad(zd)`trace, bd`space(zd)))) = bs`space(zs) and
+              forall(n: node(bd`space), i: index(pas(zs)`trace)):
+                n`1 = zd and f(pas(zs))`2(i) = n`2 implies
+                  i < length(bs`space(zs))
+
+end injections

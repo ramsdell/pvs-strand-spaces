@@ -28,6 +28,12 @@ begin
     send(t: mesg): send?         % Outbound message
   end event
 
+  subst_evt(e: event, s: subst): event =
+    cases e of
+      recv(t): recv(subst(t, s)),
+      send(t): send(subst(t, s))
+    endcases
+
   % A traces is a nonempty finite sequence of events.
   trace: type = nonempty_finite_sequence[event]
 
@@ -77,5 +83,10 @@ begin
   instance(pat: trace, 
            tgt: {c: trace | length(c) <= length(pat)}): lift[subst] =
     instance_at(pat, tgt, 0, null)
+
+  instantiate(pat: trace, h: {h: upto[pat`length] | h > 0}, s: subst): trace =
+    (# length := h,
+       seq    := lambda(i: below[h]):
+                   subst_evt(pat(i), s) #)
 
 end traces

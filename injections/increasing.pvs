@@ -13,6 +13,10 @@ begin
     forall(i, j: below[m]):
       i < j implies f(i) < f(j)
 
+  increasing_injective: lemma
+    forall(m, n: nat, f: (increasing?(m, n))):
+       injective?(f)
+
   increasing_rew: lemma
     forall(m, n: nat, f: (increasing?(m, n)), i, j: below[m]):
       f(i) < f(j) iff i < j

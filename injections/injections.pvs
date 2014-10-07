@@ -1,3 +1,7 @@
+% A protocol injection is less restrictive than a protocol
+% transformation.  Every protocol transformation is a protocol
+% injection, but not vice versa.
+
 injections: theory
 begin
 

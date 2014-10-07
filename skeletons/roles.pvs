@@ -119,7 +119,7 @@ begin
 
   % Protocols
 
-  protocol: type = finite_set[role]
+  protocol: type = setof[role]
 
   % The range of the role assignment is the protocol
   protocol_assignment?(p: protocol)(b: bundle)(ra: role_assignment(b)): bool =

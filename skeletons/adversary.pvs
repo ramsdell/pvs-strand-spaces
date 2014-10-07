@@ -30,19 +30,9 @@ begin
 
   % Create a tag
 
-  % What to do about tags?
-
-  create_tag(n: nat): role =
-    simple_role(singleton_seq(send(tg(n))))
-
-  % Here are a few create tag roles
-
-  create_tag0: role = create_tag(0)
-  create_tag1: role = create_tag(1)
-  create_tag2: role = create_tag(2)
-  
-  % create_tag(x: tag): role =
-  %   simple_role(singleton_seq(send(x)))
+  create_tag?(r: role): bool =
+    exists(n: nat):
+      r =  simple_role(singleton_seq(send(tg(n))))
 
   % Hash a message
 
@@ -91,16 +81,13 @@ begin
     add(create_skey,
     add(create_text,
     add(create_data,
-    add(create_tag0,
-    add(create_tag1,
-    add(create_tag2,
     add(hash_role,
     add(pair_role,
     add(sep_role,
     add(enc_akey,
     add(enc_skey,
     add(dec_akey,
-    singleton(dec_skey))))))))))))))
+    add(dec_skey, create_tag?)))))))))))
 
   enumerate_adversary_roles: lemma
     forall(r: role):
@@ -109,9 +96,7 @@ begin
         r = create_skey or
         r = create_text or
         r = create_data or
-        r = create_tag0 or
-        r = create_tag1 or
-        r = create_tag2 or
+        create_tag?(r) or
         r = hash_role or
         r = pair_role or
         r = sep_role or

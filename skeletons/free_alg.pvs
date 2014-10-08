@@ -321,6 +321,28 @@ begin
         let u = match(x, y, down(t)) in
         up?(u) implies subst(v, down(u)) = w
 
+  match_pair_rew: lemma
+    forall(x, y, z: mesg, s: subst):
+      pair?(z) and up?(match(x, fst(z), s)) implies
+        match(pr(x, y), z, s) =
+          match(y, snd(z), down(match(x, fst(z), s)))
+
+  auto_rewrite+ match_pair_rew
+
+  match_match_subst_x: axiom
+    forall(v, w, x, y: mesg, s: subst):
+      let t = match(v, w, s) in
+      up?(t) and subst(v, down(t)) = w implies
+        let u = match(x, y, down(t)) in
+        up?(u) implies subst(v, down(u)) = w
+
+  match_match_subst_y: axiom
+    forall(v, w, x, y: mesg, s: subst):
+      let t = match(v, w, s) in
+      up?(t) implies
+        let u = match(x, y, down(t)) in
+        up?(u) implies subst(v, down(u)) = w
+
   %%%%%% NOT PROVED!!!
   match_match_subst: axiom
     forall(v, w, x, y: mesg, s: subst):

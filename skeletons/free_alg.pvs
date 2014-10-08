@@ -236,6 +236,19 @@ begin
 
   auto_rewrite+ match_akey_invert
 
+  match_akey_append: lemma
+    forall(x, y: asymkey, s: subst):
+      let t = match_akey(x, y, s) in
+      up?(t) implies 
+        exists(u: subst):
+          down(t) = append(u, s)
+
+  match_akey_find: lemma
+    forall(v: vari, w: mesg, x, y: asymkey, s: subst):
+     let t = match_akey(x, y, s) in
+     find(v, s) = up(w) and up?(t) implies
+       find(v, down(t)) = up(w)
+
   match_akey_subst: lemma
     forall(x, y: asymkey, s: subst):
       let t = match_akey(x, y, s) in
@@ -280,6 +293,26 @@ begin
       bottom
     endif
     measure p by <<
+
+  match_append_var: lemma
+    forall(x: vari, y: mesg, s: subst):
+      let t = match(x, y, s) in
+      up?(t) implies 
+        exists(u: subst):
+          down(t) = append(u, s)
+
+  match_append: lemma
+    forall(x, y: mesg, s: subst):
+      let t = match(x, y, s) in
+      up?(t) implies 
+        exists(u: subst):
+          down(t) = append(u, s)
+
+  match_find: lemma
+    forall(v: vari, w, x, y: mesg, s: subst):
+     let t = match(x, y, s) in
+     find(v, s) = up(w) and up?(t) implies
+       find(v, down(t)) = up(w)
 
   match_match_subst_var_var: lemma
     forall(v: vari, w: mesg, x: vari, y: mesg, s: subst):

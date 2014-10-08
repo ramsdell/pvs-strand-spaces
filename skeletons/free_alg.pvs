@@ -314,8 +314,8 @@ begin
      find(v, s) = up(w) and up?(t) implies
        find(v, down(t)) = up(w)
 
-  match_match_subst_var_var: lemma
-    forall(v: vari, w: mesg, x: vari, y: mesg, s: subst):
+  match_match_subst_var: lemma
+    forall(v: vari, w, x, y: mesg, s: subst):
       let t = match(v, w, s) in
       up?(t) and subst(v, down(t)) = w implies
         let u = match(x, y, down(t)) in

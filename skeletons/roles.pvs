@@ -20,8 +20,8 @@ begin
   % Ensure all variables of sort message are acquired
   all_acquired?(c: trace): bool =
     forall(x: (param?(c))):
-      mvar?(x) implies 
-        exists(i: index(c)): 
+      mvar?(x) implies
+        exists(i: index(c)):
           acquired_index?(c, x, i)
 
   role_trace: type = (all_acquired?)
@@ -34,7 +34,7 @@ begin
 
   % Variables in a non occur in the prefix
   all_non_vars_occur?(r: pre_role): bool =
-    forall(i: index(r`rnon)): 
+    forall(i: index(r`rnon)):
       forall(x: (r`rnon(i))):
         forall(y: (vars(x))):
           exists(j: below(i+1)):
@@ -42,7 +42,7 @@ begin
 
   % Uniques originate at point in trace
   all_uniq_orig?(r: pre_role): bool =
-    forall(i: index(r`runique)): 
+    forall(i: index(r`runique)):
       forall(x: (r`runique(i))):
         originates_index?(r`trace, x, i)
 
@@ -89,7 +89,7 @@ begin
     length(c) <= length(r`trace) and
     cases instance(r`trace, c) of
       bottom: false,
-      up(s): 
+      up(s):
         let h = length(c) in
         (forall(j: below(h)):
           forall(m: (r`rnon(j))):

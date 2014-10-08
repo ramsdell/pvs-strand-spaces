@@ -58,7 +58,7 @@ begin
   % In trace c, is m acquired at index i?
   acquired_index?(c: trace, m: mesg, i: index(c)): bool =
     cases c(i) of
-      recv(ti): 
+      recv(ti):
         carried_by?(m, ti) and
         forall(j: below(i)): not subterm(m, t(c(j))),
       send(ti): false
@@ -80,7 +80,7 @@ begin
   % If target tgt is an instance of pattern pat, return the
   % substition that demonstrates this fact.
 
-  instance(pat: trace, 
+  instance(pat: trace,
            tgt: {c: trace | length(c) <= length(pat)}): lift[subst] =
     instance_at(pat, tgt, 0, null)
 

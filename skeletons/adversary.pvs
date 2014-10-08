@@ -55,12 +55,12 @@ begin
 
   enc_akey: role =
     simple_role(
-      tripleton_seq(recv(vm(0)), recv(ak(asym(0))), 
+      tripleton_seq(recv(vm(0)), recv(ak(asym(0))),
                     send(en(vm(0), ak(asym(0))))))
 
   enc_skey: role =
     simple_role(
-      tripleton_seq(recv(vm(0)), recv(sk(0)), 
+      tripleton_seq(recv(vm(0)), recv(sk(0)),
                     send(en(vm(0), sk(0)))))
 
   % Decrypt a message with the inverse of a key
@@ -72,7 +72,7 @@ begin
 
   dec_skey: role =
     simple_role(
-      tripleton_seq(recv(en(vm(0), sk(0))), 
+      tripleton_seq(recv(en(vm(0), sk(0))),
                     recv(sk(0)), send(vm(0))))
 
   % All the adversary roles as a finite set

@@ -177,6 +177,8 @@ begin
     endcases
     measure k by <<
 
+  % Apply a substitution.  Notice the function has a dependent type.
+
   subst(m: mesg, s: subst): recursive {x: mesg | key(m) implies key(x)} =
     if akey?(m) then
       subst_akey(kk(m), s)
@@ -214,6 +216,8 @@ begin
 
   auto_rewrite+ find_lookup
 
+  % Akey specific matching definition and lemmas
+
   match_akey(p, t: asymkey, s: subst): recursive lift[subst] =
     cases p of
       asym(n):
@@ -239,7 +243,7 @@ begin
   match_akey_append: lemma
     forall(x, y: asymkey, s: subst):
       let t = match_akey(x, y, s) in
-      up?(t) implies 
+      up?(t) implies
         exists(u: subst):
           down(t) = append(u, s)
 
@@ -257,11 +261,11 @@ begin
   match_match_akey: lemma
     forall(v, w, x, y: asymkey, s: subst):
       let t = match_akey(v, w, s) in
-      up?(t) and subst(ak(v), down(t)) = ak(w) implies
+      up?(t) implies
         let u = match_akey(x, y, down(t)) in
         up?(u) implies subst(ak(v), down(u)) = ak(w)
 
-  auto_rewrite- match_akey_invert
+  % Matching
 
   match(p, t: mesg , s: subst): recursive lift[subst] =
     if akey?(p) and akey?(t) then
@@ -297,16 +301,19 @@ begin
   match_append_var: lemma
     forall(x: vari, y: mesg, s: subst):
       let t = match(x, y, s) in
-      up?(t) implies 
+      up?(t) implies
         exists(u: subst):
           down(t) = append(u, s)
 
+  % An interesting lemma that is not used.
   match_append: lemma
     forall(x, y: mesg, s: subst):
       let t = match(x, y, s) in
-      up?(t) implies 
+      up?(t) implies
         exists(u: subst):
           down(t) = append(u, s)
+
+  % Lemmas on the correctness of matching
 
   match_find: lemma
     forall(v: vari, w, x, y: mesg, s: subst):
@@ -317,37 +324,14 @@ begin
   match_match_subst_var: lemma
     forall(v: vari, w, x, y: mesg, s: subst):
       let t = match(v, w, s) in
-      up?(t) and subst(v, down(t)) = w implies
-        let u = match(x, y, down(t)) in
-        up?(u) implies subst(v, down(u)) = w
-
-  match_pair_rew: lemma
-    forall(x, y, z: mesg, s: subst):
-      pair?(z) and up?(match(x, fst(z), s)) implies
-        match(pr(x, y), z, s) =
-          match(y, snd(z), down(match(x, fst(z), s)))
-
-  auto_rewrite+ match_pair_rew
-
-  match_match_subst_x: axiom
-    forall(v, w, x, y: mesg, s: subst):
-      let t = match(v, w, s) in
-      up?(t) and subst(v, down(t)) = w implies
-        let u = match(x, y, down(t)) in
-        up?(u) implies subst(v, down(u)) = w
-
-  match_match_subst_y: axiom
-    forall(v, w, x, y: mesg, s: subst):
-      let t = match(v, w, s) in
       up?(t) implies
         let u = match(x, y, down(t)) in
         up?(u) implies subst(v, down(u)) = w
 
-  %%%%%% NOT PROVED!!!
-  match_match_subst: axiom
+  match_match_subst: lemma
     forall(v, w, x, y: mesg, s: subst):
       let t = match(v, w, s) in
-      up?(t) and subst(v, down(t)) = w implies
+      up?(t) implies
         let u = match(x, y, down(t)) in
         up?(u) implies subst(v, down(u)) = w
 
@@ -356,10 +340,14 @@ begin
       let t = match(x, y, s) in
       up?(t) implies subst(x, down(t)) = y
 
-  match_subst: lemma
+  % The relation between matching and substitution.
+
+  match_subst: theorem
     forall(x, y: mesg, s: subst):
       let t = match(x, y, s) in
       up?(t) implies subst(x, down(t)) = y
+
+  auto_rewrite- match_akey_invert
 
   % Positions
 
@@ -382,8 +370,8 @@ begin
         endcases
     endcases
     measure k by <<
-  
-  % A position navigates through binary terms to denote a term  
+
+  % A position navigates through binary terms to denote a term
   position?(m: mesg)(p: pre_position): recursive bool =
     cases p of
       null: true,

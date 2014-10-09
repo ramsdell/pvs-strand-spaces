@@ -283,7 +283,7 @@
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
     (|vars| DEF-DECL "bool" |free_alg| NIL)
-    (|carried_by?| DEF-DECL "bool" |free_alg| NIL) NIL
+    (|carried_by?| DEF-DECL "bool" |free_alg| NIL)
     (|acquired_index?| CONST-DECL "bool" |traces| NIL)
     (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL)
     (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
@@ -322,7 +322,7 @@
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
     (|vars| DEF-DECL "bool" |free_alg| NIL)
-    (|carried_by?| DEF-DECL "bool" |free_alg| NIL) NIL
+    (|carried_by?| DEF-DECL "bool" |free_alg| NIL)
     (|acquired_index?| CONST-DECL "bool" |traces| NIL)
     (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL)
     (|pr| ADT-CONSTRUCTOR-DECL "[[mesg, mesg] -> (pair?)]" |free_alg| NIL)
@@ -425,7 +425,7 @@
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
     (|vars| DEF-DECL "bool" |free_alg| NIL)
-    (|carried_by?| DEF-DECL "bool" |free_alg| NIL) NIL
+    (|carried_by?| DEF-DECL "bool" |free_alg| NIL)
     (|acquired_index?| CONST-DECL "bool" |traces| NIL)
     (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL)
     (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
@@ -501,7 +501,7 @@
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
     (|vars| DEF-DECL "bool" |free_alg| NIL)
-    (|carried_by?| DEF-DECL "bool" |free_alg| NIL) NIL
+    (|carried_by?| DEF-DECL "bool" |free_alg| NIL)
     (|acquired_index?| CONST-DECL "bool" |traces| NIL)
     (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL)
     (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
@@ -573,7 +573,7 @@
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
     (|vars| DEF-DECL "bool" |free_alg| NIL)
-    (|carried_by?| DEF-DECL "bool" |free_alg| NIL) NIL
+    (|carried_by?| DEF-DECL "bool" |free_alg| NIL)
     (|acquired_index?| CONST-DECL "bool" |traces| NIL)
     (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL)
     (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
@@ -651,7 +651,7 @@
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
     (|vars| DEF-DECL "bool" |free_alg| NIL)
-    (|carried_by?| DEF-DECL "bool" |free_alg| NIL) NIL
+    (|carried_by?| DEF-DECL "bool" |free_alg| NIL)
     (|acquired_index?| CONST-DECL "bool" |traces| NIL)
     (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL)
     (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
@@ -723,7 +723,7 @@
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
     (|vars| DEF-DECL "bool" |free_alg| NIL)
-    (|carried_by?| DEF-DECL "bool" |free_alg| NIL) NIL
+    (|carried_by?| DEF-DECL "bool" |free_alg| NIL)
     (|acquired_index?| CONST-DECL "bool" |traces| NIL)
     (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL)
     (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)

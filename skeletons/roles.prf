@@ -351,9 +351,7 @@
       NIL))
     NIL)
    ((|role?| CONST-DECL "bool" |roles| NIL)
-    (|all_uniq_orig?| CONST-DECL "bool" |roles| NIL)
-    (|i| SKOLEM-CONST-DECL "index[setof[atom]](no_assumptions(c`length))"
-     |roles| NIL)
+    (|all_uniq_orig?| CONST-DECL "bool" |roles| NIL) NIL
     (|all_non_vars_occur?| CONST-DECL "bool" |roles| NIL)
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
@@ -393,10 +391,7 @@
     (|skey?| CONST-DECL "bool" |free_alg| NIL)
     (|member| CONST-DECL "bool" |sets| NIL)
     (|empty?| CONST-DECL "bool" |sets| NIL)
-    (|no_assumptions_length| FORMULA-DECL NIL |roles| NIL)
-    (|i| SKOLEM-CONST-DECL "index[setof[atom]](no_assumptions(c`length))"
-     |roles| NIL)
-    (|c| SKOLEM-CONST-DECL "role_trace" |roles| NIL)
+    (|no_assumptions_length| FORMULA-DECL NIL |roles| NIL) NIL NIL
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
     (|has_empty_assumptions| FORMULA-DECL NIL |roles| NIL))
@@ -408,8 +403,7 @@
     (|instance| CONST-DECL "lift[subst]" |traces| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
-    (|mapping?| CONST-DECL "bool" |free_alg| NIL)
-    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (|mapping?| CONST-DECL "bool" |free_alg| NIL) NIL
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|vari| TYPE-EQ-DECL NIL |free_alg| NIL)
@@ -535,6 +529,45 @@
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
    SHOSTAK))
+ (|htin_TCC1| 0
+  (|htin_TCC1-1| NIL 3621852740 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|inst| CONST-DECL "bool" |roles| NIL)
+    (|instance| CONST-DECL "lift[subst]" |traces| NIL)
+    (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
+     NIL)
+    (|role| TYPE-EQ-DECL NIL |roles| NIL)
+    (|role?| CONST-DECL "bool" |roles| NIL)
+    (|pre_role| TYPE-EQ-DECL NIL |roles| NIL)
+    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
+    (|assumptions| TYPE-EQ-DECL NIL |roles| NIL)
+    (|setof| TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|atom| TYPE-EQ-DECL NIL |free_alg| NIL)
+    (|atom?| CONST-DECL "bool" |free_alg| NIL)
+    (|mesg| TYPE-DECL NIL |free_alg| NIL)
+    (|role_trace| TYPE-EQ-DECL NIL |roles| NIL)
+    (|strand| NONEMPTY-TYPE-EQ-DECL NIL |strand_spaces| NIL)
+    (>= CONST-DECL "bool" |reals| NIL)
+    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
+    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
+    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (< CONST-DECL "bool" |reals| NIL)
+    (|strand_space| TYPE-EQ-DECL NIL |strand_spaces| NIL)
+    (|trace| TYPE-EQ-DECL NIL |traces| NIL)
+    (|finite_sequence| TYPE-EQ-DECL NIL |finite_sequences| NIL)
+    (|event| TYPE-DECL NIL |traces| NIL)
+    (|below| TYPE-EQ-DECL NIL |nat_types| NIL)
+    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
+    (> CONST-DECL "bool" |reals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
+   NIL))
  (|bundles_with_assignments_are_runs| 0
   (|bundles_with_assignments_are_runs-1| NIL 3621349555
    ("" (SKOLEM 1 ("p" "b" "pa"))

@@ -188,8 +188,7 @@
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
     (|subst| TYPE-EQ-DECL NIL |free_alg| NIL)
-    (|mapping?| CONST-DECL "bool" |free_alg| NIL)
-    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (|mapping?| CONST-DECL "bool" |free_alg| NIL) NIL
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|vari| TYPE-EQ-DECL NIL |free_alg| NIL)
@@ -208,8 +207,7 @@
     (|length| DEF-DECL "nat" |list_props| NIL)
     (|skey?| CONST-DECL "bool" |free_alg| NIL)
     (|subst| TYPE-EQ-DECL NIL |free_alg| NIL)
-    (|mapping?| CONST-DECL "bool" |free_alg| NIL)
-    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (|mapping?| CONST-DECL "bool" |free_alg| NIL) NIL
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|vari| TYPE-EQ-DECL NIL |free_alg| NIL)
@@ -314,8 +312,7 @@
     (|vari?| CONST-DECL "bool" |free_alg| NIL)
     (|vari| TYPE-EQ-DECL NIL |free_alg| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
-    (|list| TYPE-DECL NIL |list_adt| NIL)
-    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL) NIL
     (|mapping?| CONST-DECL "bool" |free_alg| NIL)
     (|subst| TYPE-EQ-DECL NIL |free_alg| NIL)
     (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
@@ -351,8 +348,7 @@
     (|vari?| CONST-DECL "bool" |free_alg| NIL)
     (|vari| TYPE-EQ-DECL NIL |free_alg| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
-    (|list| TYPE-DECL NIL |list_adt| NIL)
-    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL) NIL
     (|mapping?| CONST-DECL "bool" |free_alg| NIL)
     (|subst| TYPE-EQ-DECL NIL |free_alg| NIL)
     (|key| ADT-DEF-DECL "boolean" |free_alg| NIL))
@@ -371,8 +367,7 @@
     (|vari?| CONST-DECL "bool" |free_alg| NIL)
     (|vari| TYPE-EQ-DECL NIL |free_alg| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
-    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
-    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL) NIL
     (|mapping?| CONST-DECL "bool" |free_alg| NIL)
     (|subst| TYPE-EQ-DECL NIL |free_alg| NIL)
     (|key| ADT-DEF-DECL "boolean" |free_alg| NIL)
@@ -398,8 +393,7 @@
    ((|key| ADT-DEF-DECL "boolean" |free_alg| NIL)
     (|vari?| CONST-DECL "bool" |free_alg| NIL)
     (|subst| TYPE-EQ-DECL NIL |free_alg| NIL)
-    (|mapping?| CONST-DECL "bool" |free_alg| NIL)
-    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (|mapping?| CONST-DECL "bool" |free_alg| NIL) NIL
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|vari| TYPE-EQ-DECL NIL |free_alg| NIL)
@@ -430,8 +424,7 @@
     (|strict_well_founded?| CONST-DECL "bool" |orders| NIL)
     (|pred| TYPE-EQ-DECL NIL |defined_types| NIL)
     (|subst| TYPE-EQ-DECL NIL |free_alg| NIL)
-    (|mapping?| CONST-DECL "bool" |free_alg| NIL)
-    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (|mapping?| CONST-DECL "bool" |free_alg| NIL) NIL
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (|vari| TYPE-EQ-DECL NIL |free_alg| NIL)
@@ -469,8 +462,7 @@
    ((|key| ADT-DEF-DECL "boolean" |free_alg| NIL)
     (|vari?| CONST-DECL "bool" |free_alg| NIL)
     (|subst| TYPE-EQ-DECL NIL |free_alg| NIL)
-    (|mapping?| CONST-DECL "bool" |free_alg| NIL)
-    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (|mapping?| CONST-DECL "bool" |free_alg| NIL) NIL
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|vari| TYPE-EQ-DECL NIL |free_alg| NIL)
@@ -554,8 +546,7 @@
     (|skey?| CONST-DECL "bool" |free_alg| NIL)
     (|list_induction| FORMULA-DECL NIL |list_adt| NIL)
     (|subst| TYPE-EQ-DECL NIL |free_alg| NIL)
-    (|mapping?| CONST-DECL "bool" |free_alg| NIL)
-    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (|mapping?| CONST-DECL "bool" |free_alg| NIL) NIL
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|vari| TYPE-EQ-DECL NIL |free_alg| NIL)
@@ -925,8 +916,7 @@
     (|skey?| CONST-DECL "bool" |free_alg| NIL)
     (IMPLIES CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (|subst| TYPE-EQ-DECL NIL |free_alg| NIL)
-    (|mapping?| CONST-DECL "bool" |free_alg| NIL)
-    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (|mapping?| CONST-DECL "bool" |free_alg| NIL) NIL
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|vari| TYPE-EQ-DECL NIL |free_alg| NIL)
@@ -946,8 +936,7 @@
    ((|vari?| CONST-DECL "bool" |free_alg| NIL)
     (<< ADT-DEF-DECL "(strict_well_founded?[mesg])" |free_alg| NIL)
     (|subst| TYPE-EQ-DECL NIL |free_alg| NIL)
-    (|mapping?| CONST-DECL "bool" |free_alg| NIL)
-    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (|mapping?| CONST-DECL "bool" |free_alg| NIL) NIL
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|vari| TYPE-EQ-DECL NIL |free_alg| NIL)
@@ -966,8 +955,7 @@
    ((|vari?| CONST-DECL "bool" |free_alg| NIL)
     (<< ADT-DEF-DECL "(strict_well_founded?[mesg])" |free_alg| NIL)
     (|subst| TYPE-EQ-DECL NIL |free_alg| NIL)
-    (|mapping?| CONST-DECL "bool" |free_alg| NIL)
-    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (|mapping?| CONST-DECL "bool" |free_alg| NIL) NIL
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|vari| TYPE-EQ-DECL NIL |free_alg| NIL)

@@ -107,6 +107,13 @@ begin
 
   auto_rewrite+ simple_inst
 
+  % Role predicate used in shape analysis sentences.
+  % Is strand z at least of height h and an instance of r with
+  % substitution s?
+  htin(ss: strand_space)(z: strand(ss), h: nat, r: role, s: subst): bool =
+    h <= length(ss(z)) and inst(ss)(z, r) and
+    instance(r`trace, ss(z)) = up(s)
+
   pre_role_assignment(b: bundle): type = [strand(b`space) -> role]
 
   % Function ra is a role assignment for bundle b if each trace is an

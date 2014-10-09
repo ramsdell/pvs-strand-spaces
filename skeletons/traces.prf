@@ -20,5 +20,9 @@
      NIL))
    NIL))
  (|instance_TCC1| 0
-  (|instance_TCC1-1| NIL 3621347594 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL)))
+  (|instance_TCC1-1| NIL 3621347594 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL))
+ (|instantiate_TCC1| 0
+  (|instantiate_TCC1-1| NIL 3621852734 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL))
+ (|instantiate_TCC2| 0
+  (|instantiate_TCC2-1| NIL 3621852734 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL)))
 

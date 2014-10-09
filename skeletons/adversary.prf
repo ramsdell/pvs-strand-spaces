@@ -731,32 +731,15 @@
    NIL))
  (|enumerate_adversary_roles| 0
   (|enumerate_adversary_roles-1| NIL 3621361442
-   ("" (SKOLEM 1 "r") (("" (GRIND) NIL NIL)) NIL)
-   ((|add| CONST-DECL "(nonempty?)" |sets| NIL)
+   ("" (SKOLEM 1 "r")
+    (("" (EXPAND "adversary_roles")
+      (("" (EXPAND "add") (("" (EXPAND "member") (("" (SMASH) NIL NIL)) NIL))
+        NIL))
+      NIL))
+    NIL)
+   ((|adversary_roles| CONST-DECL "protocol" |adversary| NIL)
     (|member| CONST-DECL "bool" |sets| NIL)
-    (|create_tag?| CONST-DECL "bool" |adversary| NIL)
-    (|adversary_roles| CONST-DECL "protocol" |adversary| NIL)
-    (|dec_skey| CONST-DECL "role" |adversary| NIL)
-    (|dec_akey| CONST-DECL "role" |adversary| NIL)
-    (|enc_skey| CONST-DECL "role" |adversary| NIL)
-    (|enc_akey| CONST-DECL "role" |adversary| NIL)
-    (|sep_role| CONST-DECL "role" |adversary| NIL)
-    (|pair_role| CONST-DECL "role" |adversary| NIL)
-    (|tripleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
-     "../strand_spaces/")
-    (|hash_role| CONST-DECL "role" |adversary| NIL)
-    (|doubleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
-     "../strand_spaces/")
-    (|add| CONST-DECL "finseq[T]" |more_finseq| NIL)
-    (|create_data| CONST-DECL "role" |adversary| NIL)
-    (|create_text| CONST-DECL "role" |adversary| NIL)
-    (|create_skey| CONST-DECL "role" |adversary| NIL)
-    (|create_akey| CONST-DECL "role" |adversary| NIL)
-    (|simple_role| CONST-DECL "role" |roles| NIL)
-    (|no_assumptions| DEF-DECL "assumptions" |roles| NIL)
-    (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
-     "../strand_spaces/")
-    (|finite_emptyset| NAME-JUDGEMENT "finite_set" |finite_sets| NIL))
+    (|add| CONST-DECL "(nonempty?)" |sets| NIL))
    SHOSTAK))
  (|adversary_strands_are_short| 0
   (|adversary_strands_are_short-1| NIL 3621361727
@@ -825,8 +808,7 @@
     (|add| CONST-DECL "(nonempty?)" |sets| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
-    (|subterm| ADT-DEF-DECL "boolean" |free_alg| NIL)
-    (|all_non_vars_occur?| CONST-DECL "bool" |roles| NIL)
+    NIL (|all_non_vars_occur?| CONST-DECL "bool" |roles| NIL)
     (|originates_index?| CONST-DECL "bool" |traces| NIL)
     (|all_uniq_orig?| CONST-DECL "bool" |roles| NIL)
     (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"

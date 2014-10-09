@@ -12,6 +12,8 @@ begin
   skeletons: library = "../skeletons"
   importing skeletons@adversary
 
+  % The init role
+
   init_trace: role_trace =
     doubleton_seq(send(en(tx(0), ak(asym(0)))), recv(tx(0)))
 
@@ -19,5 +21,41 @@ begin
     (# trace   := init_trace,
        rnon    := no_assumptions(init_trace`length),
        runique :=  doubleton_seq(singleton[atom](tx(0)), emptyset) #)
+
+  % The role predicate for shape analysis sentences
+  init(ss: strand_space)
+      (z: strand(ss), h: nat, nonce: text, key: akey): bool =
+    htin(ss)(z, h, init_role,
+             cons((tx(0), nonce), cons((ak(asym(0)), key), null)))
+    
+  % The responder role
+
+  resp_trace: role_trace =
+    doubleton_seq(recv(en(tx(0), ak(asym(0)))), send(tx(0)))
+
+  resp_role: role = simple_role(resp_trace)
+
+  resp(ss: strand_space)
+      (z: strand(ss), h: nat, nonce: text, key: akey): bool =
+    htin(ss)(z, h, resp_role,
+             cons((tx(0), nonce), cons((ak(asym(0)), key), null)))
+
+  % The unilateral protocol
+
+  unilateral_roles: protocol =
+    add(init_role,
+    add(resp_role,
+        adversary_roles))
+
+  enumerate_unilateral_roles: lemma
+    forall(r: role):
+      unilateral_roles(r) iff
+        r = init_role or
+        r = resp_role or
+        adversary_roles(r)
+
+  % A unilater specific role assignment
+  unilateral_assignment(b: bundle): type = 
+    protocol_assignment(unilateral_roles, b)
 
 end unilateral

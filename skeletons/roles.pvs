@@ -77,6 +77,16 @@ begin
     forall(n: posnat, i: below[n]):
       empty?(no_assumptions(n)(i))
 
+  no_rnon_assumptions: lemma
+    forall(r: pre_role):
+      r`rnon = no_assumptions(r`trace`length) implies
+        all_non_vars_occur?(r)
+
+  no_runique_assumptions: lemma
+    forall(r: pre_role):
+      r`runique = no_assumptions(r`trace`length) implies
+        all_uniq_orig?(r)
+
   % A simple role item has only a trace
   simple_role(c: role_trace): role =
     (# trace   := c,

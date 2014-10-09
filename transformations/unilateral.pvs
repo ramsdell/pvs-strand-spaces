@@ -1,0 +1,23 @@
+% Unilateral authentication protocol
+
+% John D. Ramsdell -- The MITRE Corporation -- October 2014
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+unilateral: theory
+begin
+
+  skeletons: library = "../skeletons"
+  importing skeletons@adversary
+
+  init_trace: role_trace =
+    doubleton_seq(send(en(tx(0), ak(asym(0)))), recv(tx(0)))
+
+  init_role: role =
+    (# trace   := init_trace,
+       rnon    := no_assumptions(init_trace`length),
+       runique :=  doubleton_seq(singleton[atom](tx(0)), emptyset) #)
+
+end unilateral

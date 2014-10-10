@@ -33,6 +33,7 @@
 \newcommand{\typ}{\mathbin:}
 \newcommand{\sdom}{\fn{Dom}}
 \newcommand{\sran}{\fn{Ran}}
+\newcommand{\vars}{\fn{Vars}}
 \newcommand{\seq}[1]{\ensuremath{\langle#1\rangle}}
 \newcommand{\prefix}[2]{#1\mid#2}
 \newcommand{\append}{\cdot}
@@ -49,8 +50,9 @@
 \newcommand{\dpair}[1]{\Sigma_{(#1)}}
 \newcommand{\pow}[1]{\wp(#1)}
 
-\newcommand{\msg}{\ensuremath{\mathcal{M}}}
-\newcommand{\trc}{\ensuremath{\mathcal{T}}}
+\newcommand{\alg}[1]{\ensuremath{\mathfrak{#1}}}
+\newcommand{\msg}{\alg{A}}
+\newcommand{\atm}{\alg{B}}
 \newcommand{\ssp}{\ensuremath{\mathcal{S}}}
 \newcommand{\bun}{\ensuremath{\mathcal{B}}}
 \newcommand{\strands}{\ensuremath{\mathcal{Z}}}
@@ -63,7 +65,6 @@
 \newcommand{\sent}{\mathcal{S}}
 \newcommand{\lang}{\mathcal{L}}
 \newcommand{\interp}{\mathcal{I}}
-\newcommand{\alg}[1]{\ensuremath{\mathfrak#1}}
 \newcommand{\tr}{\ensuremath{\mathfrak C}}
 \newcommand{\rl}{\fn{rl}}
 \newcommand{\skel}{\mathsf{k}}
@@ -111,93 +112,114 @@ $(x,y)\in\dpair{x\in A}B(x)$ implies that~$x\in A$ and~$y\in B(x)$.
 
 \section{Strand Spaces}\label{sec:strand spaces}
 
-Based on~\cite{Ramsdell13}, this section describes the {\pvs}
+Based on~\cite{cpsaspec09}, this section describes the {\pvs}
 definition of strand spaces~\cite{ThayerHerzogGuttman99} in a style
 motivated by the {\pvs} language~\cite{cade92-pvs}, that is, the
 presentation attempts to minimize the gap between the actual proofs
 and this content.
 
 The parameters to the strand space theory are a set of messages
-(\msg), and a carried by relation
-(${\sqsubseteq}\subseteq\msg\times\msg$).
-
-The set of messages~{\msg} is often the carrier set of a message
-algebra.  Intuitively, a message~$m_0$ is carried by~$m_1$
-($m_0\sqsubseteq m_1$) if it is possible to extract~$m_0$ from~$m_1$.
+(\msg), a set of atoms ($\atm\subset\msg$), and a carried by relation
+(${\sqsubseteq}\subseteq\msg\times\msg$).  The set of messages~{\msg}
+is the carrier set of a term algebra.  Keys and nonces are examples of
+atoms.  Intuitively, a message~$t_0$ is carried by~$t_1$
+($t_0\sqsubseteq t_1$) if it is possible to extract~$t_0$ from~$t_1$.
 
 \paragraph{Strand Spaces.}
 A run of a protocol is viewed as an exchange of messages by a finite
 set of local sessions of the protocol.  Each local session is called a
-strand.  The behavior of a strand, its \emph{trace}, is a
-finite non-empty sequence of messaging events.  An \emph{event} is
-either a message transmission or a reception.  Outbound message
-$m\in\msg$ is written as~$\outbnd m$, and inbound message~$m$ is
-written as~$\inbnd m$.  The set of traces over $\msg$ is
-$\trc=(\pm\msg)^+$.  A message \emph{originates} in trace~$t$ at
-index~$i$ if it is carried by $t(i)$, $t(i)$ is outbound, and it is
-not carried by any event earlier in the trace.
+strand.  The behavior of a strand, its \emph{trace}, is a finite
+non-empty sequence of messaging events.  An \emph{event} is either a
+message transmission or a reception.  Outbound message $t\in\msg$ is
+written as~$\outbnd t$, and inbound message~$t$ is written as~$\inbnd
+t$.  The set of traces over $\msg$ is $\tr=(\pm\msg)^+$.  A message
+\emph{originates} in trace~$c$ at index~$i$ if it is carried by
+$c(i)$, $c(i)$ is outbound, and it is not carried by any event earlier
+in the trace.  A message is \emph{acquired} in trace~$c$ if there is
+an index~$i$ at which it is carried by $c(i)$, $c(i)$ is inbound, and
+it does not occur in any event earlier in the trace.  For algebra
+homomorphism~$\sigma$, \[\sigma (\seq{\pm t_0,\ldots,\pm t_{n-1}})=
+\seq{\pm \sigma(t_0),\ldots,\pm \sigma(t_{n-1})}.\]
 
-A \emph{strand space}~$s\in\ssp=\trc^+$ is a finite non-empty sequence
-of traces in $\trc$.  A \emph{strand}~$s$ is a member of the domain of
-$\ssp$, and its trace is $\ssp(s)$.  An atom~$t$ is
-\index{non-origination}\emph{non-originating} in a strand
-space~$\ssp$, written \index{non@\fn{non}}$\fn{non}(\ssp,t)$, if it
-originates on no strand.
+A \emph{strand space}~{\ssp} is a finite non-empty sequence of traces
+in $\tr$.  A \emph{strand}~$s$ is a member of the domain of $\ssp$,
+and its trace is $\ssp(s)$.  An atom~$t$ is \emph{non-originating} in
+a strand space~$\ssp$, written $\fn{non}(\ssp,t)$, if it originates on
+no strand.
 
 Message events occur at nodes in a strand space.  For each strand~$s$,
-there is a node for every event in~$\ssp(s)$.  The
-\index{nodes}\emph{nodes} of strand space $\ssp$ are $\{(s,i)\mid
-s\in\sdom(\ssp), 0\leq i < |\ssp(s)|\}$, and the event at a node
-is $\evt_\ssp(s,i)=\ssp(s)(i)$.  A node names an event in a strand
-space.  The relation~$\Rightarrow$ defined by
-$\{(s,i-1)\Rightarrow(s,i)\mid s\in\sdom(\ssp), 1\leq
-i<|\ssp(s)|\}$ is called the \index{strand succession}\emph{strand
-  succession relation}.  An atom~$t$ \index{unique
-  origination}\emph{uniquely originates} in a strand space~$\ssp$ at
-node~$n$, written \index{uniq@\fn{uniq}}$\fn{uniq}(\ssp,t,n)$, if it
-originates in the trace of exactly one strand~$s$ at index~$i$, and
-$n=(s,i)$.
+there is a node for every event in~$\ssp(s)$.  The \emph{nodes} of
+strand space $\ssp$ are $\{(s,i)\mid s\in\sdom(\ssp), 0\leq i <
+|\ssp(s)|\}$, and the event at a node is $\evt_\ssp(s,i)=\ssp(s)(i)$.
+A node names an event in a strand space.  The relation~$\Rightarrow$
+defined by $\{(s,i-1)\Rightarrow(s,i)\mid s\in\sdom(\ssp), 1\leq
+i<|\ssp(s)|\}$ is called the \emph{strand succession relation}.  An
+atom~$t$ \emph{uniquely originates} in a strand space~$\ssp$ at
+node~$n$, written $\fn{uniq}(\ssp,t,n)$, if it originates in the trace
+of exactly one strand~$s$ at index~$i$, and $n=(s,i)$.
 
 \paragraph{Bundles.}
-The pair $\bun=(\ssp,\to)$ is a \index{bundle}\emph{bundle} if
-it defines a directed acyclic graph, where the vertices are the nodes
-of $\ssp$, and an edge represents communication~($\rightarrow$) or
-strand succession~($\Rightarrow$) in~$\ssp$.  For communication, if
+The pair $\bun=(\ssp,\to)$ is a \emph{bundle} if it defines a directed
+acyclic graph, where the vertices are the nodes of $\ssp$, and an edge
+represents communication~($\rightarrow$) or strand
+succession~($\Rightarrow$) in~$\ssp$.  For communication, if
 $n_0\rightarrow n_1$, then there is a message~$t$ such
-that~$\evt_\ssp(n_0)=\outbnd t$ and~$\evt_\ssp(n_1)=\inbnd t$.
-For each reception node~$n_1$, there is a unique transmission
-node~$n_0$ with $n_0\rightarrow n_1$.
+that~$\evt_\ssp(n_0)=\outbnd t$ and~$\evt_\ssp(n_1)=\inbnd t$.  For
+each reception node~$n_1$, there is a unique transmission node~$n_0$
+with $n_0\rightarrow n_1$.
 
-Each acyclic graph has a transitive irreflexive
-relation~$\prec$\index{precedes@$\prec$~(precedes)} on its vertices.
-The relation specifies the causal ordering of nodes in a bundle.  A
-transitive irreflexive binary relation is also called a strict order.
+Each acyclic graph has a transitive irreflexive relation~$\prec$ on
+its vertices.  The relation specifies the causal ordering of nodes in
+a bundle.  A transitive irreflexive binary relation is also called a
+strict order.
 
 \paragraph{Runs of Protocols.}
 In a run of a protocol, the behavior of each strand is constrained by
 a role in a protocol.  Adversarial strands are constrained by roles as
-are non-adversarial strands.  A \index{role}\emph{role} is a set of
-\emph{role items} of the form $\role(C,N,U)$, where $C\in\trc$,
-$N\in\pow{\msg}^+$, $U\in\pow{\msg}^+$, and the lengths of $C$,
-$N$, and $U$ agree.  The trace of the role item is~$C$, its
-non-origination assumptions are~$N$, and its unique origination
-assumptions are~$U$.  A strand is an instance of a role item in a
-strand space, written $\fn{inst}(\ssp,s,\role(C,N,U))$, if for
-$h=|\ssp(s)|$,
+are non-adversarial strands.  A \emph{role} is of the form
+$\role(c,\nu,\upsilon)$, where $c\in\tr$, $\nu\in\pow{\atm}^+$,
+$\upsilon\in\pow{\atm}^+$, every non-atomic variable in~$c$ is
+acquired, and the lengths of $c$, $\nu$, and $\upsilon$ agree.  The
+trace of the role is~$c$, its non-origination assumptions are~$\nu$,
+and its unique origination assumptions are~$\upsilon$.  A strand is an
+instance of a role in a strand space, written
+$\fn{inst}(\ssp,s,\role(c,\nu,\upsilon))$, if for $h=|\ssp(s)|$ and
+some substitution~$\sigma$,
 \begin{enumerate}
-\item $h\leq|C|$,
-\item $\prefix{C}{h}=\ssp(s)$,
-\item for all $i<h$, $t\in N(i)$ implies $\fn{non}(\ssp,t)$, and
-\item for all $i<h$, $t\in U(i)$ implies $\fn{uniq}(\ssp,t,(s,i))$.
+\item $h\leq|c|$,
+\item $\prefix{\sigma(c)}{h}=\ssp(s)$,
+\item for all $i<h$, $t\in \nu(i)$ implies $\fn{non}(\ssp,\sigma(t))$, and
+\item for all $i<h$, $t\in \upsilon(i)$ implies
+  $\fn{uniq}(\ssp,\sigma(t),(s,i))$.
 \end{enumerate}
 
-A \index{protocol}\emph{protocol} is a set of roles.  A
-bundle~$\bun=(\ssp,\to)$ is a \index{run of protocol}\emph{run of
-  protocol} $P$ if there is a role assignment
-$\rl\typ\sdom(\ssp)\to P$ such that for each $s\in\sdom(\ssp)$,
-there exists $\role(C,N,U)\in\rl(s)$ such that
-\index{inst@\fn{inst}}$\fn{inst}(\ssp,s,\role(C,N,U))$.  Let~$\run_P$ be
-the set of bundles that are runs of protocol~$P$.
+A \emph{protocol} is a set of roles.  A bundle~$\bun=(\ssp,\to)$ is a
+\emph{run of protocol} $P$ if there is a role assignment
+$\rl\typ\sdom(\ssp)\to P$ such that for each $s\in\sdom(\ssp)$, there
+exists $\role(c,\nu,\upsilon)\in\rl(s)$ such that
+$\fn{inst}(\ssp,s,\role(c,\nu,\upsilon))$.  Let~$\run_P$ be the set of
+bundles that are runs of protocol~$P$.
+
+\section{Protocol Injections}
+
+\remark{Something should be here.}
+
+A function $f\in\zed_m\to\zed_n$ is \emph{increasing} iff $i<j$
+implies $f(i)<f(j)$.  The set of such functions is~$\alg{F}[m,n]$.  An
+increasing function is injective.
+
+A \emph{trace stretch} from trace~$c_0$ to~$c_1$ is an increasing
+function~$f\in\alg{F}[|c_0|, |c_1|]$ such that
+$\vars(c_0)\subseteq\vars(c_1)$ and for all~$i$, $c(i)$ is inbound iff
+$c(f(i))$ is inbound.  The set of such functions
+is~$\alg{T}[c_0,c_1]$.
+
+The set of \emph{protocol injections} from protocol~$P_0$ to~$P_1$ is
+\[\alg{P}[P_0,P_1]=\dprod{\role(c_0,\nu_0,\upsilon_0)\in
+  P_0}\dpair{\role(c_1,\nu_1,\upsilon_1)\in P_1}\alg{T}[c_0,c_1].\]
+That is, if~$g\in\alg{P}[P_0,P_1]$ and~$r_0\in P_0$, then
+$g(r_0)=(r_1,f)$, where $r_1\in P_1$ and~$f$ is a trace stretch from
+the trace of~$r_0$ to the trace of~$r_1$.
 
 \bibliography{secureprotocols}
 \bibliographystyle{plain}

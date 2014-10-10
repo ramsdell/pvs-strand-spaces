@@ -750,7 +750,7 @@
     (|member| CONST-DECL "bool" |sets| NIL)
     (|c!1| SKOLEM-CONST-DECL "trace[mesg, carried_by?]" |roles| NIL)
     (|j!1| SKOLEM-CONST-DECL
-     "below(finseq_appl[trace[mesg, carried_by?]](ss!1)(s!1)`length)" |roles|
+     "below(length(finseq_appl[trace[mesg, carried_by?]](ss!1)(s!1)))" |roles|
      NIL)
     (|s!1| SKOLEM-CONST-DECL "strand[mesg, carried_by?](ss!1)" |roles| NIL)
     (|ss!1| SKOLEM-CONST-DECL "strand_space[mesg, carried_by?]" |roles| NIL)
@@ -790,7 +790,7 @@
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
     (|non| CONST-DECL "bool" |strand_spaces| NIL)
     (|j!1| SKOLEM-CONST-DECL
-     "below(finseq_appl[trace[mesg, carried_by?]](ss!1)(s!1)`length)" |roles|
+     "below(length(finseq_appl[trace[mesg, carried_by?]](ss!1)(s!1)))" |roles|
      NIL)
     (|inst| CONST-DECL "bool" |roles| NIL))
    SHOSTAK))

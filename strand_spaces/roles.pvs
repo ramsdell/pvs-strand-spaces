@@ -102,23 +102,23 @@ begin
   % A simple role item has only a trace
   simple_role_item(c: trace): role_item =
     (# trace   := c,
-       rnon    := no_assumptions(c`length),
-       runique := no_assumptions(c`length),
-       ranno   := no_annotations(c`length) #)
+       rnon    := no_assumptions(length(c)),
+       runique := no_assumptions(length(c)),
+       ranno   := no_annotations(length(c)) #)
 
   % New defs
 
   % Is strand s in bundle b an instance of role item ri?
   inst(ss: strand_space)(s: strand(ss), ri: role_item): bool =
     prefix?[event](ss(s), ri`trace) and
-    let h = ss(s)`length in      % The height of the strand
+    let h = length(ss(s)) in          % The height of the strand
     (forall(j: below(h)):             % Inherited nons don't originate
       forall(m: (ri`rnon(j))): non(ss)(m)) and
     (forall(j: below(h)):             % Inherited uniques originate once
       forall(m: (ri`runique(j))): uniq(ss)(m, (s, j)))
 
   pred(ss: strand_space)(s: strand(ss), h: nat, ri: role_item): bool =
-    inst(ss)(s, ri) and h <= ss(s)`length
+    inst(ss)(s, ri) and h <= length(ss(s))
 
   % Inherited non-origination assumptions at a node
   strand_inherits_non: lemma
@@ -162,7 +162,7 @@ begin
 
   % role?(r: setof[role_item]): bool =
   %   forall(ri0, ri1: (r)):
-  %     ri0`trace`length = ri1`trace`length
+  %     length(ri0`trace) = length(ri1`trace)
 
   % role: type = (role?)
 

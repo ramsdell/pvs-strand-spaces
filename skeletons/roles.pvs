@@ -79,19 +79,19 @@ begin
 
   no_rnon_assumptions: lemma
     forall(r: pre_role):
-      r`rnon = no_assumptions(r`trace`length) implies
+      r`rnon = no_assumptions(length(r`trace)) implies
         all_non_vars_occur?(r)
 
   no_runique_assumptions: lemma
     forall(r: pre_role):
-      r`runique = no_assumptions(r`trace`length) implies
+      r`runique = no_assumptions(length(r`trace)) implies
         all_uniq_orig?(r)
 
   % A simple role item has only a trace
   simple_role(c: role_trace): role =
     (# trace   := c,
-       rnon    := no_assumptions(c`length),
-       runique := no_assumptions(c`length) #)
+       rnon    := no_assumptions(length(c)),
+       runique := no_assumptions(length(c)) #)
 
   % Is strand z in strand space s an instance of role r?
   inst(ss: strand_space)(z: strand(ss), r: role): bool =

@@ -27,7 +27,7 @@ begin
       (z: strand(ss), h: nat, nonce: text, key: akey): bool =
     htin(ss)(z, h, init_role,
              cons((tx(0), nonce), cons((ak(asym(0)), key), null)))
-    
+
   % The responder role
 
   resp_trace: role_trace =
@@ -55,7 +55,7 @@ begin
         adversary_roles(r)
 
   % A unilater specific role assignment
-  unilateral_assignment(b: bundle): type = 
+  unilateral_assignment(b: bundle): type =
     protocol_assignment(unilateral_roles, b)
 
 end unilateral

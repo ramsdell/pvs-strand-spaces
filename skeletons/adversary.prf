@@ -808,7 +808,8 @@
     (|add| CONST-DECL "(nonempty?)" |sets| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
-    NIL (|all_non_vars_occur?| CONST-DECL "bool" |roles| NIL)
+    (|subterm| ADT-DEF-DECL "boolean" |free_alg| NIL)
+    (|all_non_vars_occur?| CONST-DECL "bool" |roles| NIL)
     (|originates_index?| CONST-DECL "bool" |traces| NIL)
     (|all_uniq_orig?| CONST-DECL "bool" |roles| NIL)
     (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"

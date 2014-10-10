@@ -88,4 +88,8 @@ begin
     lemma forall(ss: strand_space, m: mesg):
       never_carried?(ss)(m) implies non(ss)(m)
 
+  % The set of atoms in a strand space
+  atoms(ss: strand_space)(x: atom): bool =
+    exists(s: strand(ss)): trace_atom?(ss(s))(x)
+
 end strand_spaces

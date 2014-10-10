@@ -42,6 +42,11 @@ begin
   param?(c: trace)(x: vari): bool =
     exists(i: index(c)): vars(t(c(i)))(x)
 
+  % Atoms in a trace
+
+  trace_atom?(c:trace)(x: atom): bool =
+    exists(i: index(c)): subterm(x, t(c(i)))
+
   % Origination
 
   % In trace c, does m originate at index i?
@@ -84,7 +89,8 @@ begin
            tgt: {c: trace | length(c) <= length(pat)}): lift[subst] =
     instance_at(pat, tgt, 0, null)
 
-  instantiate(pat: trace, h: {h: upto[pat`length] | h > 0}, s: subst): trace =
+  instantiate(pat: trace, h: {h: upto[length(pat)] | h > 0},
+              s: subst): trace =
     (# length := h,
        seq    := lambda(i: below[h]):
                    subst_evt(pat(i), s) #)

@@ -1,8 +1,12 @@
-% Just messing around for now.
-
 % A protocol injection is less restrictive than a protocol
 % transformation.  Every protocol transformation is a protocol
 % injection, but not vice versa.
+
+% To compare two protocols src and dst, try to prove
+%
+%     source_goals_implied?(src, dst),
+%
+% which is defined at the end of this theory.
 
 % John D. Ramsdell -- The MITRE Corporation -- October 2014
 
@@ -25,20 +29,63 @@ begin
 
   tmap(c0, c1: trace): type = (tmap?(c0, c1))
 
+  strand_increasing(src, dst: strand_space): type =
+    (increasing?(src`length, dst`length))
+
+  node_increasing(src, dst: strand_space,
+                  g: strand_increasing(src, dst)): type =
+    [s: strand(src) -> (increasing?(src(s)`length, dst(g(s))`length))]
+
+  % Implant a source node into a destination node using a strand
+  % increasing and node increasing function.
+  implant(src, dst: strand_space,
+          g: strand_increasing(src, dst),
+          h: node_increasing(src, dst, g))
+         (n: node(src)): node(dst) =
+    (g(n`1), h(n`1)(n`2))
+
+  % An injection
   inj(src, dst: protocol): type =
     [s: (src) -> [d: (dst), tmap(s`trace, d`trace)]]
 
   sound_inj?(src, dst: protocol)(f: inj(src, dst)): bool =
     forall(bd: bundle, pad: protocol_assignment(dst, bd)):
-      exists(bs: bundle, pas: protocol_assignment(src, bs)):
-        exists(g: (injective?[strand(bs`space), strand(bd`space)])):
-          forall(zd: strand(bd`space), zs: strand(bs`space)):
-            g(zs) = zd implies
-              f(pas(zs))`1 = pad(zd) and
-              instantiate(pas(zs)`trace, length(bs`space(zs)),
-                down(instance(pad(zd)`trace, bd`space(zd)))) = bs`space(zs) and
-              forall(n: node(bd`space), i: index(pas(zs)`trace)):
-                n`1 = zd and f(pas(zs))`2(i) = n`2 implies
-                  i < length(bs`space(zs))
+      exists(bs: bundle, pas: protocol_assignment(src, bs),
+             g: strand_increasing(bs`space, bd`space),
+	     h: node_increasing(bs`space, bd`space, g)):
+        let i = implant(bs`space, bd`space, g, h) in
+
+            % Roles respect injection (for role predicate mappings)
+        (forall(zs: strand(bs`space), zd: strand(bd`space)):
+          g(zs) = zd implies
+            f(pas(zs))`1 = pad(zd) and
+            instantiate(pas(zs)`trace, bs`space(zs)`length,
+              down(instance(pad(zd)`trace, bd`space(zd)))) = bs`space(zs))
+
+        and % Nodes respect injection (for role predicate heights)
+          (forall(nd: node(bd`space), ns: node(bs`space)):
+            g(ns`1) = nd`1 and
+            f(pas(ns`1))`2(ns`2) = nd`2 implies i(ns) = nd)
+
+        and % Source communication edges repect injection
+            % (for node ordering predicate)
+          (forall(n0, n1: node(bs`space)):
+            bs`comm(n0, n1) iff
+              exists(n2, n3: node(bd`space)):
+                i(n0) = n2 and
+                i(n1) = n3 and
+                bd`comm(n2, n3))
+
+        and % Non-origination predicate respects injection
+          (forall(x: (atoms(bs`space))):
+            non(bd`space)(x) implies non(bs`space)(x))
+
+        and % Unique origination predicate respects injection
+          (forall(x: (atoms(bs`space)), n: node(bs`space)):
+            uniq(bd`space)(x, i(n)) implies
+              uniq(bs`space)(x, n))
+
+  source_goals_implied?(src, dst: protocol): bool =
+    exists(f: inj(src, dst)): sound_inj?(src, dst)(f)
 
 end injections

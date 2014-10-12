@@ -70,16 +70,17 @@ begin
     endcases
 
   instance_at(pat: trace, tgt: {c: trace | length(c) <= length(pat)},
-              i: below[length(tgt)], s: subst): recursive lift[subst] =
-    cases match(t(pat(i)), t(tgt(i)), s) of
-      bottom: bottom,
-      up(s):
-        if i + 1 < length(tgt) then
-          instance_at(pat, tgt, i + 1, s)
-        else
-          up(s)
-        endif
-    endcases
+              i: upto[length(tgt)], s: subst): recursive lift[subst] =
+    if i = length(tgt) then
+      up(s)
+    elsif recv?(pat(i)) = recv?(tgt(i)) then
+      cases match(t(pat(i)), t(tgt(i)), s) of
+        bottom: bottom,
+        up(s): instance_at(pat, tgt, i + 1, s)
+      endcases
+    else
+      bottom
+    endif
     measure length(tgt) - i
 
   % If target tgt is an instance of pattern pat, return the
@@ -94,5 +95,26 @@ begin
     (# length := h,
        seq    := lambda(i: below[h]):
                    subst_evt(pat(i), s) #)
+
+  instance_subst: lemma
+    forall(pat: trace, tgt: {c: trace | length(c) <= length(pat)}, 
+           i: below[length(tgt)], r, s: subst):
+      instance_at(pat, tgt, i, r) = up(s) implies
+        up?(match(t(pat(i)), t(tgt(i)), r)) and
+        exists(u, v: mesg):
+          up(s) = match(u, v, down(match(t(pat(i)), t(tgt(i)), r)))
+
+  instance_instantiates_index: lemma
+    forall(pat: trace, tgt: {c: trace | length(c) <= length(pat)}, 
+           i: upto[length(tgt)], r, s: subst):
+      instance_at(pat, tgt, i, r) = up(s) implies
+        forall(j: below[length(tgt)]):
+          j >= i implies 
+            instantiate(pat, length(tgt), s)(j) = tgt(j)
+
+  instance_instantiates: lemma
+    forall(pat: trace, tgt: {c: trace | length(c) <= length(pat)}, s: subst):
+      instance(pat, tgt) = up(s) implies
+        instantiate(pat, length(tgt), s) = tgt
 
 end traces

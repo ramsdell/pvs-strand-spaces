@@ -92,4 +92,8 @@ begin
   atoms(ss: strand_space)(x: atom): bool =
     exists(s: strand(ss)): trace_atom?(ss(s))(x)
 
+  % The set of variables in a strand space
+  svars(ss: strand_space)(x: vari): bool =
+    exists(s: strand(ss)): param?(ss(s))(x)
+
 end strand_spaces

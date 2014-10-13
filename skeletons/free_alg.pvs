@@ -33,23 +33,20 @@ begin
   mesg: datatype with subtypes key, text, data, tag, cmpd
   begin
     ak(kk: asymkey): akey? : key
-    sk(n: nat): svar? : key        % Variable of sort skey
-    hs(n: mesg): hash? : key
+    sk(n: nat): skey? : key        % Variable of sort skey
+    hs(n: mesg): hash? :cmpd       % Hash of a message
     tx(n: nat): text? : text       % Variable of sort text
     dt(n: nat): data? : data       % Variable of sort data
     tg(n: nat): tag?: tag          % Tag constants
     vm(n: nat): mvar? : cmpd       % Variable of sort message
-    pr(fst: mesg, snd: mesg): pair? : cmpd
-    en(plt: mesg, ky: key): enc? : cmpd
+    pr(fst: mesg, snd: mesg): pair? : cmpd % Pair
+    en(plt: mesg, ky: key): enc? : cmpd % Encryption
   end mesg
 
   % Keys are further classified as being symmetric or asymmetric.
 
   % Symmetric keys
-  skey?(x: mesg): bool = svar?(x) or hash?(x)
   skey: type = (skey?)
-  judgement (svar?) subtype_of skey
-  judgement (hash?) subtype_of skey
 
   % Asymmetric keys
   akey: type = (akey?)
@@ -58,14 +55,12 @@ begin
   invk(k: key): key =
     cases k of
       ak(a): ak(invert(a)),
-      sk(n): sk(n),
-      hs(n): hs(n)
+      sk(n): sk(n)
     endcases
 
-  invk_svar: lemma forall(k: (svar?)): invk(k) = k
-  invk_hash: lemma forall(h: (hash?)): invk(h) = h
+  invk_skey: lemma forall(k: (skey?)): invk(k) = k
 
-  auto_rewrite+ invk_svar, invk_hash
+  auto_rewrite+ invk_skey
 
   invk_invk_identity: theorem forall(k: key): invk(invk(k)) = k
 
@@ -98,7 +93,7 @@ begin
 
   vari?(m: mesg): bool =
     akey?(m) and asymkey?(kk(m)) or
-    svar?(m) or text?(m) or data?(m) or mvar?(m)
+    skey?(m) or text?(m) or data?(m) or mvar?(m)
 
   vari: type = (vari?)
 

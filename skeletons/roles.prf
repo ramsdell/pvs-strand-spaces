@@ -1,8 +1,7 @@
 (|roles|
  (|all_non_vars_occur?_TCC1| 0
   (|all_non_vars_occur?_TCC1-1| NIL 3621337362 ("" (SUBTYPE-TCC) NIL NIL)
-   ((|skey?| CONST-DECL "bool" |free_alg| NIL)
-    (|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+   ((|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
      NIL)
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
@@ -46,8 +45,7 @@
    NIL))
  (|all_uniq_orig?_TCC1| 0
   (|all_uniq_orig?_TCC1-1| NIL 3621337362 ("" (SUBTYPE-TCC) NIL NIL)
-   ((|skey?| CONST-DECL "bool" |free_alg| NIL)
-    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+   ((|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
@@ -208,7 +206,6 @@
     (|j| SKOLEM-CONST-DECL "nat" |roles| NIL)
     (|i| SKOLEM-CONST-DECL
      "index[setof[atom]](add(emptyset, no_assumptions(j)))" |roles| NIL)
-    (|skey?| CONST-DECL "bool" |free_alg| NIL)
     (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences|
      "../strand_spaces/")
     (|set| TYPE-EQ-DECL NIL |sets| NIL)
@@ -371,7 +368,6 @@
     (|no_assumptions_length| FORMULA-DECL NIL |roles| NIL)
     (|member| CONST-DECL "bool" |sets| NIL)
     (|empty?| CONST-DECL "bool" |sets| NIL)
-    (|skey?| CONST-DECL "bool" |free_alg| NIL)
     (|all_non_vars_occur?| CONST-DECL "bool" |roles| NIL))
    SHOSTAK))
  (|no_runique_assumptions| 0
@@ -408,7 +404,6 @@
     (|i| SKOLEM-CONST-DECL "index[setof[atom]](r`runique)" |roles| NIL)
     (|member| CONST-DECL "bool" |sets| NIL)
     (|empty?| CONST-DECL "bool" |sets| NIL)
-    (|skey?| CONST-DECL "bool" |free_alg| NIL)
     (|no_assumptions_length| FORMULA-DECL NIL |roles| NIL)
     (|has_empty_assumptions| FORMULA-DECL NIL |roles| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
@@ -590,7 +585,6 @@
      NIL)
     (|has_empty_assumptions| FORMULA-DECL NIL |roles| NIL)
     (|instance_at| DEF-DECL "lift[subst]" |traces| NIL)
-    (|skey?| CONST-DECL "bool" |free_alg| NIL)
     (|empty?| CONST-DECL "bool" |sets| NIL)
     (|member| CONST-DECL "bool" |sets| NIL)
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT

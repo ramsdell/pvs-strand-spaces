@@ -721,7 +721,7 @@
                       (("" (DELETE -1 -2)
                         ((""
                           (CASE
-                              "forall(n: node(b`space)): not vars(t(finseq_appl[event](finseq_appl[trace](b`space)(n`1))(n`2)))(x)")
+                              "forall(n: node(b`space)): not subterm(x, t(finseq_appl[event](finseq_appl[trace](b`space)(n`1))(n`2)))")
                           (("1" (INST?) (("1" (SMASH) NIL NIL)) NIL)
                            ("2" (DELETE -2)
                             (("2"

@@ -40,7 +40,7 @@ begin
   % Parameters
 
   param?(c: trace)(x: vari): bool =
-    exists(i: index(c)): vars(t(c(i)))(x)
+    exists(i: index(c)): subterm(x,t(c(i)))
 
   % Atoms in a trace
 

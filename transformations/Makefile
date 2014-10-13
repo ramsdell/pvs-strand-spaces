@@ -1,3 +1,4 @@
+include ../inputs/cpsa.mk
 BASE_NAME = injections
 BIB_NAME = ../inputs/secureprotocols
 export BIBINPUTS = .:../inputs:

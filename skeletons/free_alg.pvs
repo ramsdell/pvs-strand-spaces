@@ -347,11 +347,11 @@ begin
   mvar_match_subst: lemma
     forall(v: (mvar?), x, y: mesg, s: subst):
       let t = match(x, y, s) in
-      up?(t) and vars(y)(v) implies
+      up?(t) and subterm(v, y) implies
         exists(u: (mvar?)): 
-          vars(x)(u) and 
+          subterm(u, x) and 
           up?(find(u, down(t))) and
-          vars(subst(u, down(t)))(v)
+          subterm(v, subst(u, down(t)))
 
   auto_rewrite- match_akey_invert
 

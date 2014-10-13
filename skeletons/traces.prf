@@ -80,8 +80,7 @@
     (|real_gt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
     (|subst| TYPE-EQ-DECL NIL |free_alg| NIL)
-    (|mapping?| CONST-DECL "bool" |free_alg| NIL)
-    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (|mapping?| CONST-DECL "bool" |free_alg| NIL) NIL
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|vari| TYPE-EQ-DECL NIL |free_alg| NIL)

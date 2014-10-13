@@ -1,14 +1,13 @@
 (|roles|
  (|all_non_vars_occur?_TCC1| 0
   (|all_non_vars_occur?_TCC1-1| NIL 3621337362 ("" (SUBTYPE-TCC) NIL NIL)
-   ((|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
-     NIL)
-    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
-     "(strict_total_order?[real])" |real_props| NIL)
-    (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL)
+   ((|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL)
     (+ CONST-DECL "[numfield, numfield -> numfield]" |number_fields| NIL)
     (|numfield| NONEMPTY-TYPE-EQ-DECL NIL |number_fields| NIL)
-    (|vars| DEF-DECL "bool" |free_alg| NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
     (|vari| TYPE-EQ-DECL NIL |free_alg| NIL)
     (|vari?| CONST-DECL "bool" |free_alg| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
@@ -497,6 +496,7 @@
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
     (|mapping?| CONST-DECL "bool" |free_alg| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|vari| TYPE-EQ-DECL NIL |free_alg| NIL)

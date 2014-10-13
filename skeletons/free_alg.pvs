@@ -97,24 +97,6 @@ begin
 
   vari: type = (vari?)
 
-  akey_var(k: asymkey): recursive (asymkey?) =
-    cases k of
-      invert(k0): akey_var(k0)
-      else k
-    endcases
-    measure k by <<
-
-  % The set of variables in a message
-  vars(m: mesg)(x: vari): recursive bool =
-    x = m or
-    cases m of
-      pr(f, s): vars(f)(x) or vars(s)(x),
-      en(t, k): vars(t)(x) or vars(k)(x),
-      hs(n): vars(n)(x)
-      else akey?(m) and x = ak(akey_var(kk(m)))
-    endcases
-    measure m by <<
-
   % Sort reserving mapping
 
   mapping?(x: vari, m: mesg): bool =
@@ -341,6 +323,25 @@ begin
     forall(x, y: mesg, s: subst):
       let t = match(x, y, s) in
       up?(t) implies subst(x, down(t)) = y
+
+  % Lemmas about variables is patterns
+
+  % If a variable is in the pattern, it gets bound by matching.
+  var_match_subterm: lemma
+    forall(v: vari, x, y: mesg, s: subst):
+      let t = match(x, y, s) in
+      up?(t) and subterm(v, x) implies
+        up?(find(v, down(t)))
+
+  % If a variable is in the pattern, its substitution is in the
+  % overall substitution.
+  var_match_subst: lemma
+    forall(v: vari, x, y: mesg, s: subst):
+      let t = match(x, y, s) in
+      up?(t) and subterm(v, x) implies
+        subterm(subst(v, down(t)), subst(x, down(t)))
+
+  % A lemma about variables of sort message
 
   % If x matches y to produce t, and there is an mvar v in y, then there
   % is an mvar u in x that maps to a term that contains v.

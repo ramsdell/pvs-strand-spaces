@@ -95,6 +95,20 @@ begin
        seq    := lambda(i: below[h]):
                    subst_evt(pat(i), s) #)
 
+  instance_orients_index: lemma
+    forall(pat: trace, tgt: {c: trace | length(c) <= length(pat)}, 
+           r, s: subst, i: upto[length(tgt)]):
+      instance_at(pat, tgt, i, r) = up(s) implies
+        forall(j: below[length(tgt)]):
+          j >= i implies
+            recv?(pat(j)) = recv?(tgt(j))
+
+  instance_orients: lemma
+    forall(pat: trace, tgt: {c: trace | length(c) <= length(pat)}):
+      up?(instance(pat, tgt)) implies
+        forall(i: below[length(tgt)]):
+          recv?(pat(i)) = recv?(tgt(i))
+
   instance_subst: lemma
     forall(pat: trace, tgt: {c: trace | length(c) <= length(pat)}, 
            i: below[length(tgt)], r, s: subst):
@@ -115,5 +129,10 @@ begin
     forall(pat: trace, tgt: {c: trace | length(c) <= length(pat)}, s: subst):
       instance(pat, tgt) = up(s) implies
         instantiate(pat, length(tgt), s) = tgt
+
+  instance_instantiates_alt: lemma
+    forall(pat: trace, tgt: {c: trace | length(c) <= length(pat)}):
+      up?(instance(pat, tgt)) implies
+        instantiate(pat, length(tgt), down(instance(pat, tgt))) = tgt
 
 end traces

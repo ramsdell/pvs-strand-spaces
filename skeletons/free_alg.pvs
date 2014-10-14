@@ -132,6 +132,10 @@ begin
     endcases
     measure length(s)
 
+  lookup_mapping: lemma
+    forall(x: vari, s: subst):
+      mapping?(x, lookup(x, s))
+
   lookup_akey: lemma
     forall(x: vari, s: subst):
       akey?(x) implies akey?(lookup(x, s))
@@ -192,6 +196,10 @@ begin
       up?(find(x, s)) implies lookup(x, s) = down(find(x, s))
 
   auto_rewrite+ find_lookup
+
+  find_mapping: lemma
+    forall(x: vari, s: subst):
+      up?(find(x, s)) implies mapping?(x, down(find(x, s)))
 
   % Akey specific matching definition and lemmas
 
@@ -324,7 +332,12 @@ begin
       let t = match(x, y, s) in
       up?(t) implies subst(x, down(t)) = y
 
-  % Lemmas about variables is patterns
+  % Lemmas about variables in patterns
+
+  var_subst_subterm: lemma
+    forall(v: vari, x: mesg, s: subst):
+      subterm(v, x) and up?(find(v, s)) implies
+        subterm(subst(v, s), subst(x, s))
 
   % If a variable is in the pattern, it gets bound by matching.
   var_match_subterm: lemma
@@ -342,6 +355,15 @@ begin
         subterm(subst(v, down(t)), subst(x, down(t)))
 
   % A lemma about variables of sort message
+
+  % Broken.  How to fix?
+
+  % mvar_subst: lemma
+  %   forall(v: vari, u: (mvar?), x: mesg, s: subst):
+  %     subterm(v, x) and up?(find(v, s)) and
+  %     subterm(u, subst(x, s)) implies
+  %       exists(w: (mvar?)): 
+  %         subterm(w, x)
 
   % If x matches y to produce t, and there is an mvar v in y, then there
   % is an mvar u in x that maps to a term that contains v.

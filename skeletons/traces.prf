@@ -80,8 +80,7 @@
     (|real_gt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
     (|subst| TYPE-EQ-DECL NIL |free_alg| NIL)
-    (|mapping?| CONST-DECL "bool" |free_alg| NIL)
-    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (|mapping?| CONST-DECL "bool" |free_alg| NIL) NIL
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|vari| TYPE-EQ-DECL NIL |free_alg| NIL)
@@ -308,6 +307,9 @@
     (|below| TYPE-EQ-DECL NIL |nat_types| NIL)
     (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL))
    SHOSTAK))
+ (|instance_binds_TCC1| 0
+  (|instance_binds_TCC1-1| NIL 3622285247 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|instance| CONST-DECL "lift[subst]" |traces| NIL)) NIL))
  (|instance_subst_TCC1| 0
   (|instance_subst_TCC1-1| NIL 3622101792 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL))
  (|instance_subst_TCC2| 0

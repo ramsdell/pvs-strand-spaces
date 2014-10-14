@@ -89,6 +89,10 @@ begin
   endcases
   measure y by <<
 
+  carried_by_subst: lemma
+   forall(x, y: mesg):
+     carried_by?(x, y) implies subterm(x, y)
+
   % Variables
 
   vari?(m: mesg): bool =
@@ -362,7 +366,8 @@ begin
     forall(u: (mvar?), x: mesg, s: subst):
       subterm(u, subst(x, s)) implies
         exists(w: (mvar?)): 
-          subterm(w, x)
+          subterm(w, x) and
+          subterm(u, subst(x, s))
 
   % If x matches y to produce t, and there is an mvar v in y, then there
   % is an mvar u in x that maps to a term that contains v.

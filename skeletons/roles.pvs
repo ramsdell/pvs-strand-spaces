@@ -17,7 +17,8 @@ begin
 
   assumptions: type = nonempty_finite_sequence[setof[atom]]
 
-  % Ensure all variables of sort message are acquired
+  % Ensure all variables of sort message are acquired.  See the last
+  % theorem in this theory for its purpose.
   all_acquired?(c: trace): bool =
     forall(x: (param?(c))):
       mvar?(x) implies
@@ -157,7 +158,10 @@ begin
 
   run(p: protocol): type = (run?(p))
 
-  no_message_vars: lemma
+  % A bundle that is a run of a protocol has no variables of sort
+  % message.  This is the result and the purpose of the acquired
+  % constraint in roles.
+  no_message_vars: theorem
     forall(p: protocol, b: run(p), x: (svars(b`space))):
       not mvar?(x)
 

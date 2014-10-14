@@ -375,17 +375,6 @@ begin
           subterm(w, x) and
           subterm(u, subst(w, s))
 
-  % If x matches y to produce t, and there is an mvar v in y, then there
-  % is an mvar u in x that maps to a term that contains v.
-  mvar_match_subst: lemma
-    forall(v: (mvar?), x, y: mesg, s: subst):
-      let t = match(x, y, s) in
-      up?(t) and subterm(v, y) implies
-        exists(u: (mvar?)):
-          subterm(u, x) and
-          up?(find(u, down(t))) and
-          subterm(v, subst(u, down(t)))
-
   auto_rewrite- match_akey_invert
 
   % Positions

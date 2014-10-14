@@ -306,6 +306,10 @@ begin
         exists(u: subst):
           down(t) = append(u, s)
 
+  find_append: lemma
+    forall(v: vari, s, u: subst):
+      up?(find(v, s)) implies up?(find(v, append(u, s)))
+
   % Lemmas on the correctness of matching
 
   match_find: lemma
@@ -367,7 +371,7 @@ begin
   mvar_subst: lemma
     forall(u: (mvar?), x: mesg, s: subst):
       subterm(u, subst(x, s)) implies
-        exists(w: (mvar?)): 
+        exists(w: (mvar?)):
           subterm(w, x) and
           subterm(u, subst(w, s))
 
@@ -377,8 +381,8 @@ begin
     forall(v: (mvar?), x, y: mesg, s: subst):
       let t = match(x, y, s) in
       up?(t) and subterm(v, y) implies
-        exists(u: (mvar?)): 
-          subterm(u, x) and 
+        exists(u: (mvar?)):
+          subterm(u, x) and
           up?(find(u, down(t))) and
           subterm(v, subst(u, down(t)))
 

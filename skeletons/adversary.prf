@@ -7,7 +7,7 @@
         (("" (FLATTEN) (("" (DELETE 1) (("" (GRIND) NIL NIL)) NIL)) NIL)) NIL))
       NIL))
     NIL)
-   ((|subterm| ADT-DEF-DECL "boolean" |free_alg| NIL)
+   (NIL
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
     (|asym| ADT-CONSTRUCTOR-DECL "[nat -> (asymkey?)]" |free_alg| NIL)
@@ -22,10 +22,8 @@
     (|asymkey| TYPE-DECL NIL |free_alg| NIL)
     (|send| ADT-CONSTRUCTOR-DECL "[mesg -> (send?)]" |traces| NIL)
     (|send?| ADT-RECOGNIZER-DECL "[event -> boolean]" |traces| NIL)
-    (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
-     "../strand_spaces/")
-    (|nmtfinseq| TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences| NIL)
+    (|nmtfinseq| TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (|param?| CONST-DECL "bool" |traces| NIL)
     (|trace| TYPE-EQ-DECL NIL |traces| NIL) (> CONST-DECL "bool" |reals| NIL)
     (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
@@ -53,7 +51,7 @@
         (("" (FLATTEN) (("" (DELETE 1) (("" (GRIND) NIL NIL)) NIL)) NIL)) NIL))
       NIL))
     NIL)
-   ((|subterm| ADT-DEF-DECL "boolean" |free_alg| NIL)
+   (NIL
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
     (|sk| ADT-CONSTRUCTOR-DECL "[nat -> (skey?)]" |free_alg| NIL)
@@ -65,10 +63,8 @@
     (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
     (|send| ADT-CONSTRUCTOR-DECL "[mesg -> (send?)]" |traces| NIL)
     (|send?| ADT-RECOGNIZER-DECL "[event -> boolean]" |traces| NIL)
-    (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
-     "../strand_spaces/")
-    (|nmtfinseq| TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences| NIL)
+    (|nmtfinseq| TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (|param?| CONST-DECL "bool" |traces| NIL)
     (|trace| TYPE-EQ-DECL NIL |traces| NIL) (> CONST-DECL "bool" |reals| NIL)
     (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
@@ -114,10 +110,8 @@
     (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
     (> CONST-DECL "bool" |reals| NIL) (|trace| TYPE-EQ-DECL NIL |traces| NIL)
     (|param?| CONST-DECL "bool" |traces| NIL)
-    (|nmtfinseq| TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
-    (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|nmtfinseq| TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
+    (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences| NIL)
     (|send?| ADT-RECOGNIZER-DECL "[event -> boolean]" |traces| NIL)
     (|send| ADT-CONSTRUCTOR-DECL "[mesg -> (send?)]" |traces| NIL)
     (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
@@ -126,8 +120,7 @@
     (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
     (>= CONST-DECL "bool" |reals| NIL)
     (|text?| ADT-RECOGNIZER-DECL "[mesg -> boolean]" |free_alg| NIL)
-    (|tx| ADT-CONSTRUCTOR-DECL "[nat -> (text?)]" |free_alg| NIL)
-    (|subterm| ADT-DEF-DECL "boolean" |free_alg| NIL)
+    (|tx| ADT-CONSTRUCTOR-DECL "[nat -> (text?)]" |free_alg| NIL) NIL
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
     (|all_acquired?| CONST-DECL "bool" |roles| NIL))
@@ -140,7 +133,7 @@
         (("" (FLATTEN) (("" (DELETE 1) (("" (GRIND) NIL NIL)) NIL)) NIL)) NIL))
       NIL))
     NIL)
-   ((|subterm| ADT-DEF-DECL "boolean" |free_alg| NIL)
+   (NIL
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
     (|dt| ADT-CONSTRUCTOR-DECL "[nat -> (data?)]" |free_alg| NIL)
@@ -152,10 +145,8 @@
     (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
     (|send| ADT-CONSTRUCTOR-DECL "[mesg -> (send?)]" |traces| NIL)
     (|send?| ADT-RECOGNIZER-DECL "[event -> boolean]" |traces| NIL)
-    (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
-     "../strand_spaces/")
-    (|nmtfinseq| TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences| NIL)
+    (|nmtfinseq| TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (|param?| CONST-DECL "bool" |traces| NIL)
     (|trace| TYPE-EQ-DECL NIL |traces| NIL) (> CONST-DECL "bool" |reals| NIL)
     (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
@@ -190,8 +181,7 @@
    ((|all_acquired?| CONST-DECL "bool" |roles| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
-    (|subterm| ADT-DEF-DECL "boolean" |free_alg| NIL)
-    (|tg| ADT-CONSTRUCTOR-DECL "[nat -> (tag?)]" |free_alg| NIL)
+    NIL (|tg| ADT-CONSTRUCTOR-DECL "[nat -> (tag?)]" |free_alg| NIL)
     (|tag?| ADT-RECOGNIZER-DECL "[mesg -> boolean]" |free_alg| NIL)
     (>= CONST-DECL "bool" |reals| NIL)
     (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
@@ -200,10 +190,8 @@
     (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
     (|send| ADT-CONSTRUCTOR-DECL "[mesg -> (send?)]" |traces| NIL)
     (|send?| ADT-RECOGNIZER-DECL "[event -> boolean]" |traces| NIL)
-    (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
-     "../strand_spaces/")
-    (|nmtfinseq| TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences| NIL)
+    (|nmtfinseq| TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (|param?| CONST-DECL "bool" |traces| NIL)
     (|trace| TYPE-EQ-DECL NIL |traces| NIL) (> CONST-DECL "bool" |reals| NIL)
     (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
@@ -254,10 +242,8 @@
     (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
     (> CONST-DECL "bool" |reals| NIL) (|trace| TYPE-EQ-DECL NIL |traces| NIL)
     (|param?| CONST-DECL "bool" |traces| NIL)
-    (|nmtfinseq| TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
-    (|doubleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|nmtfinseq| TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
+    (|doubleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences| NIL)
     (|recv?| ADT-RECOGNIZER-DECL "[event -> boolean]" |traces| NIL)
     (|recv| ADT-CONSTRUCTOR-DECL "[mesg -> (recv?)]" |traces| NIL)
     (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
@@ -271,18 +257,15 @@
     (|send| ADT-CONSTRUCTOR-DECL "[mesg -> (send?)]" |traces| NIL)
     (|hash?| ADT-RECOGNIZER-DECL "[mesg -> boolean]" |free_alg| NIL)
     (|hs| ADT-CONSTRUCTOR-DECL "[mesg -> (hash?)]" |free_alg| NIL)
-    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (< CONST-DECL "bool" |reals| NIL)
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
-    (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences| NIL)
     (|add| CONST-DECL "finseq[T]" |more_finseq| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
-    (|subterm| ADT-DEF-DECL "boolean" |free_alg| NIL)
-    (|carried_by?| DEF-DECL "bool" |free_alg| NIL)
+    NIL (|carried_by?| DEF-DECL "bool" |free_alg| NIL)
     (|acquired_index?| CONST-DECL "bool" |traces| NIL)
     (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL)
     (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
@@ -310,18 +293,15 @@
       NIL))
     NIL)
    ((= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
-    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (< CONST-DECL "bool" |reals| NIL)
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
-    (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences| NIL)
     (|add| CONST-DECL "finseq[T]" |more_finseq| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
-    (|subterm| ADT-DEF-DECL "boolean" |free_alg| NIL)
-    (|carried_by?| DEF-DECL "bool" |free_alg| NIL)
+    NIL (|carried_by?| DEF-DECL "bool" |free_alg| NIL)
     (|acquired_index?| CONST-DECL "bool" |traces| NIL)
     (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL)
     (|pr| ADT-CONSTRUCTOR-DECL "[[mesg, mesg] -> (pair?)]" |free_alg| NIL)
@@ -337,10 +317,8 @@
     (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
     (|recv| ADT-CONSTRUCTOR-DECL "[mesg -> (recv?)]" |traces| NIL)
     (|recv?| ADT-RECOGNIZER-DECL "[event -> boolean]" |traces| NIL)
-    (|tripleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
-     "../strand_spaces/")
-    (|nmtfinseq| TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|tripleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences| NIL)
+    (|nmtfinseq| TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (|param?| CONST-DECL "bool" |traces| NIL)
     (|trace| TYPE-EQ-DECL NIL |traces| NIL) (> CONST-DECL "bool" |reals| NIL)
     (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
@@ -396,10 +374,8 @@
     (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
     (> CONST-DECL "bool" |reals| NIL) (|trace| TYPE-EQ-DECL NIL |traces| NIL)
     (|param?| CONST-DECL "bool" |traces| NIL)
-    (|nmtfinseq| TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
-    (|tripleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|nmtfinseq| TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
+    (|tripleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences| NIL)
     (|recv?| ADT-RECOGNIZER-DECL "[event -> boolean]" |traces| NIL)
     (|recv| ADT-CONSTRUCTOR-DECL "[mesg -> (recv?)]" |traces| NIL)
     (|pair?| ADT-RECOGNIZER-DECL "[mesg -> boolean]" |free_alg| NIL)
@@ -413,18 +389,15 @@
     (|vm| ADT-CONSTRUCTOR-DECL "[nat -> (mvar?)]" |free_alg| NIL)
     (|send?| ADT-RECOGNIZER-DECL "[event -> boolean]" |traces| NIL)
     (|send| ADT-CONSTRUCTOR-DECL "[mesg -> (send?)]" |traces| NIL)
-    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (< CONST-DECL "bool" |reals| NIL)
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
-    (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences| NIL)
     (|add| CONST-DECL "finseq[T]" |more_finseq| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
-    (|subterm| ADT-DEF-DECL "boolean" |free_alg| NIL)
-    (|carried_by?| DEF-DECL "bool" |free_alg| NIL)
+    NIL (|carried_by?| DEF-DECL "bool" |free_alg| NIL)
     (|acquired_index?| CONST-DECL "bool" |traces| NIL)
     (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL)
     (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
@@ -462,10 +435,8 @@
     (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
     (> CONST-DECL "bool" |reals| NIL) (|trace| TYPE-EQ-DECL NIL |traces| NIL)
     (|param?| CONST-DECL "bool" |traces| NIL)
-    (|nmtfinseq| TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
-    (|tripleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|nmtfinseq| TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
+    (|tripleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences| NIL)
     (|recv?| ADT-RECOGNIZER-DECL "[event -> boolean]" |traces| NIL)
     (|recv| ADT-CONSTRUCTOR-DECL "[mesg -> (recv?)]" |traces| NIL)
     (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
@@ -487,18 +458,15 @@
     (|key| TYPE-EQ-DECL NIL |free_alg| NIL)
     (|enc?| ADT-RECOGNIZER-DECL "[mesg -> boolean]" |free_alg| NIL)
     (|en| ADT-CONSTRUCTOR-DECL "[[mesg, key] -> (enc?)]" |free_alg| NIL)
-    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (< CONST-DECL "bool" |reals| NIL)
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
-    (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences| NIL)
     (|add| CONST-DECL "finseq[T]" |more_finseq| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
-    (|subterm| ADT-DEF-DECL "boolean" |free_alg| NIL)
-    (|carried_by?| DEF-DECL "bool" |free_alg| NIL)
+    NIL (|carried_by?| DEF-DECL "bool" |free_alg| NIL)
     (|acquired_index?| CONST-DECL "bool" |traces| NIL)
     (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL)
     (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
@@ -536,10 +504,8 @@
     (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
     (> CONST-DECL "bool" |reals| NIL) (|trace| TYPE-EQ-DECL NIL |traces| NIL)
     (|param?| CONST-DECL "bool" |traces| NIL)
-    (|nmtfinseq| TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
-    (|tripleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|nmtfinseq| TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
+    (|tripleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences| NIL)
     (|recv?| ADT-RECOGNIZER-DECL "[event -> boolean]" |traces| NIL)
     (|recv| ADT-CONSTRUCTOR-DECL "[mesg -> (recv?)]" |traces| NIL)
     (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
@@ -558,18 +524,15 @@
     (|key| TYPE-EQ-DECL NIL |free_alg| NIL)
     (|enc?| ADT-RECOGNIZER-DECL "[mesg -> boolean]" |free_alg| NIL)
     (|en| ADT-CONSTRUCTOR-DECL "[[mesg, key] -> (enc?)]" |free_alg| NIL)
-    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (< CONST-DECL "bool" |reals| NIL)
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
-    (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences| NIL)
     (|add| CONST-DECL "finseq[T]" |more_finseq| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
-    (|subterm| ADT-DEF-DECL "boolean" |free_alg| NIL)
-    (|carried_by?| DEF-DECL "bool" |free_alg| NIL)
+    NIL (|carried_by?| DEF-DECL "bool" |free_alg| NIL)
     (|acquired_index?| CONST-DECL "bool" |traces| NIL)
     (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL)
     (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
@@ -607,10 +570,8 @@
     (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
     (> CONST-DECL "bool" |reals| NIL) (|trace| TYPE-EQ-DECL NIL |traces| NIL)
     (|param?| CONST-DECL "bool" |traces| NIL)
-    (|nmtfinseq| TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
-    (|tripleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|nmtfinseq| TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
+    (|tripleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences| NIL)
     (|recv?| ADT-RECOGNIZER-DECL "[event -> boolean]" |traces| NIL)
     (|recv| ADT-CONSTRUCTOR-DECL "[mesg -> (recv?)]" |traces| NIL)
     (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
@@ -634,18 +595,15 @@
     (|invert| ADT-CONSTRUCTOR-DECL "[asymkey -> (invkey?)]" |free_alg| NIL)
     (|send?| ADT-RECOGNIZER-DECL "[event -> boolean]" |traces| NIL)
     (|send| ADT-CONSTRUCTOR-DECL "[mesg -> (send?)]" |traces| NIL)
-    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (< CONST-DECL "bool" |reals| NIL)
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
-    (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences| NIL)
     (|add| CONST-DECL "finseq[T]" |more_finseq| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
-    (|subterm| ADT-DEF-DECL "boolean" |free_alg| NIL)
-    (|carried_by?| DEF-DECL "bool" |free_alg| NIL)
+    NIL (|carried_by?| DEF-DECL "bool" |free_alg| NIL)
     (|acquired_index?| CONST-DECL "bool" |traces| NIL)
     (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL)
     (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
@@ -683,10 +641,8 @@
     (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
     (> CONST-DECL "bool" |reals| NIL) (|trace| TYPE-EQ-DECL NIL |traces| NIL)
     (|param?| CONST-DECL "bool" |traces| NIL)
-    (|nmtfinseq| TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
-    (|tripleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|nmtfinseq| TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
+    (|tripleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences| NIL)
     (|recv?| ADT-RECOGNIZER-DECL "[event -> boolean]" |traces| NIL)
     (|recv| ADT-CONSTRUCTOR-DECL "[mesg -> (recv?)]" |traces| NIL)
     (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
@@ -705,18 +661,15 @@
     (|sk| ADT-CONSTRUCTOR-DECL "[nat -> (skey?)]" |free_alg| NIL)
     (|send?| ADT-RECOGNIZER-DECL "[event -> boolean]" |traces| NIL)
     (|send| ADT-CONSTRUCTOR-DECL "[mesg -> (send?)]" |traces| NIL)
-    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (< CONST-DECL "bool" |reals| NIL)
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
-    (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences| NIL)
     (|add| CONST-DECL "finseq[T]" |more_finseq| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
-    (|subterm| ADT-DEF-DECL "boolean" |free_alg| NIL)
-    (|carried_by?| DEF-DECL "bool" |free_alg| NIL)
+    NIL (|carried_by?| DEF-DECL "bool" |free_alg| NIL)
     (|acquired_index?| CONST-DECL "bool" |traces| NIL)
     (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL)
     (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
@@ -776,8 +729,7 @@
     (|role| TYPE-EQ-DECL NIL |roles| NIL)
     (|protocol| TYPE-EQ-DECL NIL |roles| NIL)
     (|adversary_roles| CONST-DECL "protocol" |adversary| NIL)
-    (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences| NIL)
     (|no_assumptions| DEF-DECL "assumptions" |roles| NIL)
     (|simple_role| CONST-DECL "role" |roles| NIL)
     (|create_akey| CONST-DECL "role" |adversary| NIL)
@@ -785,11 +737,9 @@
     (|create_text| CONST-DECL "role" |adversary| NIL)
     (|create_data| CONST-DECL "role" |adversary| NIL)
     (|add| CONST-DECL "finseq[T]" |more_finseq| NIL)
-    (|doubleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|doubleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences| NIL)
     (|hash_role| CONST-DECL "role" |adversary| NIL)
-    (|tripleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|tripleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences| NIL)
     (|pair_role| CONST-DECL "role" |adversary| NIL)
     (|sep_role| CONST-DECL "role" |adversary| NIL)
     (|enc_akey| CONST-DECL "role" |adversary| NIL)

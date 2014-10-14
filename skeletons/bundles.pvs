@@ -14,7 +14,7 @@ bundles: theory
 begin
 
   importing strand_spaces
-  importing strand_spaces@finite_strict_orders
+  importing finite_strict_orders
 
   % A bundle is a strand space and a set of communication edges
   % that satisfy some properties.  The properties follow the declaration.

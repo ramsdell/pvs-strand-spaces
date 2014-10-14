@@ -1,0 +1,39 @@
+% A measure for strict orders over finite types
+
+% John D. Ramsdell -- The MITRE Corporation -- November 2012
+
+% This theory defines left card, a measure for strict orders over
+% finite types.
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+finite_strict_orders[T: type, <: pred[[T, T]]]: theory
+begin
+
+  assuming
+
+    finiteness: assumption is_finite_type[T]
+
+    strictness: assumption strict_order?(<)
+
+  endassuming
+
+  importing finite_sets@finite_cross[T, T]
+
+  finite_order: lemma is_finite(<)
+
+  x, y, z: var T
+
+  left_set_increases: lemma
+    forall(x, y): x < y implies strict_subset?({z | z < x}, {z | z < y})
+
+  % The measure
+  left_card(x): nat = card({z | z < x})
+
+  % The measure is strictly increasing.
+  left_card_increases: theorem
+    forall(x, y): x < y implies left_card(x) < left_card(y)
+
+end finite_strict_orders

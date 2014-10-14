@@ -13,8 +13,7 @@
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
     (|finseq| TYPE-EQ-DECL NIL |finite_sequences| NIL)
-    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (|pre_role| TYPE-EQ-DECL NIL |roles| NIL)
     (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
     (|assumptions| TYPE-EQ-DECL NIL |roles| NIL)
@@ -49,8 +48,7 @@
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
     (|finseq| TYPE-EQ-DECL NIL |finite_sequences| NIL)
-    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (|pre_role| TYPE-EQ-DECL NIL |roles| NIL)
     (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
     (|assumptions| TYPE-EQ-DECL NIL |roles| NIL)
@@ -141,8 +139,7 @@
     (|finite_emptyset| NAME-JUDGEMENT "finite_set" |finite_sets| NIL)
     (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
     (|add| CONST-DECL "finseq[T]" |more_finseq| NIL)
-    (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences| NIL)
     (|real_gt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
     (|nat_induction| FORMULA-DECL NIL |naturalnumbers| NIL)
@@ -205,16 +202,14 @@
     (|j| SKOLEM-CONST-DECL "nat" |roles| NIL)
     (|i| SKOLEM-CONST-DECL
      "index[setof[atom]](add(emptyset, no_assumptions(j)))" |roles| NIL)
-    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (|set| TYPE-EQ-DECL NIL |sets| NIL)
     (|add| CONST-DECL "finseq[T]" |more_finseq| NIL)
     (|finseq| TYPE-EQ-DECL NIL |finite_sequences| NIL)
     (|seq| TYPE-EQ-DECL NIL |more_finseq| NIL)
     (< CONST-DECL "bool" |reals| NIL)
     (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
-    (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
     (|emptyset| CONST-DECL "set" |sets| NIL)
@@ -279,8 +274,7 @@
     (|finite_sequence| TYPE-EQ-DECL NIL |finite_sequences| NIL)
     (|assumptions| TYPE-EQ-DECL NIL |roles| NIL)
     (|no_assumptions| DEF-DECL "assumptions" |roles| NIL)
-    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (|posnat| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
     (> CONST-DECL "bool" |reals| NIL)
     (|nonneg_int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
@@ -355,8 +349,7 @@
     (|assumptions| TYPE-EQ-DECL NIL |roles| NIL)
     (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
     (|pre_role| TYPE-EQ-DECL NIL |roles| NIL)
-    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (|has_empty_assumptions| FORMULA-DECL NIL |roles| NIL)
     (|posnat| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
     (|nonneg_int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
@@ -408,8 +401,7 @@
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
     (|finseq| TYPE-EQ-DECL NIL |finite_sequences| NIL)
-    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (|pre_role| TYPE-EQ-DECL NIL |roles| NIL)
     (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
     (|assumptions| TYPE-EQ-DECL NIL |roles| NIL)
@@ -495,8 +487,7 @@
     (|instance| CONST-DECL "lift[subst]" |traces| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
-    (|mapping?| CONST-DECL "bool" |free_alg| NIL)
-    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (|mapping?| CONST-DECL "bool" |free_alg| NIL) NIL
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|vari| TYPE-EQ-DECL NIL |free_alg| NIL)

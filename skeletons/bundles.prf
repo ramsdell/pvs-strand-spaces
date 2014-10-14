@@ -72,8 +72,7 @@
     (|finseq| TYPE-EQ-DECL NIL |finite_sequences| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
-    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (|acyclic?| CONST-DECL "bool" |bundles| NIL)
     (|strict_order?| CONST-DECL "bool" |orders| NIL)
     (|transitive?| CONST-DECL "bool" |relations| NIL)
@@ -123,8 +122,7 @@
     (|finseq| TYPE-EQ-DECL NIL |finite_sequences| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
-    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/"))
+    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL))
    SHOSTAK))
  (|comm_injective| 0
   (|comm_injective-1| NIL 3564911466
@@ -156,8 +154,7 @@
    ((|unique?| CONST-DECL "bool" |exists1| NIL)
     (|exists1| CONST-DECL "bool" |exists1| NIL)
     (|right_comm_recv| FORMULA-DECL NIL |bundles| NIL)
-    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
     (|finseq| TYPE-EQ-DECL NIL |finite_sequences| NIL)
@@ -227,8 +224,7 @@
     (|finseq| TYPE-EQ-DECL NIL |finite_sequences| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
-    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (|bundle| TYPE-EQ-DECL NIL |bundles| NIL)
     (|bundle?| CONST-DECL "bool" |bundles| NIL)
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
@@ -330,8 +326,7 @@
     (|int_plus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
     (+ CONST-DECL "[numfield, numfield -> numfield]" |number_fields| NIL)
     (|minus_odd_is_odd| APPLICATION-JUDGEMENT "odd_int" |integers| NIL)
-    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
     (|finseq| TYPE-EQ-DECL NIL |finite_sequences| NIL)
@@ -405,8 +400,7 @@
     (|strict_order?| CONST-DECL "bool" |orders| NIL)
     (|is_finite_type| CONST-DECL "bool" |finite_sets| NIL)
     (|prec?| CONST-DECL "bool" |bundles| NIL)
-    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
     (|finseq| TYPE-EQ-DECL NIL |finite_sequences| NIL)
@@ -434,8 +428,7 @@
     (|node| NONEMPTY-TYPE-EQ-DECL NIL |strand_spaces| NIL)
     (|strand_space| TYPE-EQ-DECL NIL |strand_spaces| NIL)
     (|strand| NONEMPTY-TYPE-EQ-DECL NIL |strand_spaces| NIL)
-    (|left_card_increases| FORMULA-DECL NIL |finite_strict_orders|
-     "../strand_spaces/"))
+    (|left_card_increases| FORMULA-DECL NIL |finite_strict_orders| NIL))
    SHOSTAK))
  (|carried_recv_implies_send| 0
   (|carried_recv_implies_send-1| NIL 3578811450
@@ -470,8 +463,7 @@
    ((|well_formed_recv?| CONST-DECL "bool" |bundles| NIL)
     (|well_formed_comm?| CONST-DECL "bool" |bundles| NIL)
     (|exists1| CONST-DECL "bool" |exists1| NIL)
-    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
     (|finseq| TYPE-EQ-DECL NIL |finite_sequences| NIL)
@@ -550,8 +542,7 @@
     (|finseq| TYPE-EQ-DECL NIL |finite_sequences| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
-    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL)
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
@@ -654,11 +645,10 @@
     (|finseq| TYPE-EQ-DECL NIL |finite_sequences| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
-    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (|naturalnumber| TYPE-EQ-DECL NIL |naturalnumbers| NIL)
     (|prec?| CONST-DECL "bool" |bundles| NIL)
-    (|left_card| CONST-DECL "nat" |finite_strict_orders| "../strand_spaces/")
+    (|left_card| CONST-DECL "nat" |finite_strict_orders| NIL)
     (|is_finite_type| CONST-DECL "bool" |finite_sets| NIL)
     (|strict_order?| CONST-DECL "bool" |orders| NIL)
     (|well_founded?| CONST-DECL "bool" |orders| NIL)
@@ -731,8 +721,7 @@
     (|finseq| TYPE-EQ-DECL NIL |finite_sequences| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
-    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (|carried_implies_origination| FORMULA-DECL NIL |bundles| NIL))
    SHOSTAK))
  (|uniquely_originating_node_prec| 0
@@ -849,7 +838,7 @@
       NIL))
     NIL)
    ((|wf_nat| FORMULA-DECL NIL |naturalnumbers| NIL)
-    (|left_card| CONST-DECL "nat" |finite_strict_orders| "../strand_spaces/")
+    (|left_card| CONST-DECL "nat" |finite_strict_orders| NIL)
     (|naturalnumber| TYPE-EQ-DECL NIL |naturalnumbers| NIL)
     (|measure_induction| FORMULA-DECL NIL |measure_induction| NIL)
     (|is_finite_type| CONST-DECL "bool" |finite_sets| NIL)
@@ -879,8 +868,7 @@
     (|pre_bundle| TYPE-EQ-DECL NIL |bundles| NIL)
     (|event_at| CONST-DECL "event" |strand_spaces| NIL)
     (|node| NONEMPTY-TYPE-EQ-DECL NIL |strand_spaces| NIL)
-    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
     (|finseq| TYPE-EQ-DECL NIL |finite_sequences| NIL)
@@ -953,8 +941,7 @@
     (|finseq| TYPE-EQ-DECL NIL |finite_sequences| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
-    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (|prec_is_strict| FORMULA-DECL NIL |bundles| NIL)
     (|pred| TYPE-EQ-DECL NIL |defined_types| NIL)
     (|strict_order?| CONST-DECL "bool" |orders| NIL)
@@ -1000,8 +987,7 @@
     (|strict_order?| CONST-DECL "bool" |orders| NIL)
     (|is_finite_type| CONST-DECL "bool" |finite_sets| NIL)
     (|after?| CONST-DECL "bool" |bundles| NIL)
-    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
     (|finseq| TYPE-EQ-DECL NIL |finite_sequences| NIL)
@@ -1029,8 +1015,7 @@
     (|node| NONEMPTY-TYPE-EQ-DECL NIL |strand_spaces| NIL)
     (|strand_space| TYPE-EQ-DECL NIL |strand_spaces| NIL)
     (|strand| NONEMPTY-TYPE-EQ-DECL NIL |strand_spaces| NIL)
-    (|left_card_increases| FORMULA-DECL NIL |finite_strict_orders|
-     "../strand_spaces/"))
+    (|left_card_increases| FORMULA-DECL NIL |finite_strict_orders| NIL))
    SHOSTAK))
  (|prec_trans_precedes| 0
   (|prec_trans_precedes-1| NIL 3579094609
@@ -1115,11 +1100,10 @@
     (|finseq| TYPE-EQ-DECL NIL |finite_sequences| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
-    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (|naturalnumber| TYPE-EQ-DECL NIL |naturalnumbers| NIL)
     (|after?| CONST-DECL "bool" |bundles| NIL)
-    (|left_card| CONST-DECL "nat" |finite_strict_orders| "../strand_spaces/")
+    (|left_card| CONST-DECL "nat" |finite_strict_orders| NIL)
     (|is_finite_type| CONST-DECL "bool" |finite_sets| NIL)
     (|strict_order?| CONST-DECL "bool" |orders| NIL)
     (|well_founded?| CONST-DECL "bool" |orders| NIL)
@@ -1127,8 +1111,7 @@
     (|finite_node_type| FORMULA-DECL NIL |strand_spaces| NIL)
     (|after_is_strict| FORMULA-DECL NIL |bundles| NIL)
     (TC INDUCTIVE-DECL "bool" |relations| NIL)
-    (|left_card_increases| FORMULA-DECL NIL |finite_strict_orders|
-     "../strand_spaces/")
+    (|left_card_increases| FORMULA-DECL NIL |finite_strict_orders| NIL)
     (|prec_is_transitive| FORMULA-DECL NIL |bundles| NIL))
    SHOSTAK))
  (|after_send_implies_after_previous_start| 0
@@ -1207,11 +1190,10 @@
     (|finseq| TYPE-EQ-DECL NIL |finite_sequences| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
-    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (|naturalnumber| TYPE-EQ-DECL NIL |naturalnumbers| NIL)
     (|after?| CONST-DECL "bool" |bundles| NIL)
-    (|left_card| CONST-DECL "nat" |finite_strict_orders| "../strand_spaces/")
+    (|left_card| CONST-DECL "nat" |finite_strict_orders| NIL)
     (|is_finite_type| CONST-DECL "bool" |finite_sets| NIL)
     (|strict_order?| CONST-DECL "bool" |orders| NIL)
     (|well_founded?| CONST-DECL "bool" |orders| NIL)
@@ -1221,8 +1203,7 @@
     (TC INDUCTIVE-DECL "bool" |relations| NIL)
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
-    (|left_card_increases| FORMULA-DECL NIL |finite_strict_orders|
-     "../strand_spaces/")
+    (|left_card_increases| FORMULA-DECL NIL |finite_strict_orders| NIL)
     (|before?| CONST-DECL "bool" |bundles| NIL)
     (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
     (|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
@@ -1265,8 +1246,7 @@
     (|finseq| TYPE-EQ-DECL NIL |finite_sequences| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
-    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
      |real_props| NIL)
     (|prec?| CONST-DECL "bool" |bundles| NIL)
@@ -1347,8 +1327,7 @@
     (|well_formed_comm?| CONST-DECL "bool" |bundles| NIL)
     (|before?| CONST-DECL "bool" |bundles| NIL)
     (|prec_trans_precedes| FORMULA-DECL NIL |bundles| NIL)
-    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
     (|finseq| TYPE-EQ-DECL NIL |finite_sequences| NIL)

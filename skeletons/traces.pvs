@@ -17,8 +17,7 @@
 traces: theory
 begin
 
-  strand_spaces: library = "../strand_spaces"
-  importing strand_spaces@nonempty_finite_sequences
+  importing nonempty_finite_sequences
   importing free_alg
 
   % A messaging event is either a message reception or a transmission.

@@ -151,8 +151,7 @@
     (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
      NIL)
     (|node| NONEMPTY-TYPE-EQ-DECL NIL |strand_spaces| NIL)
-    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
     (|finseq| TYPE-EQ-DECL NIL |finite_sequences| NIL)
@@ -239,8 +238,7 @@
     (|finseq| TYPE-EQ-DECL NIL |finite_sequences| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
-    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (|node| NONEMPTY-TYPE-EQ-DECL NIL |strand_spaces| NIL)
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL))
@@ -291,8 +289,7 @@
      |strand_spaces| NIL)
     (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL)
     (|node| NONEMPTY-TYPE-EQ-DECL NIL |strand_spaces| NIL)
-    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
     (|finseq| TYPE-EQ-DECL NIL |finite_sequences| NIL)
@@ -363,8 +360,7 @@
     (|finseq| TYPE-EQ-DECL NIL |finite_sequences| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
-    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (|node| NONEMPTY-TYPE-EQ-DECL NIL |strand_spaces| NIL)
     (|event_at| CONST-DECL "event" |strand_spaces| NIL)
     (|originates_index?| CONST-DECL "bool" |traces| NIL)

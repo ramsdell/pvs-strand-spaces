@@ -109,6 +109,12 @@ begin
         forall(i: below[length(tgt)]):
           recv?(pat(i)) = recv?(tgt(i))
 
+  instance_binds: lemma
+    forall(pat: trace, tgt: {c: trace | length(c) <= length(pat)}, s: subst):
+      instance(pat, tgt) = up(s) implies
+        forall(i: below[length(tgt)], x: vari):
+          subterm(x, t(pat(i))) implies up?(find(x, s))
+
   instance_subst: lemma
     forall(pat: trace, tgt: {c: trace | length(c) <= length(pat)}, 
            i: below[length(tgt)], r, s: subst):

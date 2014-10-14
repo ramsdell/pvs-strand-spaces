@@ -199,9 +199,6 @@
    ((|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
     (|no_assumptions_length| FORMULA-DECL NIL |roles| NIL)
-    (|j| SKOLEM-CONST-DECL "nat" |roles| NIL)
-    (|i| SKOLEM-CONST-DECL
-     "index[setof[atom]](add(emptyset, no_assumptions(j)))" |roles| NIL)
     (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (|set| TYPE-EQ-DECL NIL |sets| NIL)
     (|add| CONST-DECL "finseq[T]" |more_finseq| NIL)
@@ -353,8 +350,6 @@
     (|has_empty_assumptions| FORMULA-DECL NIL |roles| NIL)
     (|posnat| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
     (|nonneg_int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
-    (|r| SKOLEM-CONST-DECL "pre_role" |roles| NIL)
-    (|i| SKOLEM-CONST-DECL "index[setof[atom]](r`rnon)" |roles| NIL)
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
     (|no_assumptions_length| FORMULA-DECL NIL |roles| NIL)
@@ -392,8 +387,6 @@
      "(strict_total_order?[real])" |real_props| NIL)
     (|posnat| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
     (|nonneg_int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
-    (|r| SKOLEM-CONST-DECL "pre_role" |roles| NIL)
-    (|i| SKOLEM-CONST-DECL "index[setof[atom]](r`runique)" |roles| NIL)
     (|member| CONST-DECL "bool" |sets| NIL)
     (|empty?| CONST-DECL "bool" |sets| NIL)
     (|no_assumptions_length| FORMULA-DECL NIL |roles| NIL)
@@ -488,7 +481,6 @@
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
     (|mapping?| CONST-DECL "bool" |free_alg| NIL)
-    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|vari| TYPE-EQ-DECL NIL |free_alg| NIL)
@@ -732,7 +724,194 @@
                                               (("1" (EXPAND "inst")
                                                 (("1" (SMASH)
                                                   (("1" (DELETE -2 -3)
-                                                    (("1" (POSTPONE) NIL NIL))
+                                                    (("1"
+                                                      (LEMMA
+                                                       "instance_orients")
+                                                      (("1" (INST?)
+                                                        (("1" (SMASH)
+                                                          (("1" (INST?)
+                                                            (("1" (SMASH)
+                                                              (("1"
+                                                                (LEMMA
+                                                                 "instance_instantiates_alt")
+                                                                (("1" (INST?)
+                                                                  (("1" (SMASH)
+                                                                    (("1"
+                                                                      (CASE
+                                                                          "instantiate(pa(x!1`1)`trace,
+                  length(finseq_appl[trace](b`space)(x!1`1)),
+                  down(instance(pa(x!1`1)`trace,
+                                finseq_appl[trace](b`space)(x!1`1))))(x!1`2)
+       = finseq_appl[trace](b`space)(x!1`1)(x!1`2)")
+                                                                      (("1"
+                                                                        (EXPAND
+                                                                         "finseq_appl"
+                                                                         -1 1)
+                                                                        (("1"
+                                                                          (EXPAND
+                                                                           "instantiate"
+                                                                           -1)
+                                                                          (("1"
+                                                                            (EXPAND
+                                                                             "subst_evt")
+                                                                            (("1"
+                                                                              (DECOMPOSE-EQUALITY
+                                                                               -1)
+                                                                              (("1"
+                                                                                (LEMMA
+                                                                                 "mvar_subst")
+                                                                                (("1"
+                                                                                  (INST?)
+                                                                                  (("1"
+                                                                                    (INST
+                                                                                     -1
+                                                                                     "x")
+                                                                                    (("1"
+                                                                                      (SMASH)
+                                                                                      (("1"
+                                                                                        (SKOLEM
+                                                                                         -1
+                                                                                         "w")
+                                                                                        (("1"
+                                                                                          (TYPEPRED
+                                                                                           "w")
+                                                                                          (("1"
+                                                                                            (TYPEPRED
+                                                                                             "pa(x!1`1)`trace")
+                                                                                            (("1"
+                                                                                              (EXPAND
+                                                                                               "all_acquired?")
+                                                                                              (("1"
+                                                                                                (INST
+                                                                                                 -2
+                                                                                                 "w")
+                                                                                                (("1"
+                                                                                                  (SMASH)
+                                                                                                  (("1"
+                                                                                                    (SKOLEM
+                                                                                                     -3
+                                                                                                     "j")
+                                                                                                    (("1"
+                                                                                                      (EXPAND
+                                                                                                       "acquired_index?")
+                                                                                                      (("1"
+                                                                                                        (SMASH)
+                                                                                                        (("1"
+                                                                                                          (CASE
+                                                                                                              "j<x!1`2")
+                                                                                                          (("1"
+                                                                                                            (INST
+                                                                                                             -15
+                                                                                                             "(x!1`1,j)")
+                                                                                                            (("1"
+                                                                                                              (SMASH)
+                                                                                                              (("1"
+                                                                                                                (DELETE
+                                                                                                                 -1
+                                                                                                                 -2
+                                                                                                                 -3
+                                                                                                                 -4
+                                                                                                                 -6
+                                                                                                                 -7
+                                                                                                                 -8
+                                                                                                                 -9
+                                                                                                                 -10
+                                                                                                                 -11
+                                                                                                                 -12
+                                                                                                                 -13
+                                                                                                                 14
+                                                                                                                 -15
+                                                                                                                 -16
+                                                                                                                 1)
+                                                                                                                (("1"
+                                                                                                                  (POSTPONE)
+                                                                                                                  NIL
+                                                                                                                  NIL))
+                                                                                                                NIL)
+                                                                                                               ("2"
+                                                                                                                (LEMMA
+                                                                                                                 "prec_increases")
+                                                                                                                (("2"
+                                                                                                                  (INST?)
+                                                                                                                  (("2"
+                                                                                                                    (SMASH)
+                                                                                                                    (("2"
+                                                                                                                      (DELETE
+                                                                                                                       2
+                                                                                                                       3)
+                                                                                                                      (("2"
+                                                                                                                        (LEMMA
+                                                                                                                         "strand_succession_prec")
+                                                                                                                        (("2"
+                                                                                                                          (INST?)
+                                                                                                                          (("2"
+                                                                                                                            (SMASH)
+                                                                                                                            NIL
+                                                                                                                            NIL))
+                                                                                                                          NIL))
+                                                                                                                        NIL))
+                                                                                                                      NIL))
+                                                                                                                    NIL))
+                                                                                                                  NIL))
+                                                                                                                NIL))
+                                                                                                              NIL)
+                                                                                                             ("2"
+                                                                                                              (TYPEPRED
+                                                                                                               "x!1`2")
+                                                                                                              (("2"
+                                                                                                                (SMASH)
+                                                                                                                NIL
+                                                                                                                NIL))
+                                                                                                              NIL))
+                                                                                                            NIL)
+                                                                                                           ("2"
+                                                                                                            (INST
+                                                                                                             -5
+                                                                                                             "x!1`2")
+                                                                                                            (("2"
+                                                                                                              (CASE-REPLACE
+                                                                                                               "j=x!1`2")
+                                                                                                              (("2"
+                                                                                                                (GRIND)
+                                                                                                                NIL
+                                                                                                                NIL))
+                                                                                                              NIL))
+                                                                                                            NIL))
+                                                                                                          NIL))
+                                                                                                        NIL))
+                                                                                                      NIL))
+                                                                                                    NIL))
+                                                                                                  NIL)
+                                                                                                 ("2"
+                                                                                                  (GRIND)
+                                                                                                  NIL
+                                                                                                  NIL))
+                                                                                                NIL))
+                                                                                              NIL))
+                                                                                            NIL))
+                                                                                          NIL))
+                                                                                        NIL))
+                                                                                      NIL))
+                                                                                    NIL))
+                                                                                  NIL))
+                                                                                NIL))
+                                                                              NIL))
+                                                                            NIL))
+                                                                          NIL))
+                                                                        NIL)
+                                                                       ("2"
+                                                                        (SMASH)
+                                                                        NIL
+                                                                        NIL))
+                                                                      NIL))
+                                                                    NIL))
+                                                                  NIL))
+                                                                NIL))
+                                                              NIL))
+                                                            NIL))
+                                                          NIL))
+                                                        NIL))
+                                                      NIL))
                                                     NIL))
                                                   NIL))
                                                 NIL))

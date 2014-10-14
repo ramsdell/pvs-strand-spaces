@@ -340,7 +340,7 @@ begin
         subterm(subst(v, s), subst(x, s))
 
   % If a variable is in the pattern, it gets bound by matching.
-  var_match_subterm: lemma
+  var_match_binds: lemma
     forall(v: vari, x, y: mesg, s: subst):
       let t = match(x, y, s) in
       up?(t) and subterm(v, x) implies
@@ -358,12 +358,11 @@ begin
 
   % Broken.  How to fix?
 
-  % mvar_subst: lemma
-  %   forall(v: vari, u: (mvar?), x: mesg, s: subst):
-  %     subterm(v, x) and up?(find(v, s)) and
-  %     subterm(u, subst(x, s)) implies
-  %       exists(w: (mvar?)): 
-  %         subterm(w, x)
+  mvar_subst: lemma
+    forall(u: (mvar?), x: mesg, s: subst):
+      subterm(u, subst(x, s)) implies
+        exists(w: (mvar?)): 
+          subterm(w, x)
 
   % If x matches y to produce t, and there is an mvar v in y, then there
   % is an mvar u in x that maps to a term that contains v.

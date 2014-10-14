@@ -89,9 +89,13 @@ begin
   endcases
   measure y by <<
 
-  carried_by_subst: lemma
+  carried_by_subterm: lemma
    forall(x, y: mesg):
      carried_by?(x, y) implies subterm(x, y)
+
+  subterm_transitive: lemma
+    forall(x, y, z: mesg):
+      subterm(x, y) and subterm(y, z) implies subterm(x, z)
 
   % Variables
 
@@ -360,14 +364,12 @@ begin
 
   % A lemma about variables of sort message
 
-  % Broken.  How to fix?
-
   mvar_subst: lemma
     forall(u: (mvar?), x: mesg, s: subst):
       subterm(u, subst(x, s)) implies
         exists(w: (mvar?)): 
           subterm(w, x) and
-          subterm(u, subst(x, s))
+          subterm(u, subst(w, s))
 
   % If x matches y to produce t, and there is an mvar v in y, then there
   % is an mvar u in x that maps to a term that contains v.

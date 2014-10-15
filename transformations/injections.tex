@@ -56,7 +56,7 @@
 \newcommand{\ssp}{\ensuremath{\mathcal{S}}}
 \newcommand{\bun}{\ensuremath{\mathcal{B}}}
 \newcommand{\strands}{\ensuremath{\mathcal{Z}}}
-%\newcommand{\nodes}{\ensuremath{\mathcal{N}}}
+\newcommand{\nodes}{\ensuremath{\mathcal{N}}}
 \newcommand{\pos}{\ensuremath{\mathcal{P}}}
 
 \newcommand{\run}{\mathcal{R}}
@@ -69,7 +69,6 @@
 \newcommand{\rl}{\fn{rl}}
 \newcommand{\skel}{\mathsf{k}}
 \newcommand{\insta}{\mathsf{i}}
-\newcommand{\nodes}{\fn{nodes}}
 \newcommand{\evt}{\fn{evt}}
 \newcommand{\role}{\mathsf{r}}
 \newcommand{\orig}{\mathcal{O}}
@@ -90,6 +89,8 @@
 \maketitle
 
 \section{Introduction}
+
+\nocite{Guttman12a}
 
 \remark{Much more should be here someday.}
 
@@ -142,21 +143,22 @@ homomorphism~$\sigma$, \[\sigma (\seq{\pm t_0,\ldots,\pm t_{n-1}})=
 \seq{\pm \sigma(t_0),\ldots,\pm \sigma(t_{n-1})}.\]
 
 A \emph{strand space}~{\ssp} is a finite non-empty sequence of traces
-in $\tr$.  A \emph{strand}~$s$ is a member of the domain of $\ssp$,
-and its trace is $\ssp(s)$.  An atom~$t$ is \emph{non-originating} in
-a strand space~$\ssp$, written $\fn{non}(\ssp,t)$, if it originates on
-no strand.
+in $\tr$.  A \emph{strand}~$s$ is in $\strands(\ssp)=\sdom(\ssp)$, the
+domain of $\ssp$, and its trace is $\ssp(s)$.  An atom~$t$ is
+\emph{non-originating} in a strand space~$\ssp$, written
+$\fn{non}(\ssp,t)$, if it originates on no strand.
 
 Message events occur at nodes in a strand space.  For each strand~$s$,
 there is a node for every event in~$\ssp(s)$.  The \emph{nodes} of
-strand space $\ssp$ are $\{(s,i)\mid s\in\sdom(\ssp), 0\leq i <
-|\ssp(s)|\}$, and the event at a node is $\evt_\ssp(s,i)=\ssp(s)(i)$.
-A node names an event in a strand space.  The relation~$\Rightarrow$
-defined by $\{(s,i-1)\Rightarrow(s,i)\mid s\in\sdom(\ssp), 1\leq
-i<|\ssp(s)|\}$ is called the \emph{strand succession relation}.  An
-atom~$t$ \emph{uniquely originates} in a strand space~$\ssp$ at
-node~$n$, written $\fn{uniq}(\ssp,t,n)$, if it originates in the trace
-of exactly one strand~$s$ at index~$i$, and $n=(s,i)$.
+strand space $\ssp$ are $\nodes(\ssp)=\{(s,i)\mid s\in\strands(\ssp),
+i < |\ssp(s)|\}$, and the event at a node is
+$\evt_\ssp(s,i)=\ssp(s)(i)$.  A node names an event in a strand space.
+The relation~$\Rightarrow$ defined by $\{(s,i)\Rightarrow(s,i+1)\mid
+s\in\strands(\ssp), i<|\ssp(s)|-1\}$ is called the \emph{strand
+  succession relation}.  An atom~$t$ \emph{uniquely originates} in a
+strand space~$\ssp$ at node~$n$, written $\fn{uniq}(\ssp,t,n)$, if it
+originates in the trace of exactly one strand~$s$ at index~$i$, and
+$n=(s,i)$.
 
 \paragraph{Bundles.}
 The pair $\bun=(\ssp,\to)$ is a \emph{bundle} if it defines a directed
@@ -172,6 +174,10 @@ Each acyclic graph has a transitive irreflexive relation~$\prec$ on
 its vertices.  The relation specifies the causal ordering of nodes in
 a bundle.  A transitive irreflexive binary relation is also called a
 strict order.
+
+The strand space of bundle~{\bun} is written~$\bun^\ssp$ and its
+communication relations is~$\bun^\to$, so
+$\bun=(\bun^\ssp,\bun^\to)$.
 
 \paragraph{Runs of Protocols.}
 In a run of a protocol, the behavior of each strand is constrained by
@@ -195,7 +201,7 @@ some substitution~$\sigma$,
 
 A \emph{protocol} is a set of roles.  A bundle~$\bun=(\ssp,\to)$ is a
 \emph{run of protocol} $P$ if there is a role assignment
-$\rl\typ\sdom(\ssp)\to P$ such that for each $s\in\sdom(\ssp)$, there
+$\rl\typ\strands(\ssp)\to P$ such that for each $s\in\strands(\ssp)$, there
 exists $\role(c,\nu,\upsilon)\in\rl(s)$ such that
 $\fn{inst}(\ssp,s,\role(c,\nu,\upsilon))$.  Let~$\run_P$ be the set of
 bundles that are runs of protocol~$P$.
@@ -209,17 +215,57 @@ implies $f(i)<f(j)$.  The set of such functions is~$\alg{F}[m,n]$.  An
 increasing function is injective.
 
 A \emph{trace stretch} from trace~$c_0$ to~$c_1$ is an increasing
-function~$f\in\alg{F}[|c_0|, |c_1|]$ such that
+function $f\in\alg{F}[|c_0|, |c_1|]$ such that
 $\vars(c_0)\subseteq\vars(c_1)$ and for all~$i$, $c(i)$ is inbound iff
 $c(f(i))$ is inbound.  The set of such functions
 is~$\alg{T}[c_0,c_1]$.
+
+A \emph{strand stretch} from strand space~$\ssp_0$ to~$\ssp_1$ is an
+increasing function $h^s\in\alg{F}[|\ssp_0|, |\ssp_1|]$.  A \emph{node
+  stretch} from strand space~$\ssp_0$ to~$\ssp_1$ using
+$h^s\in\alg{F}[|\ssp_0|, |\ssp_1|]$ is an increasing function
+$h^n\in\dprod{s\in\strands(\ssp_0)}\alg{F}[|\ssp_0(s)|,
+  |\ssp_1(h^s(s))|]$.  That is, for $s\in\strands(\ssp_0)$ and
+$i\in\sdom(\ssp_0(s))$, $h^n(s)(i)\in\sdom(\ssp_1(h^s(s))$.  In this
+context, the \emph{node implant} is the function in
+$\nodes(\ssp_0)\to\nodes(\ssp_1)$ defined by
+$\ell(s,i)=(h^s(s), h^n(s)(i))$.
 
 The set of \emph{protocol injections} from protocol~$P_0$ to~$P_1$ is
 \[\alg{P}[P_0,P_1]=\dprod{\role(c_0,\nu_0,\upsilon_0)\in
   P_0}\dpair{\role(c_1,\nu_1,\upsilon_1)\in P_1}\alg{T}[c_0,c_1].\]
 That is, if~$g\in\alg{P}[P_0,P_1]$ and~$r_0\in P_0$, then
 $g(r_0)=(r_1,f)$, where $r_1\in P_1$ and~$f$ is a trace stretch from
-the trace of~$r_0$ to the trace of~$r_1$.
+the trace of~$r_0$ to the trace of~$r_1$.  The role map of a protocol
+injection~$g$ is written~$g^r$ and the role to trace stretch is
+written~$g^f$ so $g(r_0)=(g^r(r_0), g^f(r_0))$.
+
+A protocol~$P_1$ \emph{imports the goals} of protocol~$P_0$, written
+$P_1\unrhd P_0$, iff
+\begin{itemize}
+\item there exists a protocol injection $g\in\alg{P}[P_0,P_1]$ such
+  that
+\item for all bundles~$\bun_1$ that are runs of~$P_1$ with role
+  assignment~$\rl_1$, there exists
+  \begin{itemize}
+  \item bundle~$\bun_0$ that is a run of~$P_0$ with role
+    assignment~$\rl_0$, and
+  \item strand stretch $h^s\in\alg{F}[|\ssp_0|, |\ssp_1|]$, and
+  \item node stretch
+    $h^n\in\dprod{s\in\strands(\ssp_0)}\alg{F}[|\ssp_0(s)|,
+    |\ssp_1(h^s(s))|]$,
+  \end{itemize}
+  where $\ssp_0=\bun^\ssp_0$ and $\ssp_1=\bun^\ssp_1$, the following
+  conditions hold.
+\end{itemize}
+\begin{enumerate}
+\item Roles respect injection (for role predicate mappings)
+  \[\begin{array}{l}
+  \all{s_0\in\strands(\ssp_0),s_1\in\strands(\ssp_1)} h^s(s_0) = s_1\\
+  \quad\supset g^r(\rl_0(s_0))=\rl_1(s_1)
+  \end{array}\]
+
+\end{enumerate}
 
 \bibliography{secureprotocols}
 \bibliographystyle{plain}

@@ -66,9 +66,10 @@
 \newcommand{\lang}{\mathcal{L}}
 \newcommand{\interp}{\mathcal{I}}
 \newcommand{\tr}{\ensuremath{\mathfrak C}}
-\newcommand{\rl}{\fn{rl}}
+\newcommand{\rl}{\ensuremath{\rho}}
 \newcommand{\skel}{\mathsf{k}}
 \newcommand{\insta}{\mathsf{i}}
+\newcommand{\insts}{\mathcal{I}}
 \newcommand{\evt}{\fn{evt}}
 \newcommand{\role}{\mathsf{r}}
 \newcommand{\orig}{\mathcal{O}}
@@ -143,7 +144,8 @@ infinite set of variables.  The set of messages~{\msg} is the carrier
 set for sort \srt{M}.  The set of atoms~{\atm} is the union of the
 carrier sets for sorts \srt{A}, \srt{S}, and \srt{D}.  Each variable
 in an order-sorted term has a unique sort.  A variable of sort~\srt{M}
-is called a \emph{non-atomic variable}.
+is called a \emph{non-atomic variable}.  We write $t\typ S$ to say
+that term~$t$ is in the carrier set of sort~$S$.
 
 \begin{figure}
 $$\begin{array}{ll@{{}\colon{}}ll}
@@ -184,8 +186,9 @@ $c(i)$, $c(i)$ is outbound, and it is not carried by any event earlier
 in the trace.  A message is \emph{acquired} in trace~$c$ if there is
 an index~$i$ at which it is carried by $c(i)$, $c(i)$ is inbound, and
 it does not occur in any event earlier in the trace.  For algebra
-homomorphism~$\sigma$, \[\sigma (\seq{\pm t_0,\ldots,\pm t_{n-1}})=
-\seq{\pm \sigma(t_0),\ldots,\pm \sigma(t_{n-1})}.\]
+homomorphism~$\sigma$, \[\sigma\circ\seq{\pm t_0,\ldots,\pm t_{n-1}}=
+\seq{\pm \sigma(t_0),\ldots,\pm \sigma(t_{n-1})},\]
+and $\sigma\circ\prefix{c}{h}=\sigma\circ(\prefix{c}{h})$.
 
 A \emph{strand space}~{\ssp} is a finite non-empty sequence of traces
 in $\tr$.  A \emph{strand}~$s$ is in $\strands(\ssp)=\sdom(\ssp)$, the
@@ -243,9 +246,9 @@ some substitution~$\sigma$,
 \item for all $i<h$, $t\in \upsilon(i)$ implies
   $\fn{uniq}(\ssp,\sigma(t),(s,i))$.
 \end{enumerate}
-Let $\rho^c(\role(c,\nu,\upsilon))=c$,
-$\rho^\nu(\role(c,\nu,\upsilon))=\nu$, and
-$\rho^\upsilon(\role(c,\nu,\upsilon))=\upsilon$.
+Let $\role^c(\role(c,\nu,\upsilon))=c$,
+$\role^\nu(\role(c,\nu,\upsilon))=\nu$, and
+$\role^\upsilon(\role(c,\nu,\upsilon))=\upsilon$.
 
 A \emph{protocol} is a set of roles.  A bundle~$\bun=(\ssp,\to)$ is a
 \emph{run of protocol} $P$ if there is a role assignment
@@ -253,6 +256,106 @@ $\rl\typ\strands(\ssp)\to P$ such that for each $s\in\strands(\ssp)$, there
 exists $\role(c,\nu,\upsilon)\in\rl(s)$ such that
 $\fn{inst}(\ssp,s,\role(c,\nu,\upsilon))$.  Let~$\run_P$ be the set of
 bundles that are runs of protocol~$P$.
+
+In each run of a protocol, no non-atomic variables occur.  This a
+result of, and the purpose of the constraint on the trace of a role
+that every non-atomic variable in the trace is acquired.
+
+\begin{figure}
+$$\begin{array}{r@{{}={}}ll}
+\fn{create}&\seq{\outbnd x}&
+\mbox{$x\typ\srt{A}$ or $x\typ\srt{S}$ or $x\typ\srt{D}$}\\
+\fn{pair}&
+\seq{\inbnd x,\inbnd y,\outbnd (x,y)}&
+x,y\typ\srt{M}\\
+\fn{sep}&
+\seq{\inbnd (x,y),\outbnd x,\outbnd y}&
+x,y\typ\srt{M}\\
+\fn{aenc}&
+\seq{\inbnd x,\inbnd k,\outbnd \enc{x}{k}}&
+\mbox{$x\typ\srt{M}$ and $k\typ\srt{A}$}\\
+\fn{adec}&
+\seq{\inbnd \enc{x}{k},\inbnd\invk{k},\outbnd x}&
+\mbox{$x\typ\srt{M}$ and $k\typ\srt{A}$}\\
+\fn{senc}&
+\seq{\inbnd x,\inbnd k,\outbnd \enc{x}{k}}&
+\mbox{$x\typ\srt{M}$ and $k\typ\srt{S}$}\\
+\fn{sdec}&
+\seq{\inbnd \enc{x}{k},\inbnd k,\outbnd x}&
+\mbox{$x\typ\srt{M}$ and $k\typ\srt{S}$}
+\end{array}$$
+\caption{Adversary Traces}\label{fig:adversary}
+\end{figure}
+
+\paragraph{Adversary Model.}
+The traces of the roles that constrain adversarial
+behavior are in Figure~\ref{fig:adversary}.  There are no origination
+assumptions in the adversary's roles.
+
+There are three \fn{create} roles, one for each sort of atoms.  In
+fact, the defining characteristic of an atom is it denotes the set of
+messages the adversary can create out of thin air modulo origination
+assumptions.
+
+\paragraph{Skeletons.}
+
+A skeleton represents all or part of the regular portion of a bundle.
+A skeleton contains a strand space, a partial ordering of its nodes,
+assumptions about uncompromised keys and freshly generated atoms, and
+role assignment.  The structure of a skeleton used here is motivated
+by CPSA~\cite{cpsa09},
+
+In {\cpsa} syntax, the trace and the role associated with a strand is
+specified by an \index{instance}\emph{instance}.  An instance is of
+the form $\insta(r,h,\sigma)$, where~$r$ is a role, $h$ specifies the
+length of a trace instantiated from the role, and~$\sigma$ specifies
+how to instantiate the variables in the role to obtain the trace.
+Thus the trace associated with $\insta(r,h,\sigma)$ is
+$\sigma\circ\prefix{r}{h}$, the prefix of length~$h$ that results from
+applying~$\sigma$ to~$r$.
+
+A sequence of instances~$\insts$ defines a strand space~{\ssp} and a
+role assignment~\rl, where $\sdom(\insts)=\strands(\ssp)$ and when
+$\insts(s)=\insta(r,h,\sigma)$, $\ssp(s)=\sigma\circ\prefix{r}{h}$ and
+$\rl(s)=r$.  Let $\insts^\ssp$ and $\insts^{\rl}$ be the strand space
+and role assignment associated with~$\insts$.
+
+$\skel(P,\insts,\prec,\nu,\upsilon)$
+
+In the {\cpsa} syntax, the role map and sequence of traces are
+replaced by a sequence of instances.  So for skeleton
+$\skel_X(\rl,P,\Theta_X,\prec,N,U)$, the {\cpsa} syntax is
+$\skel_X(P,I,\prec,N,U)$, where for each $s\in\sdom(\Theta_X)$,
+$I(s)=\insta(r,h,\sigma)$, $r=\rl(s)$, and the trace of
+$\insta(r,h,\sigma)$ is $\Theta_X(s)$.
+
+\paragraph{Homomorphisms.}
+
+Let $k_0=\skel_X(rl_0,P,\Theta_0,\prec_0,N_0,U_0)$ and
+$k_1=\skel_Y(rl_1,P,\Theta_1,\prec_1,N_1,U_1)$ be skeletons.  There is
+a \emph{skeleton homomorphism} $(\phi,\sigma)\colon k_0\mapsto k_1$
+if~$\phi$ and~$\sigma$ are maps with the following properties:
+\begin{enumerate}
+\item $\phi$ maps strands of~$k_0$ into those of~$k_1$, and nodes as
+  $\phi((s,i))=(\phi(s),i)$, that is $\phi$ is in
+  $\sdom(\Theta_0)\to\sdom(\Theta_1)$;
+\item $\sigma\colon\alg{A}\to\alg{A}$ is a message algebra homomorphism;
+\item $n\in\nodes(\Theta_0)$ implies
+  $\sigma(\evt_{\Theta_0}(n))=\evt_{\Theta_1}(\phi(n))$;
+\item $n_0\prec_0
+n_1$ implies $\phi(n_0)\prec_1\phi(n_1)$;
+\item $\sigma(N_0)\subseteq N_1$;
+\item $\sigma(U_0)\subseteq U_1$;
+\item\label{item:orig} $t\in U_0$ implies
+  $\phi(\orig_{k_0}(t))\subseteq\orig_{k_1}(\sigma(t))$;
+\end{enumerate}
+where $\orig_k(t)$ is the set of nodes of events at which~$t$
+originates.  Item~\ref{item:orig} says the node at which an atom
+declared to be uniquely originating is preserved by homomorphisms.
+Note that~$\phi$ is a strand mapping, not a node mapping as
+in~\cite{Guttman09}.
+
+\section{Shape Analysis Sentences}\label{sec:shape analysis sentences}
 
 \section{Protocol Injections}\label{sec:protocol injections}
 
@@ -297,7 +400,7 @@ The atomic formulas used in shape analysis sentences are constructed
 using the predicates \fn{htin}, $\prec$, \fn{non}, and \fn{uniq},
 where 
 \[\fn{htin}(\ssp,s,r,h,\sigma)=h\leq|\ssp(s)|\land\fn{inst}(\ssp,s,r)
-\land\prefix{\sigma(\rho^c(r))}{h}=\ssp(s).\]
+\land\sigma\circ\prefix{\role^c(r)}{h}=\ssp(s).\]
 In what follows, Properties~\ref{item: role mappings} and~\ref{item:
   role heights} ensure the preservation of the truth of the \fn{htin}.
 Property~\ref{item: node orderings} ensures the truth of~$\prec$ is
@@ -329,14 +432,14 @@ $P_1\unrhd P_0$, iff
   \[\begin{array}{l}
   \all{s_0\in\strands(\ssp_0),s_1\in\strands(\ssp_1)}h^s(s_0) = s_1\\
   \quad\supset g^r(\rl_0(s_0))=\rl_1(s_1)\\
-  \qquad{}\land\sigma(\prefix{\gamma(c_0)}{|\ssp_0(s_0)|})
+  \qquad{}\land\sigma\circ\gamma\circ\prefix{c_0}{|\ssp_0(s_0)|}
   = \ssp_0(s_0)
   \end{array}\]
-  where $c_0=\rho^c(\rl_0(s_0))$,
+  where $c_0=\role^c(\rl_0(s_0))$,
   $\gamma=g^\gamma(\rl_0(s_0))$, and~$\sigma$ is the substitution that
   shows that~$s_1$ is an instance of its role, i.e.\@
-  $\sigma(\prefix{c_1}{|\ssp_1(s_1)|})=\ssp_1(s_1)$ for
-  $c_1=\rho^c(\rl_1(s_1))$.
+  $\sigma\circ\prefix{c_1}{|\ssp_1(s_1)|}=\ssp_1(s_1)$ for
+  $c_1=\role^c(\rl_1(s_1))$.
 
 \item\label{item: role heights} Nodes respect injection (for role
   predicate heights).

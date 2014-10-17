@@ -221,7 +221,7 @@ a bundle.  A transitive irreflexive binary relation is also called a
 strict order.
 
 The strand space of bundle~{\bun} is written~$\bun^\ssp$ and its
-communication relations is~$\bun^\to$, so
+communication relation is~$\bun^\to$, so
 $\bun=(\bun^\ssp,\bun^\to)$.
 
 \paragraph{Runs of Protocols.}
@@ -257,10 +257,9 @@ $\role^\upsilon(\role(c,\nu,\upsilon))=\upsilon$.
 
 A \emph{protocol} is a set of roles.  A bundle~$\bun=(\ssp,\to)$ is a
 \emph{run of protocol} $P$ if there is a role assignment
-$\rl\typ\strands(\ssp)\to P$ such that for each $s\in\strands(\ssp)$, there
-exists $\role(c,\nu,\upsilon)\in\rl(s)$ such that
-$\fn{inst}(\ssp,s,\role(c,\nu,\upsilon))$.  Let~$\run_P$ be the set of
-bundles that are runs of protocol~$P$.
+$\rl\typ\strands(\ssp)\to P$ such that for each $s\in\strands(\ssp)$,
+there exists $r\in\rl(s)$ such that $\fn{inst}(\ssp,s,r)$.
+Let~$\run_P$ be the set of bundles that are runs of protocol~$P$.
 
 In each run of a protocol, no non-atomic variables occur.  This a
 result of, and the purpose of the constraint on the trace of a role
@@ -308,7 +307,7 @@ A skeleton represents all or part of the regular portion of a bundle.
 A skeleton contains a strand space, a partial ordering of its nodes,
 assumptions about uncompromised keys and freshly generated atoms, and
 role assignment.  The structure of a skeleton used here is motivated
-by CPSA~\cite{cpsa09},
+by CPSA~\cite{cpsa09}.
 
 In {\cpsa} syntax, the trace and the role associated with a strand is
 specified by an \index{instance}\emph{instance}.  An instance is of
@@ -362,8 +361,8 @@ n_1$ implies $\phi(n_0)\prec_1\phi(n_1)$;
   $\phi(\orig_{k_0}(t))\subseteq\orig_{k_1}(\sigma(t))$;
 \end{enumerate}
 where $\orig_k(t)$ is the set of nodes of events at which~$t$
-originates.  Item~\ref{item:orig} says the node at which an atom
-declared to be uniquely originating is preserved by homomorphisms.
+originates.  Property~\ref{item:orig} says the node at which an atom
+is declared to be uniquely originating is preserved by homomorphisms.
 
 Notice that the existence of a homomorphism depends only on a
 skeleton's strand space, node orderings, non-originating atoms, and
@@ -410,7 +409,7 @@ follows.
 
 \begin{itemize}
 \item For each $s\in\sdom(I)$, let $I(s)=\insta(r,h,\sigma)$.  For
-  each variable $x\in\sdom(\sigma)$ and term $t=\sigma(x)$, assert
+  each variable $x\in\vars(\prefix{r}{h})$ and term $t=\sigma(x)$, assert
   $P[r,h,x](z_s,t)$.
 \item For each $(s,i)\prec(s',i')$, assert
   $\cn{prec}(z_s,i,z_{s'},i')$.
@@ -576,12 +575,12 @@ g^f(r_0),g^\gamma(r_0))$.
 \paragraph{Goal Imports.}
 Protocol injections can be used to decide if the security goals of one
 protocol are imported into another.  The definition of goal
-importation ensures that the truth of predicates used in shape
-analysis sentences is preserved.
+importation ensures that the truth of predicates used in security
+formulas is preserved.
 
 Let $\Psi$ be a security formula for protocol~$P_0$ and
 $g\in\alg{P}[P_0,P_1]$ be a protocol injection.  To import~$\Psi$
-into~$P_1$, transform the atomic formulas in~$\Psi$ as follows.
+into~$P_1$, transform each atomic formula in~$\Psi$ as follows.
 \begin{itemize}
 \item $P_0[r,h,x](z, t)$ becomes
   $P_1[g^r(r),g^f(r)(h),g^\gamma(r)(x)](z,t)$.
@@ -589,7 +588,7 @@ into~$P_1$, transform the atomic formulas in~$\Psi$ as follows.
   $\cn{prec}(z,g^f(r)(i),z',g^f(r')(i'))$, where both\\
   $P_0[r,\ast,\ast](z,\ast)$ and
   $P_0[r',\ast,\ast](z',\ast)$ occur in~$\Psi$.
-\item Otherwise, the atomic formulas remain unchanged.
+\item Otherwise, the atomic formula is not changed.
 \end{itemize}
 
 In what follows, Properties~\ref{item: role mappings} and~\ref{item:

@@ -416,8 +416,8 @@ formulas composed as follows.
 
 \begin{itemize}
 \item For each $s\in\sdom(I)$, let $I(s)=\insta(r,h,\sigma)$.  For
-  each variable $x\in\vars(\prefix{r}{h})$ and term $t=\sigma(x)$, assert
-  $P[r,h,x](z_s,t)$.
+  each variable $x\in\vars(\prefix{\role^c(r)}{h})$ and term
+  $t=\sigma(x)$, assert $P[r,h,x](z_s,t)$.
 \item For each $(s,i)\prec(s',i')$, assert
   $\cn{prec}(z_s,i,z_{s'},i')$.
 \item For each $t\in\nu$, assert $\cn{non}(t)$.
@@ -541,10 +541,17 @@ satisfied in the remaining realized skeletons.
 \end{proof}
 
 A \emph{security formula}~$\Psi$ for protocol~$P$ is a first-order
-formula over the language~$\lang(P)$ that shares a property with shape
-analysis sentences.  Each $z\typ\srt{N}$ in~$\Psi$ is associated with a
-unique role that is determined by one or more atomic formulas of the form
-$P[r,\ast,\ast](z,\ast)$.
+formula over the language~$\lang(P)$ that shares properties with shape
+analysis sentences.
+\begin{enumerate}
+\item\label{item: var occurs} When $P[r,h,x](z,t)$ occurs in a
+  formula, $x\in\vars(\prefix{\role^c(r)}{h})$.
+\item Each $z\typ\srt{N}$ in~$\Psi$ is associated with a unique role
+  that is determined by one or more atomic formulas of the form
+  $P[r,\ast,\ast](z,\ast)$.
+\item When $\cn{prec}(z_0,i_0,z_1,i_1)$ occurs in a formula, $z_0$ and
+  $z_1$ are logical variables and $i_0$ and $i_1$ are ground terms.
+\end{enumerate}
 
 Let~$\Gamma$ be the shape analysis sentence of a complete shape
 analysis and~$\Psi$ be a security formula.  If $\Gamma\supset\Psi$ is a
@@ -560,8 +567,10 @@ increasing function is injective.
 
 A \emph{trace stretch} from trace~$c_0$ to~$c_1$ is a pair containing
 an increasing function $f\in\alg{F}[|c_0|, |c_1|]$ and an injective
-function $\gamma\in\vars(c_0)\to\vars(c_1)$ such that for all~$i$,
-$c(i)$ is inbound iff $c(f(i))$ is inbound.  The set of such pairs
+function $\gamma\in\vars(c_0)\to\vars(c_1)$ such that for
+all~$i<|c_0|$, $c_0(i)$ is inbound iff $c_1(f(i))$ is inbound and for
+all $x\in\vars(\prefix{c_0}{i+1})$,
+$\gamma(x)\in\vars(\prefix{c_1}{f(i)+1})$.  The set of such pairs
 is~$\alg{T}[c_0,c_1]$.  A \emph{strand stretch} from strand
 space~$\ssp_0$ to~$\ssp_1$ is an increasing function
 $h^s\in\alg{F}[|\ssp_0|, |\ssp_1|]$.
@@ -695,16 +704,16 @@ focus only on their atomic formulas.
     $(h^s(s),g^f(\rl(s))(h-1))\in\nodes(\ssp_1)$.  Therefore,
     $h'\leq|\ssp_1(h^s(s))|$ because $r=\rl(s)$.
   \item
-    $\prefix{\ssp_0(s)}{h}=\sigma_0\uplus\{x\mapsto\alpha(t)\}\circ
+    $\prefix{\ssp_0(s)}{h}=\sigma_0\uplus\{x\mapsto\alpha_0(t)\}\circ
     \prefix{\role^{c}(r)}{h}$ for some~$\sigma_0$.  By
     Property~\ref{item: role mappings},
-    $\prefix{\ssp_0(s)}{h}=\sigma_1\circ\gamma\circ\prefix{\role^c(r)}{h}$,
+    $\prefix{\ssp_0(s)}{h}=\sigma\circ\gamma\circ\prefix{\role^c(r)}{h}$,
     $\gamma=g^\gamma(r)(x)$, and
-    $\sigma_1\circ\prefix{c_1}{|\ssp_1(h^s(s))|}=\ssp_1(h^s(s))$ for
+    $\sigma\circ\prefix{c_1}{|\ssp_1(h^s(s))|}=\ssp_1(h^s(s))$ for
     $c_1=\role^c(g^r(r)$.  Since
     $(\sigma_0\uplus\{x\mapsto\alpha(t)\})(x)=\alpha(t)$, then
-    $(\sigma_1\circ\gamma)(x) =\sigma_1(\gamma(x))=\alpha(t)$.
-    Therefore $\prefix{\ssp_1(h^s(s))}{h'}=\sigma_1\uplus
+    $(\sigma\circ\gamma)(x) =\sigma(\gamma(x))=\alpha(t)$.
+    Therefore $\prefix{\ssp_1(h^s(s))}{h'}=\sigma\uplus
     \{\gamma(x)\mapsto\alpha(t)\}\circ \prefix{c_1}{h'}$.
   \end{itemize}
 
@@ -718,6 +727,22 @@ focus only on their atomic formulas.
     $(h^s(s),g^f(r)(h-1))\in\nodes(\ssp_1)$. By Property~\ref{item:
     role heights}, $(s,h-1)\in\nodes(\ssp_0)$.  Therefore,
     $h\leq|\ssp_0(s)|$.
+  \item
+    $\prefix{\ssp_1(h^s(s))}{h'}=
+    \sigma_1\uplus\{\gamma(x)\mapsto\alpha_0(t)\}\circ
+    \prefix{c_1}{h'}$ for some~$\sigma_1$, where
+    $\gamma=g^\gamma(r)(x)$ and $c_1=\role^c(g^r(r)$.  Let $\sigma$ be
+    the substitution such that
+    $\sigma\circ\prefix{c_1}{|\ssp_1(s_1)|}=\ssp_1(s_1)$.  By
+    Property~\ref{item: var occurs} in the definition of a security
+    formula, $\gamma(x)\in\vars(\prefix{c_1}{h'})$.  Then
+    $\sigma(\gamma(x))=\alpha_0(t)$, so
+    $\sigma=\sigma\uplus\{\gamma(x)\mapsto\alpha_0(t)\}$.  By
+    Property~\ref{item: role mappings},
+    $\prefix{\ssp_0(s)}{h}=\sigma\circ\gamma\circ\prefix{\role^c(r)}{h}$,
+    and thus
+    $\prefix{\ssp_0(s)}{h}=(\sigma\circ\gamma)\uplus\{x\mapsto\alpha_0(t)\}\circ
+    \prefix{\role^{c}(r)}{h}$.
   \end{itemize}
 
 \end{itemize}

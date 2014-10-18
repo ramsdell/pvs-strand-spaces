@@ -547,20 +547,11 @@ increasing function is injective.
 
 A \emph{trace stretch} from trace~$c_0$ to~$c_1$ is a pair containing
 an increasing function $f\in\alg{F}[|c_0|, |c_1|]$ and an injective
-function $\gamma\in\vars(c_0)\to\vars(c_1)$ such that for
-all~$i$, $c(i)$ is inbound iff $c(f(i))$ is inbound.  The set of such
-pairs is~$\alg{T}[c_0,c_1]$.
-
-A \emph{strand stretch} from strand space~$\ssp_0$ to~$\ssp_1$ is an
-increasing function $h^s\in\alg{F}[|\ssp_0|, |\ssp_1|]$.  A \emph{node
-  stretch} from strand space~$\ssp_0$ to~$\ssp_1$ using
-$h^s\in\alg{F}[|\ssp_0|, |\ssp_1|]$ is an increasing function
-$h^n\in\dprod{s\in\strands(\ssp_0)}\alg{F}[|\ssp_0(s)|,
-  |\ssp_1(h^s(s))|]$.  That is, for $s\in\strands(\ssp_0)$ and
-$i\in\sdom(\ssp_0(s))$, $h^n(s)(i)\in\sdom(\ssp_1(h^s(s))$.  In this
-context, the \emph{node implant} is the function in
-$\nodes(\ssp_0)\to\nodes(\ssp_1)$ defined by
-$\ell(s,i)=(h^s(s), h^n(s)(i))$.
+function $\gamma\in\vars(c_0)\to\vars(c_1)$ such that for all~$i$,
+$c(i)$ is inbound iff $c(f(i))$ is inbound.  The set of such pairs
+is~$\alg{T}[c_0,c_1]$.  A \emph{strand stretch} from strand
+space~$\ssp_0$ to~$\ssp_1$ is an increasing function
+$h^s\in\alg{F}[|\ssp_0|, |\ssp_1|]$.
 
 The set of \emph{protocol injections} from protocol~$P_0$ to~$P_1$ is
 \[\alg{P}[P_0,P_1]=\dprod{\role(c_0,\nu_0,\upsilon_0)\in
@@ -608,10 +599,7 @@ $P_1\unrhd P_0$, iff
   \begin{itemize}
   \item bundle~$\bun_0$ that is a run of~$P_0$ with role
     assignment~$\rl_0$, and
-  \item strand stretch $h^s\in\alg{F}[|\ssp_0|, |\ssp_1|]$, and
-  \item node stretch
-    $h^n\in\dprod{s\in\strands(\ssp_0)}\alg{F}[|\ssp_0(s)|,
-    |\ssp_1(h^s(s))|]$,
+  \item strand stretch $h^s\in\alg{F}[|\ssp_0|, |\ssp_1|]$,
   \end{itemize}
   where $\ssp_0=\bun^\ssp_0$ and $\ssp_1=\bun^\ssp_1$, and the following
   conditions hold.
@@ -634,11 +622,8 @@ $P_1\unrhd P_0$, iff
 
 \item\label{item: role heights} Nodes respect injection (for role
   predicate heights).
-  \[\begin{array}{l}
-  \all{(s_0,i_0)\in\nodes(\ssp_0),(s_1,i_1)\in\nodes(\ssp_1)}\\
-  \quad h^s(s_0) = s_1\land g^f(\rl_0(s_0))(i_0)=i_1\\
-  \qquad{}\supset\ell(s_0,i_0)=(s_1,i_1)
-  \end{array}\]
+  \[n_0\in\nodes(\ssp_0)\mbox{ iff }\some{n_1\in\nodes(\ssp_1)}\ell(n_0)=n_1\]
+  where $\ell(s,i)=(h^s(s),g^f(\rl_0(s))(i))$.
 
 \item\label{item: node orderings} Source communication edges repect
   injection (for node ordering predicate).  For

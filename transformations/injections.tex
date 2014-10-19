@@ -76,7 +76,7 @@
 
 \newcommand{\sembrack}[1]{[\![#1]\!]}
 
-\title{Protocol Injections}
+\title{Protocol Injections and Sound\\ Security Goal Importations}
 \author{John D.\ Ramsdell}
 %\institute{The MITRE Corporation}
 
@@ -91,14 +91,30 @@ analysis sentences~\cite{Ramsdell12} are related to security goals as
 defined in~\cite{Guttman12a}.  The precise relation between protocol
 injections and transformations has yet to be established.
 
-Protocol injections can be used to decide if the security goals of one
-protocol are imported into another.  The definition of goal
-importation defined in Section~\ref{sec:protocol injections} ensures
-that the truth of predicates used in shape analysis sentences is
-preserved.
+A protocol injection defines how a protocol~$P_0$ is incorporated into
+another protocol~$P_1$.  A security goal of a protocol is a formula
+that is satisfied by all runs of the protocol.
+Section~\ref{sec:protocol injections} defines when an injection
+implies that~$P_1$ ``imports the goals'' of~$P_0$, meaning that if~$\Psi$
+is a security goal of~$P_0$, then its translation is a security goal
+of~$P_1$.
 
-\remark{The protocol inclusion paper should be referenced
-  here.}
+Protocol injections and goal importations are defined using the same
+formalism used for {\cpsa}~\cite{cpsaspec09}.  As a result, the tool
+seamlessly integrates into this framework.  In addition, protocol
+injections and goal importations have been specified in~{\pvs}.  A
+proof that a protocol imports the goals of another has not been
+attempted yet.
+
+Section~\ref{sec:strand spaces} presents strand spaces as implemented
+in {\cpsa} and as specified in~{\pvs}.  Section~\ref{sec:shape
+  analysis sentences} defines shape analysis sentences and their key
+properties.  A shape analysis sentence encodes a result of {\cpsa}
+as a order-sorted, first-order logic formula that can be used to
+prove a security goal of a protocol.  Most of the content of this
+section is taken from the section of the same name
+in~\cite{Ramsdell12}.  Section~\ref{sec:protocol injections} defines
+protocol injections and goal importations.
 
 \paragraph{Notation.}
 
@@ -270,7 +286,8 @@ Let~$\run_P$ be the set of bundles that are runs of protocol~$P$.
 
 In each run of a protocol, no non-atomic variables occur.  This a
 result of, and the purpose of the constraint on the trace of a role
-that every non-atomic variable in the trace is acquired.
+that every non-atomic variable in the trace is acquired.  This fact
+has been proved with {\pvs}.
 
 \begin{figure}
 $$\begin{array}{r@{{}={}}ll}
@@ -303,7 +320,7 @@ The traces of the roles that constrain adversarial
 behavior are in Figure~\ref{fig:adversary}.  There are no origination
 assumptions in the adversary's roles.
 
-There are three \fn{create} roles, one for each sort of atoms.  In
+There are three \fn{create} roles, one for each atomic sort.  In
 fact, the defining characteristic of an atom is it denotes the set of
 messages the adversary can create out of thin air modulo origination
 assumptions.
@@ -314,7 +331,7 @@ A skeleton represents all or part of the regular portion of a bundle.
 A skeleton contains a strand space, a partial ordering of its nodes,
 assumptions about uncompromised keys and freshly generated atoms, and
 role assignment.  The structure of a skeleton used here is motivated
-by CPSA~\cite{cpsa09}.
+by {\cpsa}~\cite{cpsa09}.
 
 In {\cpsa} syntax, the trace and the role associated with a strand is
 specified by an \index{instance}\emph{instance}.  An instance is of
@@ -454,13 +471,13 @@ $\bigwedge_{j\in\sdom(\Theta)}Z_0(j)=Z_i(\phi_i(j))$.
 \paragraph{Semantics of Skeleton Formulas.}
 
 Let $k=\skel_X(P,\insts,\prec,\nu,\upsilon)$.  The universe of discourse is
-$\alg{D}=\nat\cup\msg$.  When formula~$\Phi$ is satisfied in
+$\alg{D}=\nat\cup\msg_X$.  When formula~$\Phi$ is satisfied in
 skeleton~$k$ with variable assignment $\alpha\colon Y\to \alg{D}$, we
 write $k,\alpha\models\Phi$.  When sentence~$\Gamma$ is satisfied in
 skeleton~$k$, we write $k\models\Gamma$.
 
 For each protocol specific predicate $P[r,h,x]$, $k,\alpha\models
-P[r,h,x](y,z)$ iff $\alpha(y)\in\nat$, $\alpha(z)\in\msg$, and with
+P[r,h,x](y,z)$ iff $\alpha(y)\in\nat$, $\alpha(z)\in\msg_X$, and with
 $\alpha(y)=s$,
 
 \begin{enumerate}
@@ -487,8 +504,8 @@ straightforward.
 \begin{itemize}
 \item $k,\alpha\models\cn{prec}(w,x,y,z)$ iff
 $(\alpha(w),\alpha(x))\prec(\alpha(y),\alpha(z))$.
-\item $k,\alpha\models\cn{non}(y)$ iff $\alpha(y)\in N$.
-\item $k,\alpha\models\cn{uniq}(x,y,z)$ iff $\alpha(x)\in U$ and
+\item $k,\alpha\models\cn{non}(y)$ iff $\alpha(y)\in\nu$.
+\item $k,\alpha\models\cn{uniq}(x,y,z)$ iff $\alpha(x)\in\upsilon$ and
   $(\alpha(y),\alpha(z))\in\orig_k(\alpha(x))$.
 \item $k,\alpha\models y=z$ iff $\alpha(y)=\alpha(z)$.
 \end{itemize}
@@ -544,8 +561,6 @@ A \emph{security formula}~$\Psi$ for protocol~$P$ is a first-order
 formula over the language~$\lang(P)$ that shares properties with shape
 analysis sentences.
 \begin{enumerate}
-\item\label{item: var occurs} When $P[r,h,x](z,t)$ occurs in a
-  formula, $x\in\vars(\prefix{\role^c(r)}{h})$.
 \item Each $z\typ\srt{N}$ in~$\Psi$ is associated with a unique role
   that is determined by one or more atomic formulas of the form
   $P[r,\ast,\ast](z,\ast)$.
@@ -588,8 +603,8 @@ g^f(r_0),g^\gamma(r_0))$.
 \paragraph{Goal Imports.}
 Protocol injections can be used to decide if the security goals of one
 protocol are imported into another.  The definition of goal
-importation ensures that the truth of predicates used in security
-formulas is preserved.
+importation ensures that the satisfiability of atomic formulas used in
+a security formula is preserved.
 
 Let $\Psi$ be a security formula for protocol~$P_0$ and
 $g\in\alg{P}[P_0,P_1]$ be a protocol injection.  To import~$\Psi$
@@ -603,6 +618,8 @@ into~$P_1$, translate each atomic formula in~$\Psi$ as follows.
   in~$\Psi$.
 \item Otherwise, the atomic formula is not changed.
 \end{itemize}
+The properties of a trace stretch ensure the translation produces a
+security formula.
 
 In what follows, Properties~\ref{item: role mappings} and~\ref{item:
   role heights} ensure the preservation of the truth of strand
@@ -624,12 +641,13 @@ where $\ssp_0=\bun^\ssp_0$ and $\ssp_1=\bun^\ssp_1$, and the following
 conditions hold.
 \begin{enumerate}
 
-\item\label{item: role mappings} Roles respect injection (for role
-  predicate mappings).
+\item\label{item: role mappings} Roles respect injection (for strand
+  progress predicate mappings).
   \[\begin{array}{l}
-  \all{s_0\in\strands(\ssp_0),s_1\in\strands(\ssp_1)}h^s(s_0) = s_1\\
-  \quad\supset g^r(\rl_0(s_0))=\rl_1(s_1)\\
-  \qquad{}\land\sigma\circ\gamma\circ\prefix{c_0}{|\ssp_0(s_0)|}
+  \all{s_0\in\strands(\ssp_0),s_1\in\strands(\ssp_1)}h^s(s_0) =
+  s_1\\ \quad\supset
+  g^r(\rl_0(s_0))=\rl_1(s_1)\\ \qquad{}\land\sigma\circ
+  \gamma\circ\prefix{c_0}{|\ssp_0(s_0)|}
   = \ssp_0(s_0)
   \end{array}\]
   where $c_0=\role^c(\rl_0(s_0))$,
@@ -638,9 +656,10 @@ conditions hold.
   $\sigma\circ\prefix{c_1}{|\ssp_1(s_1)|}=\ssp_1(s_1)$ for
   $c_1=\role^c(\rl_1(s_1))$.
 
-\item\label{item: role heights} Nodes respect injection (for role
-  predicate heights).
-  \[n_0\in\nodes(\ssp_0)\mbox{ iff }\some{n_1\in\nodes(\ssp_1)}\ell(n_0)=n_1\]
+\item\label{item: role heights} Nodes respect injection (for strand
+  progress predicate heights).
+  \[\all{s\in\strands(\ssp_0)}|\ssp_0(s)|=1+\max
+  \{i\mid\ell(s,i)\in\nodes(\ssp_1)\}\]
   where $\ell(s,i)=(h^s(s),g^f(\rl_0(s))(i))$.
 
 \item\label{item: node orderings} Source communication edges repect
@@ -659,9 +678,8 @@ conditions hold.
 \end{enumerate}
 
 Note that above definition is constructive in that given an
-injection~$g$ and a bundle~$\bun_1$, it describes how to
-create~$\bun_0$, $h^s$, and $h^n$ that can then be used for
-evaluation.
+injection~$g$, a bundle~$\bun_1$, and a strand stretch~$h^s$, it
+describes how to create~$\bun_0$ so it can be used for evaluation.
 
 Let $T_g(\Psi)$ be the security formula in $P_1$ that is the result of
 translating~$\Psi$ in~$P_0$ using $g\in\alg{P}[P_0,P_1]$.
@@ -685,12 +703,10 @@ lemma guided the definition of goal importation.
 
 \begin{proof}
 Because~$P_1$ imports the goals of~$P_0$, for each
-$\bun_1\in\run_{P_1}$, there exists $\bun_0\in\run_{P_0}$,
-$h^s\in\alg{F}[|\ssp_0|, |\ssp_1|]$, and
-$h^n\in\dprod{s\in\strands(\ssp_0)}\alg{F}[|\ssp_0(s)|,
-  |\ssp_1(h^s(s))|]$, such that the properties of goal importation
-hold.  The structures of~$\Psi$ and $T_g(\Psi)$ are identical, so we
-focus only on their atomic formulas.
+$\bun_1\in\run_{P_1}$, there exists $\bun_0\in\run_{P_0}$ and
+$h^s\in\alg{F}[|\ssp_0|, |\ssp_1|]$ such that the properties of goal
+importation hold.  The structures of~$\Psi$ and $T_g(\Psi)$ are
+identical, so we focus only on their atomic formulas.
 
 \begin{itemize}
 \item Case of $P_1[g^r(r),h',g^\gamma(r)(x)](z,t)$ in~$T_g(\Psi)$ with
@@ -733,9 +749,9 @@ focus only on their atomic formulas.
     \prefix{c_1}{h'}$ for some~$\sigma_1$, where
     $\gamma=g^\gamma(r)(x)$ and $c_1=\role^c(g^r(r)$.  Let $\sigma$ be
     the substitution such that
-    $\sigma\circ\prefix{c_1}{|\ssp_1(s_1)|}=\ssp_1(s_1)$.  By
-    Property~\ref{item: var occurs} in the definition of a security
-    formula, $\gamma(x)\in\vars(\prefix{c_1}{h'})$.  Then
+    $\sigma\circ\prefix{c_1}{|\ssp_1(s_1)|}=\ssp_1(s_1)$.  By the
+    definition of a strand progress predicate,
+    $\gamma(x)\in\vars(\prefix{c_1}{h'})$.  Then
     $\sigma(\gamma(x))=\alpha_0(t)$, so
     $\sigma=\sigma\uplus\{\gamma(x)\mapsto\alpha_0(t)\}$.  By
     Property~\ref{item: role mappings},
@@ -766,6 +782,9 @@ run of~$P_0$ related to each run of~$P_1$.  By
 Lemma~\ref{lem:satisfiability preservation}, $T_g(\Psi)$ is satisfied
 iff~$\Psi$ is satisfied.
 \end{proof}
+
+\remark{The protocol inclusion paper should be referenced
+  here, as it motivated this proof and the whole work.}
 
 \section{Relation to Protocol Transformations}
 \label{sec:protocol transformations}

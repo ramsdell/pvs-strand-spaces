@@ -23,9 +23,9 @@ begin
 
   % A trace map is an increasing function that respects event orientation
   tmap?(c0, c1: trace)(f: (increasing?(c0`length, c1`length))): bool =
-    subset?(param?(c0), param?(c1)) and
     forall(i: below[c0`length]):
-      recv?(c0(i)) iff recv?(c1(f(i)))
+      recv?(c0(i)) iff recv?(c1(f(i))) and
+      subset?(param?(c0 ^ (0, i)), param?(c1 ^ (0, f(i))))
 
   tmap(c0, c1: trace): type = (tmap?(c0, c1))
 
@@ -40,12 +40,20 @@ begin
   inj(src, dst: protocol): type =
     [s: (src) -> [d: (dst), tmap(s`trace, d`trace)]]
 
+  implant(src, dst: protocol, f: inj(src, dst),
+          bd: bundle, pad: protocol_assignment(dst, bd),
+          bs: bundle, pas: protocol_assignment(src, bs),
+          g: strand_increasing(bs`space, bd`space))
+         (n: node(bs`space)): [strand(bd`space), 
+                               below[length(pad(g(n`1))`trace)]] =
+    (g(n`1), f(pas(n`1))`2(n`2))
+
   % Does dst import the goals of src via injection f?
   imported_goals_of?(src, dst: protocol)(f: inj(src, dst)): bool =
     forall(bd: bundle, pad: protocol_assignment(dst, bd)):
       exists(bs: bundle, pas: protocol_assignment(src, bs),
              g: strand_increasing(bs`space, bd`space)):
-        let i(n: node(bs`space)) = (g(n`1), f(pas(n`1))`2(n`2)) in
+        let i = implant(src, dst, f, bd, pad, bs, pas, g) in
 
             % Roles respect injection (for strand progress predicate mappings)
         (forall(zs: strand(bs`space), zd: strand(bd`space)):
@@ -54,28 +62,29 @@ begin
             instantiate(pas(zs)`trace, bs`space(zs)`length,
               down(instance(pad(zd)`trace, bd`space(zd)))) = bs`space(zs))
 
-        % and % Nodes respect injection (for strand progress predicate heights)
-        %   (forall(zs: strand(bs`space)):
-        %     let set(i: below[length(bs`space(zs))]): bool =
-        %       f(pas(zs))`2(i) < length(bd`space(g(zs))) in
-	%     length(bs`space(zs)) = 1 + setmax(set))
+        and % Nodes respect injection (for strand progress predicate heights)
+          (forall(zs: strand(bs`space)):
+            f(pas(zs))`2(0) < length(bd`space(g(zs))) and
+            let set(i: below[length(bs`space(zs))]): bool =
+              f(pas(zs))`2(i) < length(bd`space(g(zs))) in
+	    length(bs`space(zs)) = 1 + setmax(set))
 
-        % and % Source communication edges repect injection
-        %     % (for node ordering predicate)
-        %   (forall(n0, n1: node(bs`space)):
-        %     bs`comm(n0, n1) iff
-        %       exists(n2, n3: node(bd`space)):
-        %         i(n0) = n2 and
-        %         i(n1) = n3 and
-        %         bd`comm(n2, n3))
+        and % Source communication edges repect injection
+            % (for node ordering predicate)
+          (forall(n0, n1: node(bs`space)):
+            bs`comm(n0, n1) iff
+              exists(n2, n3: node(bd`space)):
+                i(n0) = n2 and
+                i(n1) = n3 and
+                bd`comm(n2, n3))
 
-        % and % Non-origination predicate respects injection
-        %   (forall(x: (atoms(bs`space))):
-        %     non(bd`space)(x) implies non(bs`space)(x))
+        and % Non-origination predicate respects injection
+          (forall(x: (atoms(bs`space))):
+            non(bd`space)(x) implies non(bs`space)(x))
 
-        % and % Unique origination predicate respects injection
-        %   (forall(x: (atoms(bs`space)), n: node(bs`space)):
-        %     uniq(bd`space)(x, i(n)) implies
-        %       uniq(bs`space)(x, n))
+        and % Unique origination predicate respects injection
+          (forall(x: (atoms(bs`space)), n: node(bs`space)):
+            uniq(bd`space)(x, i(n)) implies
+              uniq(bs`space)(x, n))
 
 end injections

@@ -664,8 +664,13 @@ conditions hold.
 
 \item\label{item: role heights} Nodes respect injection (for strand
   progress predicate heights).
-  \[\all{s\in\strands(\ssp_0)}|\ssp_0(s)|=1+\max
-  \{i\mid\ell(s,i)\in\nodes(\ssp_1)\}\]
+  \[\all{n_0\in\nodes(\ssp_0)}\some{n_1\in\nodes(\ssp_1)}\ell(n_0)=n_1\]
+  \[\begin{array}{l}
+  \all{s\in\strands(\ssp_0)}\\
+  \quad\ell(s,0)\in\nodes(\ssp_1)\\
+  \qquad{}\land|\ssp_0(s)|=1+\max
+  \{i\mid\ell(s,i)\in\nodes(\ssp_1)\}
+  \end{array}\]
   where $\ell(s,i)=(h^s(s),g^f(\rl_0(s))(i))$.
 
 \item\label{item: node orderings} Source communication edges repect
@@ -676,11 +681,11 @@ conditions hold.
 
 \item\label{item: nons} Non-origination predicate respects injection.
   Let~$\atm$ be the atoms that occur in~$\bun_0$.
-  \[\all{t\in\atm}\fn{non}(\bun_1^\ssp, t)\supset\fn{non}(\bun_0^\ssp, t)\]
+  \[\all{t\in\atm}\fn{non}(\ssp_1, t)\supset\fn{non}(\ssp_0, t)\]
 
 \item\label{item: uniques} Unique origination predicate respects injection.
-  \[\all{t\in\atm,n\in\nodes(\bun_0^\ssp)}\fn{uniq}(\bun_1^\ssp,
-  t,\ell(n))\supset\fn{uniq}(\bun_0^\ssp, t,n)\]
+  \[\all{t\in\atm,n\in\nodes(\ssp_0)}\fn{uniq}(\ssp_1,
+  t,\ell(n))\supset\fn{uniq}(\ssp_0, t,n)\]
 \end{enumerate}
 
 Note that above definition is constructive in that given an

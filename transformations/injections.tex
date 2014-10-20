@@ -574,6 +574,12 @@ theorem in order-sorted first-order logic, then~$\Psi$ is satisfied in
 all realized skeletons and its protocol achieves this goal.  It is
 also satisfied in all bundles.
 
+Since $\prec$ is transitive, transitivity of \fn{prec} can also be
+used to prove a protocol achieves a goal.  That is,
+\[\fn{prec}(x,i,y,j)
+\land\fn{prec}(y,j,z,k)\supset
+\fn{prec}(x,i,z,k).\]
+
 \section{Protocol Injections}\label{sec:protocol injections}
 
 A function $f\in\zed_m\to\zed_n$ is \emph{increasing} iff $i<j$

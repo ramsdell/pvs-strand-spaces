@@ -1,0 +1,19 @@
+% The maximum of a nonempty finite set of nats.
+
+% John D. Ramsdell -- The MITRE Corporation -- September 2014
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+maxset: theory
+begin
+
+  maxset(n: nat)(s: non_empty_finite_set[below[n]]): below[n] =
+    epsilon!(x: (s)): forall(y: (s)): y <= x
+
+  maxset_element_exists: lemma
+    forall(n: nat, s: non_empty_finite_set[below[n]]):
+      exists(x: (s)): forall(y: (s)): y <= x
+    
+end maxset

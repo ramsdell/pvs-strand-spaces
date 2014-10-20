@@ -32,28 +32,15 @@ begin
   strand_increasing(src, dst: strand_space): type =
     (increasing?(src`length, dst`length))
 
-  % The maximum of a nonempty set.
-  setmax(s: non_empty_finite_set[nat]): nat =
-    epsilon!(x: (s)): forall(y: (s)): y <= x
-
   % An injection
   inj(src, dst: protocol): type =
     [s: (src) -> [d: (dst), tmap(s`trace, d`trace)]]
-
-  implant(src, dst: protocol, f: inj(src, dst),
-          bd: bundle, pad: protocol_assignment(dst, bd),
-          bs: bundle, pas: protocol_assignment(src, bs),
-          g: strand_increasing(bs`space, bd`space))
-         (n: node(bs`space)): [strand(bd`space), 
-                               below[length(pad(g(n`1))`trace)]] =
-    (g(n`1), f(pas(n`1))`2(n`2))
 
   % Does dst import the goals of src via injection f?
   imported_goals_of?(src, dst: protocol)(f: inj(src, dst)): bool =
     forall(bd: bundle, pad: protocol_assignment(dst, bd)):
       exists(bs: bundle, pas: protocol_assignment(src, bs),
              g: strand_increasing(bs`space, bd`space)):
-        let i = implant(src, dst, f, bd, pad, bs, pas, g) in
 
             % Roles respect injection (for strand progress predicate mappings)
         (forall(zs: strand(bs`space), zd: strand(bd`space)):
@@ -62,12 +49,14 @@ begin
             instantiate(pas(zs)`trace, bs`space(zs)`length,
               down(instance(pad(zd)`trace, bd`space(zd)))) = bs`space(zs))
 
-        and % Nodes respect injection (for strand progress predicate heights)
-          (forall(zs: strand(bs`space)):
-            f(pas(zs))`2(0) < length(bd`space(g(zs))) and
-            let set(i: below[length(bs`space(zs))]): bool =
-              f(pas(zs))`2(i) < length(bd`space(g(zs))) in
-	    length(bs`space(zs)) = 1 + setmax(set))
+        and 
+        let i(n: node(bs`space)): [strand(bd`space), 
+                                   below[length(pad(g(n`1))`trace)]] =
+             (g(n`1), f(pas(n`1))`2(n`2)) in
+            % Nodes respect injection (for strand progress predicate heights)
+          (forall(ns: node(bs`space)):
+            exists(nd: node(bd`space)):
+              i(ns) = nd)
 
         and % Source communication edges repect injection
             % (for node ordering predicate)

@@ -1,6 +1,6 @@
 (|injections|
- (|sound_inj?_TCC1| 0
-  (|sound_inj?_TCC1-1| NIL 3621591211
+ (|imported_goals_of?_TCC1| 0
+  (|imported_goals_of?_TCC1-1| NIL 3621591211
    ("" (SKOLEM!)
     (("" (FLATTEN)
       (("" (DELETE -1)
@@ -58,8 +58,8 @@
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
    NIL))
- (|sound_inj?_TCC2| 0
-  (|sound_inj?_TCC2-1| NIL 3621591211
+ (|imported_goals_of?_TCC2| 0
+  (|imported_goals_of?_TCC2-1| NIL 3621591211
    ("" (SKOLEM!)
     (("" (FLATTEN)
       (("" (SKOLEM 1 ("zs" "zd"))
@@ -127,8 +127,8 @@
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
    NIL))
- (|sound_inj?_TCC3| 0
-  (|sound_inj?_TCC3-1| NIL 3621591211 ("" (SUBTYPE-TCC) NIL NIL)
+ (|imported_goals_of?_TCC3| 0
+  (|imported_goals_of?_TCC3-1| NIL 3621591211 ("" (SUBTYPE-TCC) NIL NIL)
    ((|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
     (/= CONST-DECL "boolean" |notequal| NIL)
@@ -192,8 +192,8 @@
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
    NIL))
- (|sound_inj?_TCC4| 0
-  (|sound_inj?_TCC4-1| NIL 3621591211 ("" (SUBTYPE-TCC) NIL NIL)
+ (|imported_goals_of?_TCC4| 0
+  (|imported_goals_of?_TCC4-1| NIL 3621591211 ("" (SUBTYPE-TCC) NIL NIL)
    ((|instance| CONST-DECL "lift[subst]" |traces| "../skeletons/")
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
@@ -257,8 +257,8 @@
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
    NIL))
- (|sound_inj?_TCC5| 0
-  (|sound_inj?_TCC5-1| NIL 3621940710
+ (|imported_goals_of?_TCC5| 0
+  (|imported_goals_of?_TCC5-1| NIL 3621940710
    ("" (SKOLEM!)
     (("" (FLATTEN)
       (("" (SKOLEM 1 ("nd" "ns"))
@@ -331,8 +331,8 @@
     (|mesg| TYPE-DECL NIL |free_alg| "../skeletons/")
     (|role_trace| TYPE-EQ-DECL NIL |roles| "../skeletons/"))
    NIL))
- (|sound_inj?_TCC6| 0
-  (|sound_inj?_TCC6-1| NIL 3621940710
+ (|imported_goals_of?_TCC6| 0
+  (|imported_goals_of?_TCC6-1| NIL 3621940710
    ("" (SKOLEM!)
     (("" (FLATTEN)
       (("" (SKOLEM 1 ("nd" "ns"))

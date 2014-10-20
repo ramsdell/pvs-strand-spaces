@@ -32,60 +32,50 @@ begin
   strand_increasing(src, dst: strand_space): type =
     (increasing?(src`length, dst`length))
 
-  node_increasing(src, dst: strand_space,
-                  g: strand_increasing(src, dst)): type =
-    [s: strand(src) -> (increasing?(src(s)`length, dst(g(s))`length))]
-
-  % Implant a source node into a destination node using a strand
-  % increasing and node increasing function.
-  implant(src, dst: strand_space,
-          g: strand_increasing(src, dst),
-          h: node_increasing(src, dst, g))
-         (n: node(src)): node(dst) =
-    (g(n`1), h(n`1)(n`2))
+  % The maximum of a nonempty set.
+  setmax(s: non_empty_finite_set[nat]): nat =
+    epsilon!(x: (s)): forall(y: (s)): y <= x
 
   % An injection
   inj(src, dst: protocol): type =
     [s: (src) -> [d: (dst), tmap(s`trace, d`trace)]]
 
-  sound_inj?(src, dst: protocol)(f: inj(src, dst)): bool =
+  % Does dst import the goals of src via injection f?
+  imported_goals_of?(src, dst: protocol)(f: inj(src, dst)): bool =
     forall(bd: bundle, pad: protocol_assignment(dst, bd)):
       exists(bs: bundle, pas: protocol_assignment(src, bs),
-             g: strand_increasing(bs`space, bd`space),
-	     h: node_increasing(bs`space, bd`space, g)):
-        let i = implant(bs`space, bd`space, g, h) in
+             g: strand_increasing(bs`space, bd`space)):
+        let i(n: node(bs`space)) = (g(n`1), f(pas(n`1))`2(n`2)) in
 
-            % Roles respect injection (for role predicate mappings)
+            % Roles respect injection (for strand progress predicate mappings)
         (forall(zs: strand(bs`space), zd: strand(bd`space)):
           g(zs) = zd implies
             f(pas(zs))`1 = pad(zd) and
             instantiate(pas(zs)`trace, bs`space(zs)`length,
               down(instance(pad(zd)`trace, bd`space(zd)))) = bs`space(zs))
 
-        and % Nodes respect injection (for role predicate heights)
-          (forall(nd: node(bd`space), ns: node(bs`space)):
-            g(ns`1) = nd`1 and
-            f(pas(ns`1))`2(ns`2) = nd`2 implies i(ns) = nd)
+        % and % Nodes respect injection (for strand progress predicate heights)
+        %   (forall(zs: strand(bs`space)):
+        %     let set(i: below[length(bs`space(zs))]): bool =
+        %       f(pas(zs))`2(i) < length(bd`space(g(zs))) in
+	%     length(bs`space(zs)) = 1 + setmax(set))
 
-        and % Source communication edges repect injection
-            % (for node ordering predicate)
-          (forall(n0, n1: node(bs`space)):
-            bs`comm(n0, n1) iff
-              exists(n2, n3: node(bd`space)):
-                i(n0) = n2 and
-                i(n1) = n3 and
-                bd`comm(n2, n3))
+        % and % Source communication edges repect injection
+        %     % (for node ordering predicate)
+        %   (forall(n0, n1: node(bs`space)):
+        %     bs`comm(n0, n1) iff
+        %       exists(n2, n3: node(bd`space)):
+        %         i(n0) = n2 and
+        %         i(n1) = n3 and
+        %         bd`comm(n2, n3))
 
-        and % Non-origination predicate respects injection
-          (forall(x: (atoms(bs`space))):
-            non(bd`space)(x) implies non(bs`space)(x))
+        % and % Non-origination predicate respects injection
+        %   (forall(x: (atoms(bs`space))):
+        %     non(bd`space)(x) implies non(bs`space)(x))
 
-        and % Unique origination predicate respects injection
-          (forall(x: (atoms(bs`space)), n: node(bs`space)):
-            uniq(bd`space)(x, i(n)) implies
-              uniq(bs`space)(x, n))
-
-  source_goals_implied?(src, dst: protocol): bool =
-    exists(f: inj(src, dst)): sound_inj?(src, dst)(f)
+        % and % Unique origination predicate respects injection
+        %   (forall(x: (atoms(bs`space)), n: node(bs`space)):
+        %     uniq(bd`space)(x, i(n)) implies
+        %       uniq(bs`space)(x, n))
 
 end injections

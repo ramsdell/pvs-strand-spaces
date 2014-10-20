@@ -99,19 +99,19 @@ begin
     forall(pat: trace, tgt: {c: trace | length(c) <= length(pat)},
            r, s: subst, i: upto[length(tgt)]):
       instance_at(pat, tgt, i, r) = up(s) implies
-        forall(j: below[length(tgt)]):
+        forall(j: index(tgt)):
           j >= i implies
             recv?(pat(j)) = recv?(tgt(j))
 
   instance_orients: lemma
     forall(pat: trace, tgt: {c: trace | length(c) <= length(pat)}):
       up?(instance(pat, tgt)) implies
-        forall(i: below[length(tgt)]):
+        forall(i: index(tgt)):
           recv?(pat(i)) = recv?(tgt(i))
 
   instance_subst: lemma
     forall(pat: trace, tgt: {c: trace | length(c) <= length(pat)},
-           i: below[length(tgt)], r, s: subst):
+           i: index(tgt), r, s: subst):
       instance_at(pat, tgt, i, r) = up(s) implies
         up?(match(t(pat(i)), t(tgt(i)), r)) and
         exists(u, v: mesg):
@@ -121,7 +121,7 @@ begin
     forall(pat: trace, tgt: {c: trace | length(c) <= length(pat)},
            i: upto[length(tgt)], r, s: subst):
       instance_at(pat, tgt, i, r) = up(s) implies
-        forall(j: below[length(tgt)]):
+        forall(j: index(tgt)):
           j >= i implies
             instantiate(pat, length(tgt), s)(j) = tgt(j)
 
@@ -139,14 +139,14 @@ begin
     forall(pat: trace, tgt: {c: trace | length(c) <= length(pat)},
            i: upto[length(tgt)], r, s: subst):
       instance_at(pat, tgt, i, r) = up(s) implies
-        forall(j: below[length(tgt)], x: vari):
+        forall(j: index(tgt), x: vari):
           j >= i implies
             subterm(x, t(pat(j))) implies up?(find(x, s))
 
   instance_binds: lemma
     forall(pat: trace, tgt: {c: trace | length(c) <= length(pat)}, s: subst):
       instance(pat, tgt) = up(s) implies
-        forall(i: below[length(tgt)], x: vari):
+        forall(i: index(tgt), x: vari):
           subterm(x, t(pat(i))) implies up?(find(x, s))
 
 end traces

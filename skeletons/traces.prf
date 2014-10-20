@@ -80,8 +80,7 @@
     (|real_gt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
     (|subst| TYPE-EQ-DECL NIL |free_alg| NIL)
-    (|mapping?| CONST-DECL "bool" |free_alg| NIL)
-    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (|mapping?| CONST-DECL "bool" |free_alg| NIL) NIL
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|vari| TYPE-EQ-DECL NIL |free_alg| NIL)
@@ -221,6 +220,7 @@
     (|up?| ADT-RECOGNIZER-DECL "[lift -> boolean]" |lift_adt| NIL)
     (|up| ADT-CONSTRUCTOR-DECL "[T -> (up?)]" |lift_adt| NIL)
     (< CONST-DECL "bool" |reals| NIL)
+    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (|recv?| ADT-RECOGNIZER-DECL "[event -> boolean]" |traces| NIL)
     (|finseq| TYPE-EQ-DECL NIL |finite_sequences| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
@@ -438,6 +438,7 @@
     (|finite_sequence| TYPE-EQ-DECL NIL |finite_sequences| NIL)
     (> CONST-DECL "bool" |reals| NIL) (|trace| TYPE-EQ-DECL NIL |traces| NIL)
     (<= CONST-DECL "bool" |reals| NIL)
+    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (|k| SKOLEM-CONST-DECL "int" |traces| NIL)
     (|pat| SKOLEM-CONST-DECL "trace" |traces| NIL)
     (|tgt| SKOLEM-CONST-DECL "{c: trace | length(c) <= length(pat)}" |traces|
@@ -752,6 +753,7 @@
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
     (|finseq| TYPE-EQ-DECL NIL |finite_sequences| NIL)
+    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (< CONST-DECL "bool" |reals| NIL)
     (|up| ADT-CONSTRUCTOR-DECL "[T -> (up?)]" |lift_adt| NIL)
     (|up?| ADT-RECOGNIZER-DECL "[lift -> boolean]" |lift_adt| NIL)
@@ -827,6 +829,7 @@
     (|null?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
     (|null| ADT-CONSTRUCTOR-DECL "(null?)" |list_adt| NIL)
     (< CONST-DECL "bool" |reals| NIL)
+    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
     (|subst_evt| CONST-DECL "event" |traces| NIL)
@@ -1065,6 +1068,7 @@
     (|finseq| TYPE-EQ-DECL NIL |finite_sequences| NIL)
     (|t| SHARED-ADT-ACCESSOR-DECL "[event -> mesg]" |traces| NIL)
     (|subterm| ADT-DEF-DECL "boolean" |free_alg| NIL)
+    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (< CONST-DECL "bool" |reals| NIL)
     (|up| ADT-CONSTRUCTOR-DECL "[T -> (up?)]" |lift_adt| NIL)
     (|up?| ADT-RECOGNIZER-DECL "[lift -> boolean]" |lift_adt| NIL)

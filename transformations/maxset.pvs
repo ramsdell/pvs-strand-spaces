@@ -15,5 +15,5 @@ begin
   maxset_element_exists: lemma
     forall(n: nat, s: non_empty_finite_set[below[n]]):
       exists(x: (s)): forall(y: (s)): y <= x
-    
+
 end maxset

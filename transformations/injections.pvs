@@ -57,6 +57,22 @@ begin
 
   auto_rewrite+ strand_progress_height_TCC_A
 
+  strand_progress_height_TCC_B: lemma
+  FORALL (src, dst: protocol, f: inj(src, dst),
+          bd: bundle, bs: bundle,
+          pas: protocol_assignment(src, bs),
+          g: strand_increasing(bs`space, bd`space),
+          zs: strand(bs`space)):
+    f(pas(zs))`2(0) < finseq_appl(bd`space)(g(zs))`length IMPLIES
+     is_finite[below[finseq_appl(bs`space)(zs)`length]]
+         ({i: index[event](finseq_appl[trace](bs`space)(zs)) |
+             f(pas(zs))`2(i) < finseq_appl[trace](bd`space)(g(zs))`length})
+      AND
+      NOT empty?[below[finseq_appl(bs`space)(zs)`length]]
+              ({i: index[event](finseq_appl[trace](bs`space)(zs)) |
+                  f(pas(zs))`2(i) <
+                   finseq_appl[trace](bd`space)(g(zs))`length})
+
   % Roles respect injection (for strand progress predicate mappings)
   strand_progress_mapping(src, dst: protocol, f: inj(src, dst),
                           bd: bundle, pad: protocol_assignment(dst, bd),
@@ -85,7 +101,7 @@ begin
                bd: bundle, pad: protocol_assignment(dst, bd),
                bs: bundle, pas: protocol_assignment(src, bs),
                g: strand_increasing(bs`space, bd`space))
-              (n: node(bs`space)): 
+              (n: node(bs`space)):
               [strand(bd`space), nat] =
     (g(n`1), f(pas(n`1))`2(n`2))
 
@@ -131,50 +147,5 @@ begin
         node_ordering(src, dst, f, bd, pad, bs, pas, g) and
         non_origination(src, dst, f, bd, pad, bs, pas, g) and
         unique_origination(src, dst, f, bd, pad, bs, pas, g)
-
-  % Old
-
-  % Does dst import the goals of src via injection f?
-  imported_goals_of?(src, dst: protocol)(f: inj(src, dst)): bool =
-    forall(bd: bundle, pad: protocol_assignment(dst, bd)):
-      exists(bs: bundle, pas: protocol_assignment(src, bs),
-             g: strand_increasing(bs`space, bd`space)):
-
-            % Roles respect injection (for strand progress predicate mappings)
-        (forall(zs: strand(bs`space), zd: strand(bd`space)):
-          g(zs) = zd implies
-            f(pas(zs))`1 = pad(zd) and
-            instantiate(pas(zs)`trace, bs`space(zs)`length,
-              down(instance(pad(zd)`trace, bd`space(zd)))) = bs`space(zs))
-
-        and 
-        let i(n: node(bs`space)): [strand(bd`space), 
-                                   index(pad(g(n`1))`trace)] =
-             (g(n`1), f(pas(n`1))`2(n`2)) in
-            % Nodes respect injection (for strand progress predicate heights)
-          (forall(zs: strand(bs`space)):
-            f(pas(zs))`2(0) < length(bd`space(g(zs))) and
-            length(bs`space(zs)) =
-              1 + maxset(length(bs`space(zs)))
-                        ({i: index(bs`space(zs)) |
-                          f(pas(zs))`2(i) < length(bd`space(g(zs)))}))
-
-        and % Source communication edges repect injection
-            % (for node ordering predicate)
-          (forall(n0, n1: node(bs`space)):
-            bs`comm(n0, n1) iff
-              exists(n2, n3: node(bd`space)):
-                i(n0) = n2 and
-                i(n1) = n3 and
-                bd`comm(n2, n3))
-
-        and % Non-origination predicate respects injection
-          (forall(x: (atoms(bs`space))):
-            non(bd`space)(x) implies non(bs`space)(x))
-
-        and % Unique origination predicate respects injection
-          (forall(x: (atoms(bs`space)), n: node(bs`space)):
-            uniq(bd`space)(x, i(n)) implies
-              uniq(bs`space)(x, n))
 
 end injections

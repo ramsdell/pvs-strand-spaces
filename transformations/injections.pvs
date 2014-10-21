@@ -1,4 +1,4 @@
-% A protocol injection and imported goals of.
+% Protocol injections and goals imported predicate.
 
 % John D. Ramsdell -- The MITRE Corporation -- October 2014
 
@@ -28,6 +28,111 @@ begin
   % An injection
   inj(src, dst: protocol): type =
     [s: (src) -> [d: (dst), tmap(s`trace, d`trace)]]
+
+  strand_progress_mapping_TCC_A: lemma
+  FORALL (p: protocol, b: bundle,
+          ra: role_assignment(b),
+          z: strand(b`space)):
+    protocol_assignment?(p)(b)(ra) implies
+      p(ra(z))
+
+  auto_rewrite+ strand_progress_mapping_TCC_A
+
+  strand_progress_mapping_TCC_B: lemma
+  FORALL (p: protocol, b: bundle,
+          ra: role_assignment(b),
+          z: strand(b`space)):
+    protocol_assignment?(p)(b)(ra) implies
+      finseq_appl[trace](b`space)(z)`length <= ra(z)`trace`length
+
+  auto_rewrite+ strand_progress_mapping_TCC_B
+
+  strand_progress_height_TCC_A: lemma
+  FORALL (p: protocol, b: bundle,
+          ra: role_assignment(b),
+          z: strand(b`space)):
+    protocol_assignment?(p)(b)(ra) implies
+      FORALL (i: index[event](finseq_appl[trace](b`space)(z))):
+        i < ra(z)`trace`length
+
+  auto_rewrite+ strand_progress_height_TCC_A
+
+  % Roles respect injection (for strand progress predicate mappings)
+  strand_progress_mapping(src, dst: protocol, f: inj(src, dst),
+                          bd: bundle, pad: protocol_assignment(dst, bd),
+                          bs: bundle, pas: protocol_assignment(src, bs),
+                          g: strand_increasing(bs`space, bd`space)): bool =
+    forall(zs: strand(bs`space), zd: strand(bd`space)):
+      g(zs) = zd implies
+        f(pas(zs))`1 = pad(zd) and
+          instantiate(pas(zs)`trace, bs`space(zs)`length,
+            down(instance(pad(zd)`trace, bd`space(zd)))) = bs`space(zs)
+
+  % Nodes respect injection (for strand progress predicate heights)
+  strand_progress_height(src, dst: protocol, f: inj(src, dst),
+                         bd: bundle, pad: protocol_assignment(dst, bd),
+                         bs: bundle, pas: protocol_assignment(src, bs),
+                         g: strand_increasing(bs`space, bd`space)): bool =
+    forall(zs: strand(bs`space)):
+      f(pas(zs))`2(0) < length(bd`space(g(zs))) and
+        length(bs`space(zs)) =
+          1 + maxset(length(bs`space(zs)))
+                    ({i: index(bs`space(zs)) |
+                      f(pas(zs))`2(i) < length(bd`space(g(zs)))})
+
+  % The node mapping
+  node_mapping(src, dst: protocol, f: inj(src, dst),
+               bd: bundle, pad: protocol_assignment(dst, bd),
+               bs: bundle, pas: protocol_assignment(src, bs),
+               g: strand_increasing(bs`space, bd`space))
+              (n: node(bs`space)): 
+              [strand(bd`space), nat] =
+    (g(n`1), f(pas(n`1))`2(n`2))
+
+  % Source communication edges repect injection
+  % (for node ordering predicate)
+  node_ordering(src, dst: protocol, f: inj(src, dst),
+                bd: bundle, pad: protocol_assignment(dst, bd),
+                bs: bundle, pas: protocol_assignment(src, bs),
+                g: strand_increasing(bs`space, bd`space)): bool =
+    let h = node_mapping(src, dst, f, bd, pad, bs, pas, g) in
+    forall(n0, n1: node(bs`space)):
+      bs`comm(n0, n1) iff
+        exists(n2, n3: node(bd`space)):
+          h(n0) = n2 and
+          h(n1) = n3 and
+          bd`comm(n2, n3)
+
+  % Non-origination predicate respects injection
+  non_origination(src, dst: protocol, f: inj(src, dst),
+                  bd: bundle, pad: protocol_assignment(dst, bd),
+                  bs: bundle, pas: protocol_assignment(src, bs),
+                  g: strand_increasing(bs`space, bd`space)): bool =
+    forall(x: (atoms(bs`space))):
+      non(bd`space)(x) implies non(bs`space)(x)
+
+  % Unique origination predicate respects injection
+  unique_origination(src, dst: protocol, f: inj(src, dst),
+                     bd: bundle, pad: protocol_assignment(dst, bd),
+                     bs: bundle, pas: protocol_assignment(src, bs),
+                     g: strand_increasing(bs`space, bd`space)): bool =
+    strand_progress_height(src, dst, f, bd, pad, bs, pas, g) implies
+      let h = node_mapping(src, dst, f, bd, pad, bs, pas, g) in
+      forall(x: (atoms(bs`space)), n: node(bs`space)):
+        uniq(bd`space)(x, h(n)) implies
+          uniq(bs`space)(x, n)
+
+  goals_imported?(src, dst: protocol)(f: inj(src, dst)): bool =
+    forall(bd: bundle, pad: protocol_assignment(dst, bd)):
+      exists(bs: bundle, pas: protocol_assignment(src, bs),
+             g: strand_increasing(bs`space, bd`space)):
+        strand_progress_mapping(src, dst, f, bd, pad, bs, pas, g) and
+        strand_progress_height(src, dst, f, bd, pad, bs, pas, g) and
+        node_ordering(src, dst, f, bd, pad, bs, pas, g) and
+        non_origination(src, dst, f, bd, pad, bs, pas, g) and
+        unique_origination(src, dst, f, bd, pad, bs, pas, g)
+
+  % Old
 
   % Does dst import the goals of src via injection f?
   imported_goals_of?(src, dst: protocol)(f: inj(src, dst)): bool =

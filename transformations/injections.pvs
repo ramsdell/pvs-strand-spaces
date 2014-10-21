@@ -1,12 +1,4 @@
-% A protocol injection is less restrictive than a protocol
-% transformation.  Every protocol transformation is a protocol
-% injection, but not vice versa.
-
-% To compare two protocols src and dst, try to prove
-%
-%     source_goals_implied?(src, dst),
-%
-% which is defined at the end of this theory.
+% A protocol injection and imported goals of.
 
 % John D. Ramsdell -- The MITRE Corporation -- October 2014
 
@@ -20,6 +12,7 @@ begin
   skeletons: library = "../skeletons"
   importing skeletons@roles
   importing increasing
+  importing maxset
 
   % A trace map is an increasing function that respects event orientation
   tmap?(c0, c1: trace)(f: (increasing?(c0`length, c1`length))): bool =
@@ -51,12 +44,15 @@ begin
 
         and 
         let i(n: node(bs`space)): [strand(bd`space), 
-                                   below[length(pad(g(n`1))`trace)]] =
+                                   index(pad(g(n`1))`trace)] =
              (g(n`1), f(pas(n`1))`2(n`2)) in
             % Nodes respect injection (for strand progress predicate heights)
-          (forall(ns: node(bs`space)):
-            exists(nd: node(bd`space)):
-              i(ns) = nd)
+          (forall(zs: strand(bs`space)):
+            f(pas(zs))`2(0) < length(bd`space(g(zs))) and
+            length(bs`space(zs)) =
+              1 + maxset(length(bs`space(zs)))
+                        ({i: index(bs`space(zs)) |
+                          f(pas(zs))`2(i) < length(bd`space(g(zs)))}))
 
         and % Source communication edges repect injection
             % (for node ordering predicate)

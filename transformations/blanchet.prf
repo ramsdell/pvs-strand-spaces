@@ -16,7 +16,7 @@
     (|add| CONST-DECL "finseq[T]" |more_finseq| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
-    (|subterm| ADT-DEF-DECL "boolean" |free_alg| "../skeletons/")
+    NIL
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
     (< CONST-DECL "bool" |reals| NIL)
@@ -218,7 +218,7 @@
     (|add| CONST-DECL "finseq[T]" |more_finseq| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
-    (|subterm| ADT-DEF-DECL "boolean" |free_alg| "../skeletons/")
+    NIL
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
     (< CONST-DECL "bool" |reals| NIL)
@@ -281,6 +281,18 @@
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
     (|all_acquired?| CONST-DECL "bool" |roles| "../skeletons/"))
    NIL))
+ (|enumerate_bprot| 0
+  (|enumerate_bprot-1| NIL 3622977064
+   ("" (SKOLEM 1 "r")
+    (("" (EXPAND "bprot")
+      (("" (EXPAND "add") (("" (EXPAND "member") (("" (SMASH) NIL NIL)) NIL))
+        NIL))
+      NIL))
+    NIL)
+   ((|bprot| CONST-DECL "protocol" |blanchet| NIL)
+    (|member| CONST-DECL "bool" |sets| NIL)
+    (|add| CONST-DECL "(nonempty?)" |sets| NIL))
+   SHOSTAK))
  (|cinit_trace_TCC1| 0
   (|cinit_trace_TCC1-1| NIL 3622974131
    ("" (EXPAND "all_acquired?")
@@ -295,8 +307,7 @@
     (< CONST-DECL "bool" |reals| NIL)
     (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences|
      "../skeletons/")
-    (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL)
-    (|subterm| ADT-DEF-DECL "boolean" |free_alg| "../skeletons/")
+    (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL) NIL
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
     (|add| CONST-DECL "finseq[T]" |more_finseq| NIL)
@@ -496,8 +507,7 @@
     (< CONST-DECL "bool" |reals| NIL)
     (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences|
      "../skeletons/")
-    (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL)
-    (|subterm| ADT-DEF-DECL "boolean" |free_alg| "../skeletons/")
+    (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL) NIL
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
     (|add| CONST-DECL "finseq[T]" |more_finseq| NIL)
@@ -563,6 +573,18 @@
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
     (|all_acquired?| CONST-DECL "bool" |roles| "../skeletons/"))
    NIL))
+ (|enumerate_cprot| 0
+  (|enumerate_cprot-1| NIL 3622977127
+   ("" (SKOLEM 1 "r")
+    (("" (EXPAND "cprot")
+      (("" (EXPAND "add") (("" (EXPAND "member") (("" (SMASH) NIL NIL)) NIL))
+        NIL))
+      NIL))
+    NIL)
+   ((|cprot| CONST-DECL "protocol" |blanchet| NIL)
+    (|member| CONST-DECL "bool" |sets| NIL)
+    (|add| CONST-DECL "(nonempty?)" |sets| NIL))
+   SHOSTAK))
  (|pmap_TCC1| 0
   (|pmap_TCC1-1| NIL 3622974131 ("" (SUBTYPE-TCC) NIL NIL)
    ((|add| CONST-DECL "(nonempty?)" |sets| NIL)
@@ -662,8 +684,7 @@
     (|add| CONST-DECL "finseq[T]" |more_finseq| NIL)
     (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
      "../skeletons/")
-    (|r!1| SKOLEM-CONST-DECL "(cprot)" |blanchet| NIL)
-    (< CONST-DECL "bool" |reals| NIL)
+    NIL (< CONST-DECL "bool" |reals| NIL)
     (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
     (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
     (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
@@ -742,11 +763,8 @@
     (|uniq| CONST-DECL "bool" |strand_spaces| "../skeletons/")
     (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
      |real_props| NIL)
-    (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL)
-    (|b1!1| SKOLEM-CONST-DECL "bundle" |blanchet| NIL)
-    (|x1!1| SKOLEM-CONST-DECL "strand(b1!1`space)" |blanchet| NIL)
-    (|finseq| TYPE-EQ-DECL NIL |finite_sequences| NIL)
-    (|pa1!1| SKOLEM-CONST-DECL "cprot_assignment(b1!1)" |blanchet| NIL)
+    (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL) NIL NIL
+    (|finseq| TYPE-EQ-DECL NIL |finite_sequences| NIL) NIL
     (|skey?| ADT-RECOGNIZER-DECL "[mesg -> boolean]" |free_alg|
      "../skeletons/")
     (|sk| ADT-CONSTRUCTOR-DECL "[nat -> (skey?)]" |free_alg| "../skeletons/")

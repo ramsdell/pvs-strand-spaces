@@ -90,7 +90,7 @@ begin
     instance_at(pat, tgt, 0, null)
 
   instantiate(pat: trace, h: {h: upto[length(pat)] | h > 0},
-              s: subst): trace =
+              s: subst): {c: trace | length(c) = h} =
     (# length := h,
        seq    := lambda(i: below[h]):
                    subst_evt(pat(i), s) #)

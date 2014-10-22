@@ -487,8 +487,7 @@
     (|instance| CONST-DECL "lift[subst]" |traces| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
-    (|mapping?| CONST-DECL "bool" |free_alg| NIL)
-    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (|mapping?| CONST-DECL "bool" |free_alg| NIL) NIL
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|vari| TYPE-EQ-DECL NIL |free_alg| NIL)
@@ -1232,7 +1231,7 @@
     (|up?| ADT-RECOGNIZER-DECL "[lift -> boolean]" |lift_adt| NIL)
     (|every| ADT-DEF-DECL "boolean" |lift_adt| NIL)
     (|lift| TYPE-DECL NIL |lift_adt| NIL)
-    (|instantiate| CONST-DECL "trace" |traces| NIL)
+    (|instantiate| CONST-DECL "{c: trace | length(c) = h}" |traces| NIL)
     (|subst| TYPE-EQ-DECL NIL |free_alg| NIL)
     (|mapping?| CONST-DECL "bool" |free_alg| NIL)
     (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)

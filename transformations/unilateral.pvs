@@ -42,20 +42,20 @@ begin
 
   % The unilateral protocol
 
-  unilateral_roles: protocol =
+  unilateral_prot: protocol =
     add(init_role,
     add(resp_role,
-        adversary_roles))
+        adversary_prot))
 
-  enumerate_unilateral_roles: lemma
+  enumerate_unilateral_prot: lemma
     forall(r: role):
-      unilateral_roles(r) iff
+      unilateral_prot(r) iff
         r = init_role or
         r = resp_role or
-        adversary_roles(r)
+        adversary_prot(r)
 
   % A unilater specific role assignment
   unilateral_assignment(b: bundle): type =
-    protocol_assignment(unilateral_roles, b)
+    protocol_assignment(unilateral_prot, b)
 
 end unilateral

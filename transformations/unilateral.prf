@@ -26,17 +26,15 @@
     (> CONST-DECL "bool" |reals| NIL)
     (|trace| TYPE-EQ-DECL NIL |traces| "../skeletons/")
     (|param?| CONST-DECL "bool" |traces| "../skeletons/")
-    (|nmtfinseq| TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|nmtfinseq| TYPE-EQ-DECL NIL |nonempty_finite_sequences| "../skeletons/")
     (|doubleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
-     "../strand_spaces/")
+     "../skeletons/")
     (|send?| ADT-RECOGNIZER-DECL "[event -> boolean]" |traces| "../skeletons/")
     (|send| ADT-CONSTRUCTOR-DECL "[mesg -> (send?)]" |traces| "../skeletons/")
     (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (|akey?| ADT-RECOGNIZER-DECL "[mesg -> boolean]" |free_alg|
      "../skeletons/")
-    (|svar?| ADT-RECOGNIZER-DECL "[mesg -> boolean]" |free_alg|
-     "../skeletons/")
+    NIL
     (|hash?| ADT-RECOGNIZER-DECL "[mesg -> boolean]" |free_alg|
      "../skeletons/")
     (|key| TYPE-EQ-DECL NIL |free_alg| "../skeletons/")
@@ -62,17 +60,15 @@
     (|recv| ADT-CONSTRUCTOR-DECL "[mesg -> (recv?)]" |traces| "../skeletons/")
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
-    (|akey_var| DEF-DECL "(asymkey?)" |free_alg| "../skeletons/")
-    (< CONST-DECL "bool" |reals| NIL)
+    NIL (< CONST-DECL "bool" |reals| NIL)
     (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
-    (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL)
-    (|vars| DEF-DECL "bool" |free_alg| "../skeletons/")
+     "../skeletons/")
+    (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL) NIL
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
     (|add| CONST-DECL "finseq[T]" |more_finseq| NIL)
     (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
-     "../strand_spaces/")
+     "../skeletons/")
     (|all_acquired?| CONST-DECL "bool" |roles| "../skeletons/"))
    NIL))
  (|init_role_TCC1| 0
@@ -81,20 +77,20 @@
      "(strict_total_order?[real])" |real_props| NIL)
     (|init_trace| CONST-DECL "role_trace" |unilateral| NIL)
     (|doubleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
-     "../strand_spaces/")
+     "../skeletons/")
     (|add| CONST-DECL "finseq[T]" |more_finseq| NIL)
     (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
-     "../strand_spaces/"))
+     "../skeletons/"))
    NIL))
  (|init_role_TCC2| 0
   (|init_role_TCC2-1| NIL 3621854563 ("" (SUBTYPE-TCC) NIL NIL)
    ((|no_assumptions_length| FORMULA-DECL NIL |roles| "../skeletons/")
     (|init_trace| CONST-DECL "role_trace" |unilateral| NIL)
     (|doubleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
-     "../strand_spaces/")
+     "../skeletons/")
     (|add| CONST-DECL "finseq[T]" |more_finseq| NIL)
     (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
-     "../strand_spaces/"))
+     "../skeletons/"))
    NIL))
  (|init_role_TCC3| 0
   (|init_role_TCC3-1| NIL 3621854563 ("" (SUBTYPE-TCC) NIL NIL)
@@ -103,10 +99,10 @@
     (|finite_emptyset| NAME-JUDGEMENT "finite_set" |finite_sets| NIL)
     (|init_trace| CONST-DECL "role_trace" |unilateral| NIL)
     (|doubleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
-     "../strand_spaces/")
+     "../skeletons/")
     (|add| CONST-DECL "finseq[T]" |more_finseq| NIL)
     (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
-     "../strand_spaces/"))
+     "../skeletons/"))
    NIL))
  (|init_role_TCC4| 0
   (|init_role_TCC4-1| NIL 3621854563
@@ -172,10 +168,9 @@
     (|posnat| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
     (|no_assumptions| DEF-DECL "assumptions" |roles| "../skeletons/")
     (|set| TYPE-EQ-DECL NIL |sets| NIL)
-    (|nmtfinseq| TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|nmtfinseq| TYPE-EQ-DECL NIL |nonempty_finite_sequences| "../skeletons/")
     (|doubleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
-     "../strand_spaces/")
+     "../skeletons/")
     (|singleton?| CONST-DECL "bool" |sets| NIL)
     (|singleton| CONST-DECL "(singleton?)" |sets| NIL)
     (|text?| ADT-RECOGNIZER-DECL "[mesg -> boolean]" |free_alg|
@@ -183,20 +178,19 @@
     (|tx| ADT-CONSTRUCTOR-DECL "[nat -> (text?)]" |free_alg| "../skeletons/")
     (|emptyset| CONST-DECL "set" |sets| NIL)
     (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
-     "../strand_spaces/")
+     "../skeletons/")
     (|add| CONST-DECL "finseq[T]" |more_finseq| NIL)
     (|no_rnon_assumptions| FORMULA-DECL NIL |roles| "../skeletons/")
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
     (|originates_index?| CONST-DECL "bool" |traces| "../skeletons/")
-    (|carried_by?| DEF-DECL "bool" |free_alg| "../skeletons/")
-    (|skey?| CONST-DECL "bool" |free_alg| "../skeletons/")
+    (|carried_by?| DEF-DECL "bool" |free_alg| "../skeletons/") NIL
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
     (|finseq| TYPE-EQ-DECL NIL |finite_sequences| NIL)
     (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
     (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
+     "../skeletons/")
     (< CONST-DECL "bool" |reals| NIL)
     (|all_uniq_orig?| CONST-DECL "bool" |roles| "../skeletons/")
     (|role?| CONST-DECL "bool" |roles| "../skeletons/"))
@@ -206,9 +200,7 @@
    ((|vari?| CONST-DECL "bool" |free_alg| "../skeletons/")) NIL))
  (|init_TCC2| 0
   (|init_TCC2-1| NIL 3621875777 ("" (SUBTYPE-TCC) NIL NIL)
-   ((|mapping?| CONST-DECL "bool" |free_alg| "../skeletons/")
-    (|skey?| CONST-DECL "bool" |free_alg| "../skeletons/"))
-   NIL))
+   ((|mapping?| CONST-DECL "bool" |free_alg| "../skeletons/") NIL) NIL))
  (|init_TCC3| 0
   (|init_TCC3-1| NIL 3621875777
    ("" (SUBTYPE-TCC)
@@ -216,9 +208,7 @@
       NIL)
      ("2" (EXPAND "every") (("2" (GRIND) NIL NIL)) NIL))
     NIL)
-   ((|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
-    (|mapping?| CONST-DECL "bool" |free_alg| "../skeletons/")
-    (|skey?| CONST-DECL "bool" |free_alg| "../skeletons/")
+   (NIL (|mapping?| CONST-DECL "bool" |free_alg| "../skeletons/") NIL
     (|vari?| CONST-DECL "bool" |free_alg| "../skeletons/")
     (|akey| TYPE-EQ-DECL NIL |free_alg| "../skeletons/")
     (|akey?| ADT-RECOGNIZER-DECL "[mesg -> boolean]" |free_alg|
@@ -269,17 +259,15 @@
     (> CONST-DECL "bool" |reals| NIL)
     (|trace| TYPE-EQ-DECL NIL |traces| "../skeletons/")
     (|param?| CONST-DECL "bool" |traces| "../skeletons/")
-    (|nmtfinseq| TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
+    (|nmtfinseq| TYPE-EQ-DECL NIL |nonempty_finite_sequences| "../skeletons/")
     (|doubleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
-     "../strand_spaces/")
+     "../skeletons/")
     (|recv?| ADT-RECOGNIZER-DECL "[event -> boolean]" |traces| "../skeletons/")
     (|recv| ADT-CONSTRUCTOR-DECL "[mesg -> (recv?)]" |traces| "../skeletons/")
     (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (|akey?| ADT-RECOGNIZER-DECL "[mesg -> boolean]" |free_alg|
      "../skeletons/")
-    (|svar?| ADT-RECOGNIZER-DECL "[mesg -> boolean]" |free_alg|
-     "../skeletons/")
+    NIL
     (|hash?| ADT-RECOGNIZER-DECL "[mesg -> boolean]" |free_alg|
      "../skeletons/")
     (|key| TYPE-EQ-DECL NIL |free_alg| "../skeletons/")
@@ -305,28 +293,26 @@
     (|send| ADT-CONSTRUCTOR-DECL "[mesg -> (send?)]" |traces| "../skeletons/")
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
-    (|akey_var| DEF-DECL "(asymkey?)" |free_alg| "../skeletons/")
-    (< CONST-DECL "bool" |reals| NIL)
+    NIL (< CONST-DECL "bool" |reals| NIL)
     (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences|
-     "../strand_spaces/")
-    (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL)
-    (|vars| DEF-DECL "bool" |free_alg| "../skeletons/")
+     "../skeletons/")
+    (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL) NIL
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
     (|add| CONST-DECL "finseq[T]" |more_finseq| NIL)
     (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
-     "../strand_spaces/")
+     "../skeletons/")
     (|all_acquired?| CONST-DECL "bool" |roles| "../skeletons/"))
    NIL))
- (|enumerate_unilateral_roles| 0
-  (|enumerate_unilateral_roles-1| NIL 3621876776
+ (|enumerate_unilateral_prot| 0
+  (|enumerate_unilateral_prot-1| NIL 3621876776
    ("" (SKOLEM 1 "r")
-    (("" (EXPAND "unilateral_roles")
+    (("" (EXPAND "unilateral_prot")
       (("" (EXPAND "add") (("" (EXPAND "member") (("" (SMASH) NIL NIL)) NIL))
         NIL))
       NIL))
     NIL)
-   ((|unilateral_roles| CONST-DECL "protocol" |unilateral| NIL)
+   ((|unilateral_prot| CONST-DECL "protocol" |unilateral| NIL)
     (|member| CONST-DECL "bool" |sets| NIL)
     (|add| CONST-DECL "(nonempty?)" |sets| NIL))
    SHOSTAK)))

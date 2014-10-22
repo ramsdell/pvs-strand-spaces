@@ -42,14 +42,14 @@ begin
   bprot: protocol =
     add(binit_role,
     add(bresp_role,
-        adversary_roles))
+        adversary_prot))
 
   enumerate_bprot: lemma
     forall(r: role):
       bprot(r) iff
         r = binit_role or
         r = bresp_role or
-        adversary_roles(r)
+        adversary_prot(r)
 
   % A blanchet specific role assignment
   bprot_assignment(b: bundle): type =
@@ -85,14 +85,14 @@ begin
   cprot: protocol =
     add(cinit_role,
     add(cresp_role,
-        adversary_roles))
+        adversary_prot))
 
   enumerate_cprot: lemma
     forall(r: role):
       cprot(r) iff
         r = cinit_role or
         r = cresp_role or
-        adversary_roles(r)
+        adversary_prot(r)
 
   % A blanchet specific role assignment
   cprot_assignment(b: bundle): type =
@@ -106,6 +106,16 @@ begin
     else
       r
     endif
+
+  pmap_trace_length: lemma
+    forall(r: (cprot)):
+      length(r`trace) = length(pmap(r)`trace)
+
+  resp_inst: lemma
+    forall(c: trace, s: subst):
+      length(c) <= length(cresp_trace) and
+      instance(cresp_trace, c) = up(s) implies
+        up?(instance(bresp_trace, instantiate(bresp_trace, length(c), s)))
        
   bmap(b1: bundle, pa1: cprot_assignment(b1)):
       [b0: bundle, bprot_assignment(b0)] =

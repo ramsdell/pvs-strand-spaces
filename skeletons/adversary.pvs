@@ -76,7 +76,7 @@ begin
                     recv(sk(0)), send(vm(0))))
 
   % All the adversary roles as a finite set
-  adversary_roles: protocol =
+  adversary_prot: protocol =
     add(create_akey,
     add(create_skey,
     add(create_text,
@@ -89,9 +89,9 @@ begin
     add(dec_akey,
     add(dec_skey, create_tag?)))))))))))
 
-  enumerate_adversary_roles: lemma
+  enumerate_adversary_prot: lemma
     forall(r: role):
-      adversary_roles(r) iff
+      adversary_prot(r) iff
         r = create_akey or
         r = create_skey or
         r = create_text or
@@ -106,7 +106,13 @@ begin
         r = dec_skey
 
   adversary_strands_are_short: lemma
-    forall(ss: strand_space, z: strand(ss), r: (adversary_roles)):
+    forall(ss: strand_space, z: strand(ss), r: (adversary_prot)):
       ss(z)`length >= 4 implies not inst(ss)(z, r)
+
+  adversary_inst: lemma
+    forall(ss: strand_space, z: strand(ss), r: (adversary_prot)):
+      inst(ss)(z, r) iff
+        length(ss(z)) <= length(r`trace) and
+        up?(instance(r`trace, ss(z)))
 
 end adversary

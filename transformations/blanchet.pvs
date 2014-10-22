@@ -39,21 +39,21 @@ begin
 
   % The blanchet protocol
 
-  bprot_roles: protocol =
+  bprot: protocol =
     add(binit_role,
     add(bresp_role,
         adversary_roles))
 
-  enumerate_bprot_roles: lemma
+  enumerate_bprot: lemma
     forall(r: role):
-      bprot_roles(r) iff
+      bprot(r) iff
         r = binit_role or
         r = bresp_role or
         adversary_roles(r)
 
   % A blanchet specific role assignment
   bprot_assignment(b: bundle): type =
-    protocol_assignment(bprot_roles, b)
+    protocol_assignment(bprot, b)
 
   % The Corrected Blanchet Protocol 
 
@@ -82,20 +82,40 @@ begin
 
   % The blanchet protocol
 
-  cprot_roles: protocol =
+  cprot: protocol =
     add(cinit_role,
     add(cresp_role,
         adversary_roles))
 
-  enumerate_cprot_roles: lemma
+  enumerate_cprot: lemma
     forall(r: role):
-      cprot_roles(r) iff
+      cprot(r) iff
         r = cinit_role or
         r = cresp_role or
         adversary_roles(r)
 
   % A blanchet specific role assignment
   cprot_assignment(b: bundle): type =
-    protocol_assignment(cprot_roles, b)
+    protocol_assignment(cprot, b)
+
+  pmap(r: (cprot)): (bprot) =
+    if r = cinit_role then
+      binit_role
+    elsif r = cresp_role then
+      bresp_role
+    else
+      r
+    endif
+       
+  bmap(b1: bundle, pa1: cprot_assignment(b1)):
+      [b0: bundle, bprot_assignment(b0)] =
+    let pa0 = pmap o pa1,
+        ss1 = b1`space,
+        ss0 =
+          (# length := length(ss1),
+             seq    := lambda(i: below[length(ss1)]):
+               let s = instance(pa1(i)`trace, ss1(i)) in
+               instantiate(pa0(i)`trace, length(ss1(i)), down(s)) #) in
+    ((# space := ss0, comm := b1`comm #), pa0)
 
 end blanchet

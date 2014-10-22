@@ -111,21 +111,40 @@ begin
     forall(r: (cprot)):
       length(r`trace) = length(pmap(r)`trace)
 
+  init_inst: lemma
+    forall(c: trace, s: subst):
+      length(c) <= length(cinit_trace) and
+      instance(cinit_trace, c) = up(s) implies
+        up?(instance(binit_trace, instantiate(binit_trace, length(c), s)))
+       
   resp_inst: lemma
     forall(c: trace, s: subst):
       length(c) <= length(cresp_trace) and
       instance(cresp_trace, c) = up(s) implies
         up?(instance(bresp_trace, instantiate(bresp_trace, length(c), s)))
        
+  smap(b1: bundle, pa1: cprot_assignment(b1)): strand_space =
+    (# length := length(b1`space),
+       seq    := lambda(i: below[length(b1`space)]):
+         let s = instance(pa1(i)`trace, b1`space(i)) in
+         instantiate(pmap(pa1(i))`trace, length(b1`space(i)), down(s)) #)
+
+  smap_strand: lemma
+    forall(b1: bundle, pa1: cprot_assignment(b1), s: strand(b1`space)):
+      smap(b1, pa1)(s) = 
+       instantiate(pmap(pa1(s))`trace, length(b1`space(s)),
+         down(instance(pa1(s)`trace, b1`space(s))))
+
+  auto_rewrite+ smap_strand
+
+  smap_length: lemma
+    forall(b1: bundle, pa1: cprot_assignment(b1)):
+      length(smap(b1, pa1)) = length(b1`space)
+
+  auto_rewrite+ smap_length
+
   bmap(b1: bundle, pa1: cprot_assignment(b1)):
       [b0: bundle, bprot_assignment(b0)] =
-    let pa0 = pmap o pa1,
-        ss1 = b1`space,
-        ss0 =
-          (# length := length(ss1),
-             seq    := lambda(i: below[length(ss1)]):
-               let s = instance(pa1(i)`trace, ss1(i)) in
-               instantiate(pa0(i)`trace, length(ss1(i)), down(s)) #) in
-    ((# space := ss0, comm := b1`comm #), pa0)
+    ((# space := smap(b1, pa1), comm := b1`comm #), pmap o pa1)
 
 end blanchet

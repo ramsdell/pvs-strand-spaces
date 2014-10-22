@@ -1,0 +1,101 @@
+% Blanchet's Simple Example Protocol
+
+% John D. Ramsdell -- The MITRE Corporation -- October 2014
+
+% Copyright (C) 2014 The MITRE Corporation.
+% All rights reserved.
+% See ../license.txt for terms.
+
+blanchet: theory
+begin
+
+  skeletons: library = "../skeletons"
+  importing skeletons@adversary
+
+  % The Blanchet Protocol 
+
+  % The init role
+
+  binit_trace: role_trace =
+    doubleton_seq(send(en(en(sk(0),
+                             ak(invert(asym(0)))),
+                          ak(asym(1)))),
+                  recv(en(tx(0), sk(0))))
+
+  binit_role: role =
+    (# trace   := binit_trace,
+       rnon    := no_assumptions(binit_trace`length),
+       runique :=  doubleton_seq(singleton[atom](sk(0)), emptyset) #)
+
+  % The responder role
+
+  bresp_trace: role_trace =
+    doubleton_seq(recv(en(en(sk(0),
+                             ak(invert(asym(0)))),
+                          ak(asym(1)))),
+                  send(en(tx(0), sk(0))))
+
+  bresp_role: role = simple_role(bresp_trace)
+
+  % The blanchet protocol
+
+  bprot_roles: protocol =
+    add(binit_role,
+    add(bresp_role,
+        adversary_roles))
+
+  enumerate_bprot_roles: lemma
+    forall(r: role):
+      bprot_roles(r) iff
+        r = binit_role or
+        r = bresp_role or
+        adversary_roles(r)
+
+  % A blanchet specific role assignment
+  bprot_assignment(b: bundle): type =
+    protocol_assignment(bprot_roles, b)
+
+  % The Corrected Blanchet Protocol 
+
+  % The init role
+
+  cinit_trace: role_trace =
+    doubleton_seq(send(en(en(pr(sk(0), ak(asym(1))), 
+                             ak(invert(asym(0)))),
+                          ak(asym(1)))),
+                  recv(en(tx(0), sk(0))))
+
+  cinit_role: role =
+    (# trace   := cinit_trace,
+       rnon    := no_assumptions(cinit_trace`length),
+       runique :=  doubleton_seq(singleton[atom](sk(0)), emptyset) #)
+
+  % The responder role
+
+  cresp_trace: role_trace =
+    doubleton_seq(recv(en(en(pr(sk(0), ak(asym(1))), 
+                             ak(invert(asym(0)))),
+                          ak(asym(1)))),
+                  send(en(tx(0), sk(0))))
+
+  cresp_role: role = simple_role(cresp_trace)
+
+  % The blanchet protocol
+
+  cprot_roles: protocol =
+    add(cinit_role,
+    add(cresp_role,
+        adversary_roles))
+
+  enumerate_cprot_roles: lemma
+    forall(r: role):
+      cprot_roles(r) iff
+        r = cinit_role or
+        r = cresp_role or
+        adversary_roles(r)
+
+  % A blanchet specific role assignment
+  cprot_assignment(b: bundle): type =
+    protocol_assignment(cprot_roles, b)
+
+end blanchet

@@ -22,7 +22,7 @@
 \newenvironment{note}{\begingroup\itshape}{\endgroup}
 \newcommand{\remark}[1]{\emph{[#1]}}
 \newtheorem{thm}{Theorem}
-\newtheorem{lem}{Lemma}
+\newtheorem{lem}[thm]{Lemma}
 \newtheorem{conj}[thm]{Conjecture}
 \newcommand{\cpsa}{\textsc{cpsa}}
 \newcommand{\pvs}{\textsc{pvs}}
@@ -92,12 +92,12 @@ defined in~\cite{Guttman12a}.  The precise relation between protocol
 injections and transformations has yet to be established.
 
 A protocol injection defines how a protocol~$P_0$ is incorporated into
-another protocol~$P_1$.  A security goal of a protocol is a formula
-that is satisfied by all runs of the protocol.
+another protocol~$P_1$.  A security goal of a protocol is achieved if
+it is satisfied by all runs of the protocol.
 Section~\ref{sec:protocol injections} defines when an injection
-implies that~$P_1$ ``imports the goals'' of~$P_0$, meaning that if~$\Psi$
-is a security goal of~$P_0$, then its translation is a security goal
-of~$P_1$.
+implies that~$P_1$ ``imports the achieved goals'' of~$P_0$, meaning
+that if~$\Psi$ is an achieved security goal of~$P_0$, then its
+translation is an achieved security goal of~$P_1$.
 
 Protocol injections and goal importations are defined using the same
 formalism used for {\cpsa}~\cite{cpsaspec09}.  As a result, the tool
@@ -110,7 +110,7 @@ Section~\ref{sec:strand spaces} presents strand spaces as implemented
 in {\cpsa} and as specified in~{\pvs}.  Section~\ref{sec:shape
   analysis sentences} defines shape analysis sentences and their key
 properties.  A shape analysis sentence encodes a result of {\cpsa}
-as an order-sorted, first-order logic formula that can be used to
+as an order-sorted, first-order geometric formula that can be used to
 prove a security goal of a protocol.  Most of the content of this
 section is taken from the section of the same name
 in~\cite{Ramsdell12}.  Section~\ref{sec:protocol injections} defines
@@ -557,9 +557,9 @@ skeletons that are not in the image of~$k_0$, and the disjunction is
 satisfied in the remaining realized skeletons.
 \end{proof}
 
-A \emph{security formula}~$\Psi$ for protocol~$P$ is a first-order
-formula over the language~$\lang(P)$ that shares properties with shape
-analysis sentences.
+A \emph{security goal}~$\Psi$ for protocol~$P$ is a first-order
+geometric formula over the language~$\lang(P)$ that shares properties
+with shape analysis sentences.
 \begin{enumerate}
 \item Each $z\typ\srt{N}$ in~$\Psi$ is associated with a unique role
   that is determined by one or more atomic formulas of the form
@@ -569,7 +569,7 @@ analysis sentences.
 \end{enumerate}
 
 Let~$\Gamma$ be the shape analysis sentence of a complete shape
-analysis and~$\Psi$ be a security formula.  If $\Gamma\supset\Psi$ is a
+analysis and~$\Psi$ be a security goal.  If $\Gamma\supset\Psi$ is a
 theorem in order-sorted first-order logic, then~$\Psi$ is satisfied in
 all realized skeletons and its protocol achieves this goal.  It is
 also satisfied in all bundles.
@@ -589,11 +589,14 @@ increasing function is injective.
 A \emph{trace stretch} from trace~$c_0$ to~$c_1$ is a pair containing
 an increasing function $f\in\alg{F}[|c_0|, |c_1|]$ and an injective
 function $\gamma\in\vars(c_0)\to\vars(c_1)$ such that for
-all~$i<|c_0|$, $c_0(i)$ is inbound iff $c_1(f(i))$ is inbound and for
-all $x\in\vars(\prefix{c_0}{i+1})$,
-$\gamma(x)\in\vars(\prefix{c_1}{f(i)+1})$.  The set of such pairs
-is~$\alg{T}[c_0,c_1]$.  A \emph{strand stretch} from strand
-space~$\ssp_0$ to~$\ssp_1$ is an increasing function
+all~$i<|c_0|$, 
+\begin{enumerate}
+\item $c_0(i)$ is inbound iff $c_1(f(i))$ is inbound, and
+\item for all $x\in\vars(\prefix{c_0}{i+1})$,
+  $\gamma(x)\in\vars(\prefix{c_1}{f(i)+1})$.
+\end{enumerate}
+The set of such pairs is~$\alg{T}[c_0,c_1]$.  A \emph{strand stretch}
+from strand space~$\ssp_0$ to~$\ssp_1$ is an increasing function
 $h^s\in\alg{F}[|\ssp_0|, |\ssp_1|]$.
 
 The set of \emph{protocol injections} from protocol~$P_0$ to~$P_1$ is
@@ -607,12 +610,12 @@ stretch is written~$g^f$ and~$g^\gamma$, so $g(r_0)=(g^r(r_0),
 g^f(r_0),g^\gamma(r_0))$.
 
 \paragraph{Goal Imports.}
-Protocol injections can be used to decide if the security goals of one
-protocol are imported into another.  The definition of goal
-importation ensures that the satisfiability of atomic formulas used in
-a security formula is preserved.
+Protocol injections can be used to decide if the achieved security
+goals of one protocol are imported into another.  The definition of
+goal importation ensures that the satisfiability of atomic formulas
+used in a security formula is preserved.
 
-Let $\Psi$ be a security formula for protocol~$P_0$ and
+Let $\Psi$ be a security goal for protocol~$P_0$ and
 $g\in\alg{P}[P_0,P_1]$ be a protocol injection.  To import~$\Psi$
 into~$P_1$, translate each atomic formula in~$\Psi$ as follows.
 \begin{itemize}
@@ -625,7 +628,7 @@ into~$P_1$, translate each atomic formula in~$\Psi$ as follows.
 \item Otherwise, the atomic formula is not changed.
 \end{itemize}
 The properties of a trace stretch ensure the translation produces a
-security formula.
+security goal.
 
 In what follows, Properties~\ref{item: role mappings} and~\ref{item:
   role heights} ensure the preservation of the truth of strand
@@ -634,7 +637,7 @@ truth of~$\prec$ is preserved.  Properties~\ref{item: nons}
 and~\ref{item: uniques} ensure the truths of \fn{non} and \fn{uniq}
 are preserved.
 
-Protocol~$P_1$ \emph{imports the goals} of protocol~$P_0$ via
+Protocol~$P_1$ \emph{imports the achieved goals} of protocol~$P_0$ via
 protocol injection $g\in\alg{P}[P_0,P_1]$, written
 $P_0\hookrightarrow_g P_1$, iff for all bundles~$\bun_1$ that are runs
 of~$P_1$ with role assignment~$\rl_1$, there exists
@@ -691,7 +694,7 @@ Note that above definition is constructive in that given an
 injection~$g$, a bundle~$\bun_1$, and a strand stretch~$h^s$, it
 describes how to create~$\bun_0$ so it can be used for evaluation.
 
-Let $T_g(\Psi)$ be the security formula in $P_1$ that is the result of
+Let $T_g(\Psi)$ be the security goal in $P_1$ that is the result of
 translating~$\Psi$ in~$P_0$ using $g\in\alg{P}[P_0,P_1]$.
 
 \begin{lem}[Satisfiability Preservation]
@@ -712,7 +715,7 @@ The proof of this lemma is a bit vacuous because the truth of the
 lemma guided the definition of goal importation.
 
 \begin{proof}
-Because~$P_1$ imports the goals of~$P_0$, for each
+Because~$P_1$ imports the achieved goals of~$P_0$, for each
 $\bun_1\in\run_{P_1}$, there exists $\bun_0\in\run_{P_0}$ and
 $h^s\in\alg{F}[|\ssp_0|, |\ssp_1|]$ such that the properties of goal
 importation hold.  The structures of~$\Psi$ and $T_g(\Psi)$ are
@@ -777,7 +780,7 @@ The preservation of the satisfiability of each protocol independent
 atomic formula is straightforward.
 \end{proof}
 
-\begin{thm}[Goal Importation is Sound]
+\begin{thm}[Achieved Goal Importation is Sound]
 Assume $P_0\hookrightarrow_g P_1$.  If security sentence~$\Psi$
 for~$P_0$ is satisfied by all runs of~$P_0$, then $T_g(\Psi)$ is
 satisfied by all runs of~$P_1$.
@@ -787,14 +790,34 @@ satisfied by all runs of~$P_1$.
 The strategy of the proof is to show the contrapositive of the
 theorem, that a run of~$P_1$ that is not satisfied by $T_g(\Psi)$
 demonstrates the existence of a run of~$P_0$ this is not satisfied
-by~$\Psi$.  Because~$P_1$ imports the goals of~$P_0$, there exists a
-run of~$P_0$ related to each run of~$P_1$.  By
+by~$\Psi$.  Because~$P_1$ imports the achieved goals of~$P_0$, there
+exists a run of~$P_0$ related to each run of~$P_1$.  By
 Lemma~\ref{lem:satisfiability preservation}, $T_g(\Psi)$ is satisfied
 iff~$\Psi$ is satisfied.
 \end{proof}
 
 \remark{The protocol inclusion paper should be referenced
   here, as it motivated this proof and the whole work.}
+
+\paragraph{Wild Idea.}
+To trace stretches, add the following properties, and then maybe
+Conjecture~\ref{conj: injections are sound} can be proved.
+For all~$i<|c_0|$, 
+\begin{enumerate}
+\item $x\sqsubseteq c_0(i)$ implies $\gamma(x)\sqsubseteq
+  c_1(j)$ for some $j\leq f(i)$,
+\item $x$ originates in $c_0$ at~$i$ implies $\gamma(x)$ originates in
+  $c_1$ at~$j$ for some $j\leq f(i)$, and
+\item for all $\sigma$ and $c_3$, $\sigma\circ\prefix{c_1}{f(i)+1}=c_3$
+  implies there exists a~$\sigma_0$ such that
+  \[\sigma_0\circ\prefix{c_0}{i+1}=
+  \sigma\circ\gamma\circ\prefix{c_0}{i+1}.\]
+\end{enumerate}
+The first two properties are properties of protocol transformations.
+
+\begin{conj}[Injections Are Sound]\label{conj: injections are sound}
+  $g\in\alg{P}[P_0,P_1]$ implies $P_0\hookrightarrow_g P_1$.
+\end{conj}
 
 \section{Relation to Protocol Transformations}
 \label{sec:protocol transformations}

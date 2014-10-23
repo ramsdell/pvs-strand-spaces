@@ -123,6 +123,12 @@ begin
       instance(cresp_trace, c) = up(s) implies
         up?(instance(bresp_trace, instantiate(bresp_trace, length(c), s)))
        
+  prot_inst: lemma
+    forall(r: (cprot), c: trace, s: subst):
+      length(c) <= length(r`trace) and
+      instance(r`trace, c) = up(s) implies
+        up?(instance(pmap(r)`trace, instantiate(pmap(r)`trace, length(c), s)))
+       
   smap(b1: bundle, pa1: cprot_assignment(b1)): strand_space =
     (# length := length(b1`space),
        seq    := lambda(i: below[length(b1`space)]):
@@ -132,8 +138,8 @@ begin
   smap_strand: lemma
     forall(b1: bundle, pa1: cprot_assignment(b1), s: strand(b1`space)):
       smap(b1, pa1)(s) = 
-       instantiate(pmap(pa1(s))`trace, length(b1`space(s)),
-         down(instance(pa1(s)`trace, b1`space(s))))
+        instantiate(pmap(pa1(s))`trace, length(b1`space(s)),
+          down(instance(pa1(s)`trace, b1`space(s))))
 
   auto_rewrite+ smap_strand
 

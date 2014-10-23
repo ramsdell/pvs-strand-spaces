@@ -418,28 +418,30 @@ that will become evident when their semantics is defined, each
 protocol specific predicate is called a \emph{strand progress
   predicate}. The protocol independent predicate of arity four is
 $\mathsf{prec}\typ\srt{N}\times\srt{N}\times\srt{N}\times\srt{N}$.
-The protocol independent unary predicates are $\mathsf{non}\typ B$ for
-each atomic sort~$B\in\{\srt{A}, \srt{S},\srt{D}\}$, and the protocol
-independent ternary predicates are $\mathsf{uniq}\typ
-B\times\srt{N}\times\srt{N}$.
-Finally, equality is binary.
+The protocol independent unary predicates are $\mathsf{non}\typ B$ and
+$\mathsf{uniq}\typ B$ for each atomic sort~$B\in\{\srt{A},
+\srt{S},\srt{D}\}$, and the protocol independent ternary predicates
+are $\mathsf{orig}\typ B\times\srt{N}\times\srt{N}$.  Finally,
+equality is binary.
 
 We define~$\form(k)=(Y,\Phi)$, where~$\Phi$ is $k$'s skeleton formula,
 and~$Y$ is the formula's variables.  Let
 $k=\skel_X(P,\insts,\prec,\nu,\upsilon)$.  The variables~$Y$ is~$X$
 augmented with a fresh variable~$z_s\typ\srt{N}$ for each strand
-$s\in\sdom(I)$.  The formula~$\Phi$ is a conjunction of atomic
-formulas composed as follows.
+$s\in\sdom(I)$.  Let~$\prec'$ be the transitive reduction of~$\prec$.
+The formula~$\Phi$ is a conjunction of atomic formulas composed as
+follows.
 
 \begin{itemize}
 \item For each $s\in\sdom(I)$, let $I(s)=\insta(r,h,\sigma)$.  For
   each variable $x\in\vars(\prefix{\role^c(r)}{h})$ and term
   $t=\sigma(x)$, assert $P[r,h,x](z_s,t)$.
-\item For each $(s,i)\prec(s',i')$, assert
+\item For each $(s,i)\prec'(s',i')$, assert
   $\cn{prec}(z_s,i,z_{s'},i')$.
 \item For each $t\in\nu$, assert $\cn{non}(t)$.
+\item For each $t\in\upsilon$, assert $\cn{uniq}(t)$.
 \item For each $t\in\upsilon$ and $(s,i)\in\orig_k(t)$, assert
-  $\cn{uniq}(t,z_s, i)$.
+  $\cn{orig}(t,z_s, i)$.
 \end{itemize}
 
 The structure of a generated formula has a notable property.  Each
@@ -505,7 +507,8 @@ straightforward.
 \item $k,\alpha\models\cn{prec}(w,x,y,z)$ iff
 $(\alpha(w),\alpha(x))\prec(\alpha(y),\alpha(z))$.
 \item $k,\alpha\models\cn{non}(y)$ iff $\alpha(y)\in\nu$.
-\item $k,\alpha\models\cn{uniq}(x,y,z)$ iff $\alpha(x)\in\upsilon$ and
+\item $k,\alpha\models\cn{uniq}(x)$ iff $\alpha(x)\in\upsilon$.
+\item $k,\alpha\models\cn{orig}(x,y,z)$ iff $\alpha(x)\in\upsilon$ and
   $(\alpha(y),\alpha(z))\in\orig_k(\alpha(x))$.
 \item $k,\alpha\models y=z$ iff $\alpha(y)=\alpha(z)$.
 \end{itemize}
@@ -633,9 +636,9 @@ security goal.
 In what follows, Properties~\ref{item: role mappings} and~\ref{item:
   role heights} ensure the preservation of the truth of strand
 progress predicates.  Property~\ref{item: node orderings} ensures the
-truth of~$\prec$ is preserved.  Properties~\ref{item: nons}
-and~\ref{item: uniques} ensure the truths of \fn{non} and \fn{uniq}
-are preserved.
+truth of~$\prec$ is preserved.  Properties~\ref{item: nons},
+\ref{item: uniqs}, and~\ref{item: origs} ensure the truths of \fn{non},
+\fn{uniq}, and \fn{orig} are preserved.
 
 Protocol~$P_1$ \emph{imports the achieved goals} of protocol~$P_0$ via
 protocol injection $g\in\alg{P}[P_0,P_1]$, written
@@ -685,9 +688,13 @@ conditions hold.
   Let~$\atm$ be the atoms that occur in~$\bun_0$.
   \[\all{t\in\atm}\fn{non}(\ssp_1, t)\supset\fn{non}(\ssp_0, t)\]
 
-\item\label{item: uniques} Unique origination predicate respects injection.
-  \[\all{t\in\atm,n\in\nodes(\ssp_0)}\fn{uniq}(\ssp_1,
-  t,\ell(n))\supset\fn{uniq}(\ssp_0, t,n)\]
+\item\label{item: uniqs} Unique origination predicate respects injection.
+  Let~$\atm$ be the atoms that occur in~$\bun_0$.
+  \[\all{t\in\atm}\fn{uniq}(\ssp_1, t)\supset\fn{uniq}(\ssp_0, t)\]
+
+\item\label{item: origs} Unique origination at predicate respects injection.
+  \[\all{t\in\atm,n\in\nodes(\ssp_0)}\fn{orig}(\ssp_1,
+  t,\ell(n))\supset\fn{orig}(\ssp_0, t,n)\]
 \end{enumerate}
 
 Note that above definition is constructive in that given an

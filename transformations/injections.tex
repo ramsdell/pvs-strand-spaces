@@ -246,12 +246,12 @@ $\bun=(\bun^\ssp,\bun^\to)$.
 \paragraph{Runs of Protocols.}
 In a run of a protocol, the behavior of each strand is constrained by
 a role in a protocol.  Adversarial strands are constrained by roles as
-are non-adversarial strands.  A \emph{proto-role} is of the form
+are non-adversarial strands.  A \emph{protorole} is of the form
 $\role(c,\nu,\upsilon)$, where $c\in\tr$, $\nu\in\pow{\atm}^+$,
 $\upsilon\in\pow{\atm}^+$, every non-atomic variable in~$c$ is
 acquired, and the lengths of $c$, $\nu$, and $\upsilon$ agree.  The
 trace of the role is~$c$, its non-origination assumptions are~$\nu$,
-and its unique origination assumptions are~$\upsilon$.  A proto-role
+and its unique origination assumptions are~$\upsilon$.  A protorole
 $\role(c,\nu,\upsilon)$ is a \emph{role} iff
 \begin{enumerate}
 \item for all $i<|\nu|$, $t\in \nu(i)$ implies
@@ -636,9 +636,9 @@ security goal.
 In what follows, Properties~\ref{item: role mappings} and~\ref{item:
   role heights} ensure the preservation of the truth of strand
 progress predicates.  Property~\ref{item: node orderings} ensures the
-truth of~$\prec$ is preserved.  Properties~\ref{item: nons},
-\ref{item: uniqs}, and~\ref{item: origs} ensure the truths of \fn{non},
-\fn{uniq}, and \fn{orig} are preserved.
+truth of~$\cn{prec}$ is preserved.  Properties~\ref{item: nons} and
+\ref{item: uniqs} ensure the truths of \cn{non}, \cn{uniq}, and
+\cn{orig} are preserved.
 
 Protocol~$P_1$ \emph{imports the achieved goals} of protocol~$P_0$ via
 protocol injection $g\in\alg{P}[P_0,P_1]$, written
@@ -686,15 +686,12 @@ conditions hold.
 
 \item\label{item: nons} Non-origination predicate respects injection.
   Let~$\atm$ be the atoms that occur in~$\bun_0$.
-  \[\all{t\in\atm}\fn{non}(\ssp_1, t)\supset\fn{non}(\ssp_0, t)\]
+  \[\all{t\in\atm}\fn{non}(\ssp_1, t)\mbox{ iff }\fn{non}(\ssp_0, t)\]
 
-\item\label{item: uniqs} Unique origination predicate respects injection.
-  Let~$\atm$ be the atoms that occur in~$\bun_0$.
-  \[\all{t\in\atm}\fn{uniq}(\ssp_1, t)\supset\fn{uniq}(\ssp_0, t)\]
-
-\item\label{item: origs} Unique origination at predicate respects injection.
-  \[\all{t\in\atm,n\in\nodes(\ssp_0)}\fn{orig}(\ssp_1,
-  t,\ell(n))\supset\fn{orig}(\ssp_0, t,n)\]
+\item\label{item: uniqs} Unique origination predicate respects
+  injection.
+  \[\all{t\in\atm,n\in\nodes(\ssp_0)}\fn{uniq}(\ssp_1,
+  t,\ell(n))\mbox{ iff }\fn{uniq}(\ssp_0, t,n)\]
 \end{enumerate}
 
 Note that above definition is constructive in that given an
@@ -744,13 +741,14 @@ identical, so we focus only on their atomic formulas.
     \prefix{\role^{c}(r)}{h}$ for some~$\sigma_0$.  By
     Property~\ref{item: role mappings},
     $\prefix{\ssp_0(s)}{h}=\sigma\circ\gamma\circ\prefix{\role^c(r)}{h}$,
-    $\gamma=g^\gamma(r)(x)$, and
+    $\gamma=g^\gamma(r)$, and
     $\sigma\circ\prefix{c_1}{|\ssp_1(h^s(s))|}=\ssp_1(h^s(s))$ for
-    $c_1=\role^c(g^r(r)$.  Since
+    $c_1=\role^c(g^r(r))$.  Since
     $(\sigma_0\uplus\{x\mapsto\alpha(t)\})(x)=\alpha(t)$, then
     $(\sigma\circ\gamma)(x) =\sigma(\gamma(x))=\alpha(t)$.
     Therefore $\prefix{\ssp_1(h^s(s))}{h'}=\sigma\uplus
     \{\gamma(x)\mapsto\alpha(t)\}\circ \prefix{c_1}{h'}$.
+    \remark{This must be wrong because of branching!}
   \end{itemize}
 
 \item Case of $P_0[r,h,x](z,t)$ in~$\Psi$.  Assume $\bun_1,\alpha_1\models
@@ -767,7 +765,7 @@ identical, so we focus only on their atomic formulas.
     $\prefix{\ssp_1(h^s(s))}{h'}=
     \sigma_1\uplus\{\gamma(x)\mapsto\alpha_0(t)\}\circ
     \prefix{c_1}{h'}$ for some~$\sigma_1$, where
-    $\gamma=g^\gamma(r)(x)$ and $c_1=\role^c(g^r(r)$.  Let $\sigma$ be
+    $\gamma=g^\gamma(r)$ and $c_1=\role^c(g^r(r))$.  Let $\sigma$ be
     the substitution such that
     $\sigma\circ\prefix{c_1}{|\ssp_1(s_1)|}=\ssp_1(s_1)$.  By the
     definition of a strand progress predicate,
@@ -803,9 +801,6 @@ Lemma~\ref{lem:satisfiability preservation}, $T_g(\Psi)$ is satisfied
 iff~$\Psi$ is satisfied.
 \end{proof}
 
-\remark{The protocol inclusion paper should be referenced
-  here, as it motivated this proof and the whole work.}
-
 \paragraph{Wild Idea.}
 To trace stretches, add the following properties, and then maybe
 Conjecture~\ref{conj: injections are sound} can be proved.
@@ -831,5 +826,107 @@ The first two properties are properties of protocol transformations.
 
 \bibliography{secureprotocols}
 \bibliographystyle{plain}
+\newpage
+\section{Node-oriented Security Goals}
+
+The language~$\lang(P)$ used for shape analysis sentences is quite
+constrained.  The signature for terms extends the one used for the
+underlying message algebra with a sort~$\srt{N}$, the sort of pairs of
+natural numbers.  Variables of this sort denote nodes.
+
+Security goals make use of protocol specific and protocol independent
+predicates.  For each role $r\in P$ and $i<|\role^c(r)|$,
+there is a protocol specific unary position predicate
+$P[r,i]\typ\srt{N}$.  For each role~$r\in P$ and variable~$x\typ S$
+that occurs in $\role^c(r)$, there is a protocol specific binary
+parameter predicate $P[r,x]\typ\srt{N}\times S$.  The protocol
+independent unary predicates are $\mathsf{non}\typ B$ and
+$\mathsf{uniq}\typ B$ for each atomic sort~$B\in\{\srt{A},
+\srt{S},\srt{D}\}$.  The remaining protocol independent predicates are
+binary, and are $\mathsf{orig}\typ B\times\srt{N}$,
+$\mathsf{coll}\typ\srt{N}\times\srt{N}$,
+$\mathsf{prec}\typ\srt{N}\times\srt{N}$, and equality.
+
+We define~$\form(k)=(Y,\Phi)$, where~$\Phi$ is $k$'s skeleton formula,
+and~$Y$ is the formula's variables.  Let
+$k=\skel_X(P,\insts,\prec,\nu,\upsilon)$ and let~$\prec'$ be the
+transitive reduction of~$\prec$.  The variables~$Y$ is~$X$ augmented
+with a fresh variable~$v_{s,i}\typ\srt{N}$, where $v_{s,i}$ is in
+$V=V_s\cup V_\prec\cup V_\upsilon$ and
+\begin{itemize}
+\item $V_s=\{v_{s,i}\mid s\in\strands(\insts^\ssp)\land
+  i=|\insts^\ssp|-1\}$
+\item $V_\prec=\{v_{s,i}\mid
+  \some{(s',i')\in\nodes(\insts^\ssp)}s\neq s'\land((s',i')\prec'(s,i)\lor(s,i)\prec' (s',i'))\}$
+\item $V_\upsilon=\{v_{s,i}\mid\some{t\in\upsilon,(s,i)\in
+  \nodes(\insts^\ssp)}(s,i)\in\orig_k(t)\}$
+\end{itemize}
+
+The formula~$\Phi$ is a conjunction of atomic formulas composed as
+follows.
+\begin{itemize}
+\item For each $v_{s,i}\in V$, assert $P[r,i](v_{s,i})$,
+  where $\insts(s)=\insta(r,h,\sigma$).
+\item For each $s\in\sdom(I)$, let $I(s)=\insta(r,h,\sigma)$.  For
+  each variable
+  $x\in\vars(\prefix{\role^c(r)}{h})$ and term $t=\sigma(x)$, assert
+  $P[r,x](v_{s,h-1},t)$.
+\item For each $v_{s,i},v_{s,i'}\in V$ such that $(s,i)\prec'(s,i')$, assert
+  $\cn{coll}(v_{s,i},v_{s,i'})$.
+\item For each $(s,i)\prec'(s',i')$ with $s\neq s'$, assert
+  $\cn{prec}(v_{s,i},v_{s',i'})$.
+\item For each $t\in\nu$, assert $\cn{non}(t)$.
+\item For each $t\in\upsilon$, assert $\cn{uniq}(t)$.
+\item For each $t\in\upsilon$ and $(s,i)\in\orig_k(t)$, assert
+  $\cn{orig}(t,v_{s, i})$.
+\end{itemize}
+
+\paragraph{Semantics of Skeleton Formulas.}
+
+Let $k=\skel_X(P,\insts,\prec,\nu,\upsilon)$.  The universe of discourse is
+$\alg{D}=(\nat\times\nat)\cup\msg_X$.  When formula~$\Phi$ is satisfied in
+skeleton~$k$ with variable assignment $\alpha\colon Y\to \alg{D}$, we
+write $k,\alpha\models\Phi$.  When sentence~$\Gamma$ is satisfied in
+skeleton~$k$, we write $k\models\Gamma$.  Let $\ssp=\insts^\ssp$.
+
+For each position predicate $P[r,i]$, $k,\alpha\models
+P[r,i](y)$ iff $\alpha(y)\in\nodes(\ssp)$.
+
+For each parameter predicate $P[r,x]$, $k,\alpha\models P[r,x](y,z)$
+iff $\alpha(y)\in\nodes(\ssp)$, $\alpha(z)\in\msg_X$, and with
+$\alpha(y)=(s, i)$ and for some~$\sigma$
+
+\[\ssp(s)=\sigma\uplus\{x\mapsto\alpha(z)\}\circ
+  \prefix{\role^c(r)}{|\ssp(s)|}\]
+where \[(\sigma\uplus\{x\mapsto y\})(z)=
+\left\{
+\begin{array}{ll}
+y&z=x\\
+\sigma(z)&\mbox{otherwise.}
+\end{array}\right.\]
+
+In an interpretation, $\rl(s)$ need not be~$r$.  The events that make
+up a strand's trace is all that matters.
+
+The interpretation of the protocol independent predicates is
+straightforward.
+\begin{itemize}
+\item $k,\alpha\models\cn{prec}(y,z)$ iff
+  $\alpha(y)\prec\alpha(z)$.
+\item $k,\alpha\models\cn{non}(y)$ iff $\alpha(y)\in\nu$.
+\item $k,\alpha\models\cn{uniq}(y)$ iff $\alpha(y)\in\upsilon$.
+\item $k,\alpha\models\cn{orig}(y,z)$ iff $\alpha(y)\in\upsilon$ and
+  $\alpha(z)\in\orig_k(\alpha(y))$.
+\item $k,\alpha\models y=z$ iff $\alpha(y)=\alpha(z)$.
+\end{itemize}
+
+\[\ast\ast\ast\]
+
+Since $\prec$ is transitive, transitivity of \fn{prec} can also be
+used to prove a protocol achieves a goal.  That is,
+\[\fn{prec}(x,i,y,j)
+\land\fn{prec}(y,j,z,k)\supset
+\fn{prec}(x,i,z,k).\]
+Furthermore, for all $1\leq i<h$, $P[r,h](n)$ implies $P[r,i](n)$.
 
 \end{document}

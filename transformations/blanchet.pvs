@@ -116,6 +116,11 @@ begin
       length(c) <= length(cinit_trace) and
       instance(cinit_trace, c) = up(s) implies
         up?(instance(binit_trace, instantiate(binit_trace, length(c), s)))
+
+  resp_subterm: lemma
+    forall(x: vari, i: below[length(bresp_trace)]):
+      subterm(x, t(bresp_trace(i))) implies
+        subterm(x, t(cresp_trace(i)))
        
   resp_inst: lemma
     forall(c: trace, s: subst):

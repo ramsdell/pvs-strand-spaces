@@ -59,8 +59,8 @@
      NIL)
     (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
      |real_props| NIL)
-    (|j| SKOLEM-CONST-DECL "nat" |maxset| NIL)
     (|s| SKOLEM-CONST-DECL "non_empty_finite_set[below[1 + j]]" |maxset| NIL)
+    (|j| SKOLEM-CONST-DECL "nat" |maxset| NIL)
     (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (IMPLIES CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (IFF CONST-DECL "[bool, bool -> bool]" |booleans| NIL)

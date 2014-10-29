@@ -395,8 +395,10 @@
     NIL)
    ((|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
-    NIL (|strand| NONEMPTY-TYPE-EQ-DECL NIL |strand_spaces| "../skeletons/")
-    NIL (|bundle| TYPE-EQ-DECL NIL |bundles| "../skeletons/")
+    (|zs!1| SKOLEM-CONST-DECL "strand(bs!1`space)" |injections| NIL)
+    (|strand| NONEMPTY-TYPE-EQ-DECL NIL |strand_spaces| "../skeletons/")
+    (|bs!1| SKOLEM-CONST-DECL "bundle" |injections| NIL)
+    (|bundle| TYPE-EQ-DECL NIL |bundles| "../skeletons/")
     (|bundle?| CONST-DECL "bool" |bundles| "../skeletons/")
     (|pre_bundle| TYPE-EQ-DECL NIL |bundles| "../skeletons/")
     (|node| NONEMPTY-TYPE-EQ-DECL NIL |strand_spaces| "../skeletons/")
@@ -447,8 +449,11 @@
     (|role_assignment?| CONST-DECL "bool" |roles| "../skeletons/")
     (|role_assignment| TYPE-EQ-DECL NIL |roles| "../skeletons/")
     (|protocol| TYPE-EQ-DECL NIL |roles| "../skeletons/")
-    (|protocol_assignment?| CONST-DECL "bool" |roles| "../skeletons/") NIL
-    (|protocol_assignment| TYPE-EQ-DECL NIL |roles| "../skeletons/") NIL
+    (|protocol_assignment?| CONST-DECL "bool" |roles| "../skeletons/")
+    (|src!1| SKOLEM-CONST-DECL "protocol" |injections| NIL)
+    (|protocol_assignment| TYPE-EQ-DECL NIL |roles| "../skeletons/")
+    (|pas!1| SKOLEM-CONST-DECL "protocol_assignment(src!1, bs!1)" |injections|
+     NIL)
     (|strand_increasing| TYPE-EQ-DECL NIL |injections| NIL)
     (|inj| TYPE-EQ-DECL NIL |injections| NIL)
     (|tmap| TYPE-EQ-DECL NIL |injections| NIL)
@@ -632,7 +637,7 @@
     (|uniq| CONST-DECL "bool" |strand_spaces| "../skeletons/")
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
-    (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL) NIL NIL
+    (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL)
     (|instance_at| DEF-DECL "lift[subst]" |traces| "../skeletons/")
     (|strand_progress_mapping_TCC_B| FORMULA-DECL NIL |injections| NIL))
    NIL))
@@ -965,8 +970,8 @@
      "../skeletons/")
     (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
     (|strand_progress_height_TCC_B| FORMULA-DECL NIL |injections| NIL)
-    (|increasing_rew| FORMULA-DECL NIL |increasing| NIL) NIL NIL NIL NIL NIL
-    NIL NIL NIL (|pred| TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|increasing_rew| FORMULA-DECL NIL |increasing| NIL)
+    (|pred| TYPE-EQ-DECL NIL |defined_types| NIL)
     (<= CONST-DECL "bool" |reals| NIL) (TRUE CONST-DECL "bool" |booleans| NIL)
     (|epsilon_ax| FORMULA-DECL NIL |epsilons| NIL)
     (|strand_progress_height_TCC_A| FORMULA-DECL NIL |injections| NIL)

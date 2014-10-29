@@ -16,7 +16,7 @@
     (|add| CONST-DECL "finseq[T]" |more_finseq| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
-    (|subterm| ADT-DEF-DECL "boolean" |free_alg| "../skeletons/")
+    NIL
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
     (< CONST-DECL "bool" |reals| NIL)
@@ -218,7 +218,7 @@
     (|add| CONST-DECL "finseq[T]" |more_finseq| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
-    (|subterm| ADT-DEF-DECL "boolean" |free_alg| "../skeletons/")
+    NIL
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
     (< CONST-DECL "bool" |reals| NIL)
@@ -307,8 +307,7 @@
     (< CONST-DECL "bool" |reals| NIL)
     (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences|
      "../skeletons/")
-    (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL)
-    (|subterm| ADT-DEF-DECL "boolean" |free_alg| "../skeletons/")
+    (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL) NIL
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
     (|add| CONST-DECL "finseq[T]" |more_finseq| NIL)
@@ -508,8 +507,7 @@
     (< CONST-DECL "bool" |reals| NIL)
     (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences|
      "../skeletons/")
-    (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL)
-    (|subterm| ADT-DEF-DECL "boolean" |free_alg| "../skeletons/")
+    (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL) NIL
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
     (|add| CONST-DECL "finseq[T]" |more_finseq| NIL)
@@ -686,8 +684,7 @@
     (|add| CONST-DECL "finseq[T]" |more_finseq| NIL)
     (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
      "../skeletons/")
-    (|r!1| SKOLEM-CONST-DECL "(cprot)" |blanchet| NIL)
-    (< CONST-DECL "bool" |reals| NIL)
+    NIL (< CONST-DECL "bool" |reals| NIL)
     (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
     (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
     (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
@@ -797,8 +794,7 @@
     (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
      "../skeletons/")
     (|subst| TYPE-EQ-DECL NIL |free_alg| "../skeletons/")
-    (|mapping?| CONST-DECL "bool" |free_alg| "../skeletons/")
-    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (|mapping?| CONST-DECL "bool" |free_alg| "../skeletons/") NIL
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|vari| TYPE-EQ-DECL NIL |free_alg| "../skeletons/")
@@ -834,8 +830,7 @@
     (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
      "../skeletons/")
     (|subst| TYPE-EQ-DECL NIL |free_alg| "../skeletons/")
-    (|mapping?| CONST-DECL "bool" |free_alg| "../skeletons/")
-    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (|mapping?| CONST-DECL "bool" |free_alg| "../skeletons/") NIL
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|vari| TYPE-EQ-DECL NIL |free_alg| "../skeletons/")
@@ -932,7 +927,8 @@
      "../skeletons/")
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
-    NIL (|cresp_trace| CONST-DECL "role_trace" |blanchet| NIL)
+    (|subterm| ADT-DEF-DECL "boolean" |free_alg| "../skeletons/")
+    (|cresp_trace| CONST-DECL "role_trace" |blanchet| NIL)
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
     (|mesg| TYPE-DECL NIL |free_alg| "../skeletons/")
@@ -950,8 +946,7 @@
     (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
      "../skeletons/")
     (|subst| TYPE-EQ-DECL NIL |free_alg| "../skeletons/")
-    (|mapping?| CONST-DECL "bool" |free_alg| "../skeletons/")
-    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (|mapping?| CONST-DECL "bool" |free_alg| "../skeletons/") NIL
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|vari| TYPE-EQ-DECL NIL |free_alg| "../skeletons/")
@@ -987,8 +982,7 @@
     (|singleton_seq| CONST-DECL "nmtfinseq" |nonempty_finite_sequences|
      "../skeletons/")
     (|subst| TYPE-EQ-DECL NIL |free_alg| "../skeletons/")
-    (|mapping?| CONST-DECL "bool" |free_alg| "../skeletons/")
-    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (|mapping?| CONST-DECL "bool" |free_alg| "../skeletons/") NIL
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|vari| TYPE-EQ-DECL NIL |free_alg| "../skeletons/")

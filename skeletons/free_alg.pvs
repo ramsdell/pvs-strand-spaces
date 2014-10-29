@@ -79,6 +79,18 @@ begin
   judgement text subtype_of atom
   judgement data subtype_of atom
 
+  % Need to define this because subterm doesn't work with akeys.
+  occurs?(x, y: mesg): recursive boolean =
+  x = y or
+  cases y OF
+    ak(k): akey?(x) and subterm(kk(x), kk(y)),
+    hs(n): occurs?(x, n),
+    pr(f, s): occurs?(x, f) or occurs?(x, s),
+    en(p, k): occurs?(x, p) or occurs?(x, k)
+  else false
+  endcases
+  measure y by <<
+
   % Is message x carried by message y?
   carried_by?(x, y: mesg): recursive bool =
   x = y or
@@ -183,6 +195,14 @@ begin
       hs(subst(n(m), s))
     endif
     measure m by <<
+
+  eqv_lookup(x: mesg, r, s: subst): bool =
+    forall(v: vari):
+      occurs?(v, x) implies lookup(v, r) = lookup(v, s)
+
+  eqv_subst: lemma
+    forall(x: mesg, r, s: subst):
+       eqv_lookup(x, r, s) implies subst(x, r) = subst(x, s)
 
   % Matching
 

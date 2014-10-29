@@ -101,13 +101,17 @@ begin
   endcases
   measure y by <<
 
-  carried_by_subterm: lemma
+  carried_by_occurs: lemma
    forall(x, y: mesg):
-     carried_by?(x, y) implies subterm(x, y)
+     carried_by?(x, y) implies occurs?(x, y)
 
   subterm_transitive: lemma
-    forall(x, y, z: mesg):
+    forall(x, y, z: asymkey):
       subterm(x, y) and subterm(y, z) implies subterm(x, z)
+
+  occurs_transitive: lemma
+    forall(x, y, z: mesg):
+      occurs?(x, y) and occurs?(y, z) implies occurs?(x, z)
 
   % Variables
 
@@ -366,16 +370,20 @@ begin
 
   % Lemmas about variables in patterns
 
-  var_subst_subterm: lemma
+  occurs_subst_akey: lemma
+    forall(x: asymkey, s: subst):
+      occurs?(subst_akey(x, s), subst_akey(invert(x), s))
+
+  var_subst_occurs: lemma
     forall(v: vari, x: mesg, s: subst):
-      subterm(v, x) and up?(find(v, s)) implies
-        subterm(subst(v, s), subst(x, s))
+      occurs?(v, x) and up?(find(v, s)) implies
+        occurs?(subst(v, s), subst(x, s))
 
   % If a variable is in the pattern, it gets bound by matching.
   var_match_binds: lemma
     forall(v: vari, x, y: mesg, s: subst):
       let t = match(x, y, s) in
-      up?(t) and subterm(v, x) implies
+      up?(t) and occurs?(v, x) implies
         up?(find(v, down(t)))
 
   % If a variable is in the pattern, its substitution is in the
@@ -383,17 +391,17 @@ begin
   var_match_subst: lemma
     forall(v: vari, x, y: mesg, s: subst):
       let t = match(x, y, s) in
-      up?(t) and subterm(v, x) implies
-        subterm(subst(v, down(t)), subst(x, down(t)))
+      up?(t) and occurs?(v, x) implies
+        occurs?(subst(v, down(t)), subst(x, down(t)))
 
   % A lemma about variables of sort message
 
   mvar_subst: lemma
     forall(u: (mvar?), x: mesg, s: subst):
-      subterm(u, subst(x, s)) implies
+      occurs?(u, subst(x, s)) implies
         exists(w: (mvar?)):
-          subterm(w, x) and
-          subterm(u, subst(w, s))
+          occurs?(w, x) and
+          occurs?(u, subst(w, s))
 
   auto_rewrite- match_akey_invert
 

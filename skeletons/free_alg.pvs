@@ -79,18 +79,6 @@ begin
   judgement text subtype_of atom
   judgement data subtype_of atom
 
-  % Need to define this because subterm doesn't work with akeys.
-  occurs?(x, y: mesg): recursive boolean =
-  x = y or
-  cases y OF
-    ak(k): akey?(x) and subterm(kk(x), kk(y)),
-    hs(n): occurs?(x, n),
-    pr(f, s): occurs?(x, f) or occurs?(x, s),
-    en(p, k): occurs?(x, p) or occurs?(x, k)
-  else false
-  endcases
-  measure y by <<
-
   % Is message x carried by message y?
   carried_by?(x, y: mesg): recursive bool =
   x = y or
@@ -101,17 +89,13 @@ begin
   endcases
   measure y by <<
 
-  carried_by_occurs: lemma
+  carried_by_subterm: lemma
    forall(x, y: mesg):
-     carried_by?(x, y) implies occurs?(x, y)
+     carried_by?(x, y) implies subterm(x, y)
 
   subterm_transitive: lemma
-    forall(x, y, z: asymkey):
-      subterm(x, y) and subterm(y, z) implies subterm(x, z)
-
-  occurs_transitive: lemma
     forall(x, y, z: mesg):
-      occurs?(x, y) and occurs?(y, z) implies occurs?(x, z)
+      subterm(x, y) and subterm(y, z) implies subterm(x, z)
 
   % Variables
 
@@ -199,14 +183,6 @@ begin
       hs(subst(n(m), s))
     endif
     measure m by <<
-
-  eqv_lookup(x: mesg, r, s: subst): bool =
-    forall(v: vari):
-      occurs?(v, x) implies lookup(v, r) = lookup(v, s)
-
-  eqv_subst: lemma
-    forall(x: mesg, r, s: subst):
-       eqv_lookup(x, r, s) implies subst(x, r) = subst(x, s)
 
   % Matching
 
@@ -370,20 +346,16 @@ begin
 
   % Lemmas about variables in patterns
 
-  occurs_subst_akey: lemma
-    forall(x: asymkey, s: subst):
-      occurs?(subst_akey(x, s), subst_akey(invert(x), s))
-
-  var_subst_occurs: lemma
+  var_subst_subterm: lemma
     forall(v: vari, x: mesg, s: subst):
-      occurs?(v, x) and up?(find(v, s)) implies
-        occurs?(subst(v, s), subst(x, s))
+      subterm(v, x) and up?(find(v, s)) implies
+        subterm(subst(v, s), subst(x, s))
 
   % If a variable is in the pattern, it gets bound by matching.
   var_match_binds: lemma
     forall(v: vari, x, y: mesg, s: subst):
       let t = match(x, y, s) in
-      up?(t) and occurs?(v, x) implies
+      up?(t) and subterm(v, x) implies
         up?(find(v, down(t)))
 
   % If a variable is in the pattern, its substitution is in the
@@ -391,17 +363,17 @@ begin
   var_match_subst: lemma
     forall(v: vari, x, y: mesg, s: subst):
       let t = match(x, y, s) in
-      up?(t) and occurs?(v, x) implies
-        occurs?(subst(v, down(t)), subst(x, down(t)))
+      up?(t) and subterm(v, x) implies
+        subterm(subst(v, down(t)), subst(x, down(t)))
 
   % A lemma about variables of sort message
 
   mvar_subst: lemma
     forall(u: (mvar?), x: mesg, s: subst):
-      occurs?(u, subst(x, s)) implies
+      subterm(u, subst(x, s)) implies
         exists(w: (mvar?)):
-          occurs?(w, x) and
-          occurs?(u, subst(w, s))
+          subterm(w, x) and
+          subterm(u, subst(w, s))
 
   auto_rewrite- match_akey_invert
 

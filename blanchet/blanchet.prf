@@ -2663,14 +2663,14 @@
     (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (|inst| CONST-DECL "bool" |roles| "../strand_spaces/")
     (|j| SKOLEM-CONST-DECL
-     "below(finseq_appl[trace[mesg, carried_by?]](cbu`space)(0)`length)"
+     "below(length(finseq_appl[trace[mesg, carried_by?]](cbu`space)(0)))"
      |blanchet| NIL)
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
     (|posnat| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
     (|nonneg_int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
     (|j| SKOLEM-CONST-DECL
-     "below(finseq_appl[trace[mesg, carried_by?]](cbu`space)(0)`length)"
+     "below(length(finseq_appl[trace[mesg, carried_by?]](cbu`space)(0)))"
      |blanchet| NIL)
     (|empty?| CONST-DECL "bool" |sets| NIL)
     (|member| CONST-DECL "bool" |sets| NIL)
@@ -2733,10 +2733,10 @@
     (|cb| CONST-DECL "akey" |blanchet| NIL)
     (|ca| CONST-DECL "akey" |blanchet| NIL)
     (|j| SKOLEM-CONST-DECL
-     "below(finseq_appl[trace[mesg, carried_by?]](cbu`space)(1)`length)"
+     "below(length(finseq_appl[trace[mesg, carried_by?]](cbu`space)(1)))"
      |blanchet| NIL)
     (|j| SKOLEM-CONST-DECL
-     "below(finseq_appl[trace[mesg, carried_by?]](cbu`space)(1)`length)"
+     "below(length(finseq_appl[trace[mesg, carried_by?]](cbu`space)(1)))"
      |blanchet| NIL)
     (IF CONST-DECL
         "[boolean, T, T -> T]"
@@ -2745,10 +2745,10 @@
     (|atom| TYPE-EQ-DECL NIL |init_alg| "../strand_spaces/")
     (|atom?| CONST-DECL "bool" |init_alg| "../strand_spaces/")
     (|j| SKOLEM-CONST-DECL
-     "below(finseq_appl[trace[mesg, carried_by?]](cbu`space)(2)`length)"
+     "below(length(finseq_appl[trace[mesg, carried_by?]](cbu`space)(2)))"
      |blanchet| NIL)
     (|j| SKOLEM-CONST-DECL
-     "below(finseq_appl[trace[mesg, carried_by?]](cbu`space)(2)`length)"
+     "below(length(finseq_appl[trace[mesg, carried_by?]](cbu`space)(2)))"
      |blanchet| NIL)
     (|en| ADT-CONSTRUCTOR-DECL "[[mesg, key] -> (enc?)]" |init_alg|
      "../strand_spaces/")
@@ -2758,23 +2758,23 @@
     (|hash?| ADT-RECOGNIZER-DECL "[mesg -> boolean]" |init_alg|
      "../strand_spaces/")
     (|j| SKOLEM-CONST-DECL
-     "below(finseq_appl[trace[mesg, carried_by?]](cbu`space)(3)`length)"
+     "below(length(finseq_appl[trace[mesg, carried_by?]](cbu`space)(3)))"
      |blanchet| NIL)
     (|j| SKOLEM-CONST-DECL
-     "below(finseq_appl[trace[mesg, carried_by?]](cbu`space)(3)`length)"
+     "below(length(finseq_appl[trace[mesg, carried_by?]](cbu`space)(3)))"
      |blanchet| NIL)
     (|j| SKOLEM-CONST-DECL
-     "below(finseq_appl[trace[mesg, carried_by?]](cbu`space)(4)`length)"
+     "below(length(finseq_appl[trace[mesg, carried_by?]](cbu`space)(4)))"
      |blanchet| NIL)
     (|j| SKOLEM-CONST-DECL
-     "below(finseq_appl[trace[mesg, carried_by?]](cbu`space)(4)`length)"
+     "below(length(finseq_appl[trace[mesg, carried_by?]](cbu`space)(4)))"
      |blanchet| NIL)
     (|init_runique| CONST-DECL "assumptions" |blanchet| NIL)
     (|init_role_item| CONST-DECL "role_item" |blanchet| NIL)
     (|nonempty_singleton_finite| APPLICATION-JUDGEMENT "non_empty_finite_set"
      |finite_sets| NIL)
     (|j| SKOLEM-CONST-DECL
-     "below(finseq_appl[trace[mesg, carried_by?]](cbu`space)(5)`length)"
+     "below(length(finseq_appl[trace[mesg, carried_by?]](cbu`space)(5)))"
      |blanchet| NIL)
     (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (|uniq| CONST-DECL "bool" |strand_spaces| "../strand_spaces/")

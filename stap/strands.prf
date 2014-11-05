@@ -435,7 +435,7 @@
     (|z!1| SKOLEM-CONST-DECL "strand[mesg, carried_by?](bu!1`space)" |strands|
      NIL)
     (|j!1| SKOLEM-CONST-DECL
-     "below(finseq_appl[trace[mesg, carried_by?]](bu!1`space)(z!1)`length)"
+     "below(length(finseq_appl[trace[mesg, carried_by?]](bu!1`space)(z!1)))"
      |strands| NIL)
     (|tpm_extend_trace| CONST-DECL "trace" |annotated_roles| NIL)
     (|value!1| SKOLEM-CONST-DECL "mesg" |strands| NIL)
@@ -1193,7 +1193,7 @@
     (|m!1| SKOLEM-CONST-DECL "mesg" |strands| NIL)
     (|tpm_decrypt_trace| CONST-DECL "trace" |annotated_roles| NIL)
     (|j!1| SKOLEM-CONST-DECL
-     "below(finseq_appl[trace[mesg, carried_by?]](bu!1`space)(z!1)`length)"
+     "below(length(finseq_appl[trace[mesg, carried_by?]](bu!1`space)(z!1)))"
      |strands| NIL)
     (|z!1| SKOLEM-CONST-DECL "strand[mesg, carried_by?](bu!1`space)" |strands|
      NIL)
@@ -1226,7 +1226,7 @@
     (|nonempty_singleton_finite| APPLICATION-JUDGEMENT "non_empty_finite_set"
      |finite_sets| NIL)
     (|j!1| SKOLEM-CONST-DECL
-     "below(finseq_appl[trace[mesg, carried_by?]](bu!1`space)(z!1)`length)"
+     "below(length(finseq_appl[trace[mesg, carried_by?]](bu!1`space)(z!1)))"
      |strands| NIL)
     (|singleton| CONST-DECL "(singleton?)" |sets| NIL))
    SHOSTAK))

@@ -392,12 +392,12 @@
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
     (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
     (|j!1| SKOLEM-CONST-DECL
-     "below(finseq_appl[trace[mesg, carried_by?]](bu!1`space)(z!1)`length)"
+     "below(length(finseq_appl[trace[mesg, carried_by?]](bu!1`space)(z!1)))"
      |strands| NIL)
     (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (|emptyset| CONST-DECL "set" |sets| NIL)
     (|j!1| SKOLEM-CONST-DECL
-     "below(finseq_appl[trace[mesg, carried_by?]](bu!1`space)(z!1)`length)"
+     "below(length(finseq_appl[trace[mesg, carried_by?]](bu!1`space)(z!1)))"
      |strands| NIL)
     (|z!1| SKOLEM-CONST-DECL "strand[mesg, carried_by?](bu!1`space)" |strands|
      NIL)

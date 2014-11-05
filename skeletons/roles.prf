@@ -487,7 +487,8 @@
     (|instance| CONST-DECL "lift[subst]" |traces| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
-    (|mapping?| CONST-DECL "bool" |free_alg| NIL) NIL
+    (|mapping?| CONST-DECL "bool" |free_alg| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|vari| TYPE-EQ-DECL NIL |free_alg| NIL)

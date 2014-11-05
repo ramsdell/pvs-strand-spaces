@@ -487,7 +487,7 @@
     (|instance| CONST-DECL "lift[subst]" |traces| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
-    (|mapping?| CONST-DECL "bool" |free_alg| NIL)
+    (|mapping?| CONST-DECL "bool" |free_alg| NIL) NIL
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|vari| TYPE-EQ-DECL NIL |free_alg| NIL)
@@ -712,7 +712,7 @@
                       (("" (DELETE -1 -2)
                         ((""
                           (CASE
-                              "forall(n: node(b`space)): not subterm(x, t(finseq_appl[event](finseq_appl[trace](b`space)(n`1))(n`2)))")
+                              "forall(n: node(b`space)): not occurs?(x, t(finseq_appl[event](finseq_appl[trace](b`space)(n`1))(n`2)))")
                           (("1" (INST?) (("1" (SMASH) NIL NIL)) NIL)
                            ("2" (DELETE -2)
                             (("2"
@@ -867,7 +867,7 @@
                                   finseq_appl[trace](b`space)(x!1`1)))))")
                                                                                                                                           (("1"
                                                                                                                                             (LEMMA
-                                                                                                                                             "carried_by_subterm")
+                                                                                                                                             "carried_by_occurs")
                                                                                                                                             (("1"
                                                                                                                                               (INST?
                                                                                                                                                :WHERE
@@ -879,7 +879,7 @@
                                                                                                                                                    -1)
                                                                                                                                                   (("1"
                                                                                                                                                     (LEMMA
-                                                                                                                                                     "var_subst_subterm")
+                                                                                                                                                     "var_subst_occurs")
                                                                                                                                                     (("1"
                                                                                                                                                       (INST?
                                                                                                                                                        :WHERE
@@ -904,7 +904,7 @@
                                                                                                                                                                -13)
                                                                                                                                                               (("1"
                                                                                                                                                                 (LEMMA
-                                                                                                                                                                 "subterm_transitive")
+                                                                                                                                                                 "occurs_transitive")
                                                                                                                                                                 (("1"
                                                                                                                                                                   (INST
                                                                                                                                                                    -1
@@ -934,7 +934,7 @@
                                                                                                                                              2)
                                                                                                                                             (("2"
                                                                                                                                               (LEMMA
-                                                                                                                                               "carried_by_subterm")
+                                                                                                                                               "carried_by_occurs")
                                                                                                                                               (("2"
                                                                                                                                                 (INST?
                                                                                                                                                  :WHERE
@@ -1204,7 +1204,7 @@
     (|protocol| TYPE-EQ-DECL NIL |roles| NIL)
     (|run?| CONST-DECL "bool" |roles| NIL) (|run| TYPE-EQ-DECL NIL |roles| NIL)
     (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (|subterm| ADT-DEF-DECL "boolean" |free_alg| NIL)
+    (|occurs?| DEF-DECL "boolean" |free_alg| NIL)
     (|t| SHARED-ADT-ACCESSOR-DECL "[event -> mesg]" |traces| NIL)
     (|wf_nat| FORMULA-DECL NIL |naturalnumbers| NIL)
     (|left_card| CONST-DECL "nat" |finite_strict_orders| NIL)
@@ -1260,9 +1260,9 @@
     (|prec_increases| FORMULA-DECL NIL |bundles| NIL)
     (|strand_succession_prec| FORMULA-DECL NIL |bundles| NIL)
     (|find| DEF-DECL "lift[mesg]" |free_alg| NIL)
-    (|subterm_transitive| FORMULA-DECL NIL |free_alg| NIL)
-    (|var_subst_subterm| FORMULA-DECL NIL |free_alg| NIL)
-    (|carried_by_subterm| FORMULA-DECL NIL |free_alg| NIL)
+    (|occurs_transitive| FORMULA-DECL NIL |free_alg| NIL)
+    (|var_subst_occurs| FORMULA-DECL NIL |free_alg| NIL)
+    (|carried_by_occurs| FORMULA-DECL NIL |free_alg| NIL)
     (|instance_binds| FORMULA-DECL NIL |traces| NIL)
     (|lift_up_extensionality| FORMULA-DECL NIL |lift_adt| NIL)
     (|up| ADT-CONSTRUCTOR-DECL "[T -> (up?)]" |lift_adt| NIL)

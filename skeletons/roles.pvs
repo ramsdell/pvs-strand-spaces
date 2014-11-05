@@ -38,9 +38,9 @@ begin
     forall(i: index(r`rnon)):
       forall(x: (r`rnon(i))):
         forall(y: vari):
-          subterm(y, x) implies
+          occurs?(y, x) implies
             exists(j: below(i+1)):
-              subterm(y, t(r`trace(j)))
+              occurs?(y, t(r`trace(j)))
 
   % Uniques originate at point in trace
   all_uniq_orig?(r: pre_role): bool =

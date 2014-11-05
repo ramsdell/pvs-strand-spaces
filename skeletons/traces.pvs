@@ -39,12 +39,12 @@ begin
   % Parameters
 
   param?(c: trace)(x: vari): bool =
-    exists(i: index(c)): subterm(x,t(c(i)))
+    exists(i: index(c)): occurs?(x,t(c(i)))
 
   % Atoms in a trace
 
   trace_atom?(c:trace)(x: atom): bool =
-    exists(i: index(c)): subterm(x, t(c(i)))
+    exists(i: index(c)): occurs?(x, t(c(i)))
 
   % Origination
 
@@ -64,7 +64,7 @@ begin
     cases c(i) of
       recv(ti):
         carried_by?(m, ti) and
-        forall(j: below(i)): not subterm(m, t(c(j))),
+        forall(j: below(i)): not occurs?(m, t(c(j))),
       send(ti): false
     endcases
 
@@ -141,12 +141,12 @@ begin
       instance_at(pat, tgt, i, r) = up(s) implies
         forall(j: index(tgt), x: vari):
           j >= i implies
-            subterm(x, t(pat(j))) implies up?(find(x, s))
+            occurs?(x, t(pat(j))) implies up?(find(x, s))
 
   instance_binds: lemma
     forall(pat: trace, tgt: {c: trace | length(c) <= length(pat)}, s: subst):
       instance(pat, tgt) = up(s) implies
         forall(i: index(tgt), x: vari):
-          subterm(x, t(pat(i))) implies up?(find(x, s))
+          occurs?(x, t(pat(i))) implies up?(find(x, s))
 
 end traces

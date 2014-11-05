@@ -80,7 +80,7 @@
     (|real_gt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
     (|subst| TYPE-EQ-DECL NIL |free_alg| NIL)
-    (|mapping?| CONST-DECL "bool" |free_alg| NIL)
+    (|mapping?| CONST-DECL "bool" |free_alg| NIL) NIL
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|vari| TYPE-EQ-DECL NIL |free_alg| NIL)
@@ -1067,7 +1067,7 @@
      NIL)
     (|finseq| TYPE-EQ-DECL NIL |finite_sequences| NIL)
     (|t| SHARED-ADT-ACCESSOR-DECL "[event -> mesg]" |traces| NIL)
-    (|subterm| ADT-DEF-DECL "boolean" |free_alg| NIL)
+    (|occurs?| DEF-DECL "boolean" |free_alg| NIL)
     (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (< CONST-DECL "bool" |reals| NIL)
     (|up| ADT-CONSTRUCTOR-DECL "[T -> (up?)]" |lift_adt| NIL)

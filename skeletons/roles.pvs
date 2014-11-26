@@ -119,13 +119,6 @@ begin
 
   auto_rewrite+ simple_inst
 
-  % Role predicate used in shape analysis sentences.
-  % Is strand z at least of height h and an instance of r with
-  % substitution s?
-  htin(ss: strand_space)(z: strand(ss), h: nat, r: role, s: subst): bool =
-    h <= length(ss(z)) and inst(ss)(z, r) and
-    instance(r`trace, ss(z)) = up(s)
-
   pre_role_assignment(b: bundle): type = [strand(b`space) -> role]
 
   % Function ra is a role assignment for bundle b if each trace is an
@@ -157,6 +150,19 @@ begin
       run?(p)(b)
 
   run(p: protocol): type = (run?(p))
+
+  % Role and parameter predicates for shape analysis sentences
+
+  % Role predicate
+  p_role(p: protocol, b: run(p))
+        (r: (p), i: index(r`trace), n: node(b`space)): bool =
+    inst(b`space)(n`1, r) and n`2 = i
+
+  % Parameter predicate
+  p_param(p: protocol, b: run(p))
+         (r: (p), v: (param?(r`trace)), n: node(b`space), t: mesg): bool =
+    inst(b`space)(n`1, r) and
+    lookup(v, down(instance(r`trace, b`space(n`1)))) = t
 
   % A bundle that is a run of a protocol has no variables of sort
   % message.  This is the result and the purpose of the acquired

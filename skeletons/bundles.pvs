@@ -69,6 +69,10 @@ begin
 
   auto_rewrite+ prec_is_strict
 
+  % Does n0 precede n1 on the same strand?
+  sprec?(b: bundle)(n0, n1: node(b`space)): bool =
+    prec?(b)(n0, n1) and n0`1 = n1`1
+
   % Derived properties of the communication relation
   left_comm_send:
     lemma forall(b: bundle, n0, n1: node(b`space)):

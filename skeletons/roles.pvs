@@ -154,13 +154,14 @@ begin
   % Role and parameter predicates for shape analysis sentences
 
   % Role predicate
-  p_role(p: protocol, b: run(p))
-        (r: (p), i: index(r`trace), n: node(b`space)): bool =
-    inst(b`space)(n`1, r) and n`2 = i
+  role_pred(p: protocol, r: (p), i: index(r`trace))
+           (b: bundle)(n: node(b`space)): bool =
+    run?(p)(b) and inst(b`space)(n`1, r) and n`2 = i
 
   % Parameter predicate
-  p_param(p: protocol, b: run(p))
-         (r: (p), v: (param?(r`trace)), n: node(b`space), t: mesg): bool =
+  param_pred(p: protocol, r: (p), v: (param?(r`trace)))
+            (b: bundle)(n: node(b`space), t: mesg): bool =
+    run?(p)(b) and
     inst(b`space)(n`1, r) and
     lookup(v, down(instance(r`trace, b`space(n`1)))) = t
 

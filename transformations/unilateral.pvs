@@ -22,23 +22,12 @@ begin
        rnon    := no_assumptions(init_trace`length),
        runique :=  doubleton_seq(singleton[atom](tx(0)), emptyset) #)
 
-  % The role predicate for shape analysis sentences
-  init(ss: strand_space)
-      (z: strand(ss), h: nat, nonce: text, key: akey): bool =
-    htin(ss)(z, h, init_role,
-             cons((tx(0), nonce), cons((ak(asym(0)), key), null)))
-
   % The responder role
 
   resp_trace: role_trace =
     doubleton_seq(recv(en(tx(0), ak(asym(0)))), send(tx(0)))
 
   resp_role: role = simple_role(resp_trace)
-
-  resp(ss: strand_space)
-      (z: strand(ss), h: nat, nonce: text, key: akey): bool =
-    htin(ss)(z, h, resp_role,
-             cons((tx(0), nonce), cons((ak(asym(0)), key), null)))
 
   % The unilateral protocol
 
@@ -57,5 +46,65 @@ begin
   % A unilater specific role assignment
   unilateral_assignment(b: bundle): type =
     protocol_assignment(unilateral_prot, b)
+
+  % The role predicates for shape analysis sentences
+
+  init_role_0: [b: bundle -> [node(b`space) -> bool]] =
+    role_pred(unilateral_prot, init_role, 0)
+
+  init_role_1: [b: bundle -> [node(b`space) -> bool]] =
+    role_pred(unilateral_prot, init_role, 1)
+
+  resp_role_0: [b: bundle -> [node(b`space) -> bool]] =
+    role_pred(unilateral_prot, resp_role, 0)
+
+  resp_role_1: [b: bundle -> [node(b`space) -> bool]] =
+    role_pred(unilateral_prot, resp_role, 1)
+
+  % The parameter predicates for shape analysis sentences
+
+  init_param_tx_0: [b: bundle -> [node(b`space), mesg -> bool]] =
+    param_pred(unilateral_prot, init_role, tx(0))
+
+  init_param_asym_0: [b: bundle -> [node(b`space), mesg -> bool]] =
+    param_pred(unilateral_prot, init_role, ak(asym(0)))
+
+  resp_param_tx_0: [b: bundle -> [node(b`space), mesg -> bool]] =
+    param_pred(unilateral_prot, resp_role, tx(0))
+
+  resp_param_asym_0: [b: bundle -> [node(b`space), mesg -> bool]] =
+    param_pred(unilateral_prot, resp_role, ak(asym(0)))
+
+  % A shape analysis sentence
+
+  % (forall
+  %   ((n text) (k akey) (z z-0 node))
+  %   (implies
+  %     (and (p "unilateral" "init" 0 z) (p "unilateral" "init" 1 z-0)
+  %       (p "unilateral" "init" "n" z-0 n)
+  %       (p "unilateral" "init" "k" z-0 k) (sprec z z-0) (non (invk k))
+  %       (uniq n z))
+  %     (exists ((z-1 z-2 node))
+  %       (and (p "unilateral" "resp" 0 z-1) (p "unilateral" "resp" 1 z-2)
+  %         (p "unilateral" "resp" "n" z-2 n)
+  %         (p "unilateral" "resp" "k" z-2 k) (prec z z-1) (prec z-2 z-0)
+  %         (sprec z-1 z-2)))))
+
+  sas: axiom
+    forall(b: bundle, n: text, k: akey, z, z0: node(b`space)):
+      init_role_0(b)(z) and init_role_1(b)(z0) and
+      init_param_tx_0(b)(z0, n) and
+      init_param_asym_0(b)(z0, k) and
+      sprec?(b)(z, z0) and
+      non(b`space)(invk(k)) and
+      uniq(b`space)(n, z)
+      implies
+        exists(z1, z2: node(b`space)):
+          resp_role_0(b)(z) and resp_role_1(b)(z0) and
+          resp_param_tx_0(b)(z0, n) and
+          resp_param_asym_0(b)(z0, k) and
+          sprec?(b)(z1, z2) and
+	  prec?(b)(z, z1) and
+	  prec?(b)(z2, z0)
 
 end unilateral

@@ -95,7 +95,7 @@ begin
        rnon    := no_assumptions(length(c)),
        runique := no_assumptions(length(c)) #)
 
-  % Is strand z in strand space s an instance of role r?
+  % Is strand z in strand space ss an instance of role r?
   inst(ss: strand_space)(z: strand(ss), r: role): bool =
     let c = ss(z) in
     length(c) <= length(r`trace) and
@@ -118,6 +118,34 @@ begin
         up?(instance(c, ss(z)))
 
   auto_rewrite+ simple_inst
+
+  % Node prespective
+
+  % Is node n in strand space ss an instance of role r?
+  ninst(ss: strand_space)(n: node(ss), r: role): bool =
+    let c = ss(n`1) ^ (0, n`2) in
+    length(c) <= length(r`trace) and
+    cases instance(r`trace, c) of
+      bottom: false,
+      up(s):
+        let h = length(c) in
+        (forall(j: below(h)):
+          forall(m: (r`rnon(j))):
+            non(ss)(subst(m, s))) and
+        (forall(j: below(h)):
+          forall(m: (r`runique(j))):
+            uniq(ss)(subst(m, s), (n`1, j)))
+     endcases
+
+  simple_ninst: lemma
+    forall(ss: strand_space, n: node(ss), c: role_trace):
+      ninst(ss)(n, simple_role(c)) iff
+        n`2 < length(c) and
+        up?(instance(c, ss(n`1) ^ (0, n`2)))
+
+  auto_rewrite+ simple_ninst
+
+  % Role assignments
 
   pre_role_assignment(b: bundle): type = [strand(b`space) -> role]
 
@@ -151,25 +179,25 @@ begin
 
   run(p: protocol): type = (run?(p))
 
-  % Role and parameter predicates for shape analysis sentences
-
-  % Role predicate
-  role_pred(p: protocol, r: (p), i: index(r`trace))
-           (b: bundle)(n: node(b`space)): bool =
-    run?(p)(b) and inst(b`space)(n`1, r) and n`2 = i
-
-  % Parameter predicate
-  param_pred(p: protocol, r: (p), v: (param?(r`trace)))
-            (b: bundle)(n: node(b`space), t: mesg): bool =
-    run?(p)(b) and
-    inst(b`space)(n`1, r) and
-    lookup(v, down(instance(r`trace, b`space(n`1)))) = t
-
   % A bundle that is a run of a protocol has no variables of sort
   % message.  This is the result and the purpose of the acquired
   % constraint in roles.
   no_message_vars: theorem
     forall(p: protocol, b: run(p), x: (svars(b`space))):
       not mvar?(x)
+
+  % Role and parameter predicates for shape analysis sentences
+
+  % Role predicate
+  role_pred(p: protocol, r: (p), i: index(r`trace))
+           (b: bundle)(n: node(b`space)): bool =
+    n`2 = i and ninst(b`space)(n, r)
+
+  % Parameter predicate
+  param_pred(p: protocol, r: (p), v: (param?(r`trace)))
+            (b: bundle)(n: node(b`space), t: mesg): bool =
+    ninst(b`space)(n, r) and
+    param?(r`trace ^ (0, n`2))(v) and
+    lookup(v, down(instance(r`trace, b`space(n`1) ^ (0, n`2)))) = t
 
 end roles

@@ -200,4 +200,34 @@ begin
     param?(r`trace ^ (0, n`2))(v) and
     lookup(v, down(instance(r`trace, b`space(n`1) ^ (0, n`2)))) = t
 
+  % Theorems about role and parameter formulas
+
+  role_role_index: lemma
+    forall(p: protocol, r, s: (p), i: index(r`trace), j: index(s`trace),
+           b: bundle, n: node(b`space)):
+      role_pred(p, r, i)(b)(n) and role_pred(p, s, j)(b)(n) implies i = j
+
+  role_param_occurs: lemma
+    forall(p: protocol, r: (p), i: index(r`trace), v: vari, t: mesg,
+           b: bundle, n: node(b`space)):
+      role_pred(p, r, i)(b)(n) and
+      param_pred(p, r, v)(b)(n, t) implies
+        param?(r`trace ^ (0, i))(v)
+
+  role_param_role: lemma
+    forall(p: protocol, r, s: (p), i: index(r`trace), v: vari, t: mesg,
+           b: bundle, n: node(b`space)):
+      role_pred(p, r, i)(b)(n) and
+      param_pred(p, s, v)(b)(n, t) implies
+        role_pred(p, s, i)(b)(n)
+        
+  param_slide: lemma
+    forall(p: protocol, r: (p), i, j: index(r`trace), v: vari, t: mesg,
+           b: bundle, n0, n1: node(b`space)):
+      role_pred(p, r, i)(b)(n0) and
+      param_pred(p, r, v)(b)(n0, t) and
+      sprec?(b)(n0, n1) and
+      role_pred(p, r, j)(b)(n1) implies
+        param_pred(p, r, v)(b)(n1, t)
+
 end roles

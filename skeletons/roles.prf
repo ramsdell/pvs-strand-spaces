@@ -199,6 +199,9 @@
    ((|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
     (|no_assumptions_length| FORMULA-DECL NIL |roles| NIL)
+    (|j| SKOLEM-CONST-DECL "nat" |roles| NIL)
+    (|i| SKOLEM-CONST-DECL
+     "index[setof[atom]](add(emptyset, no_assumptions(j)))" |roles| NIL)
     (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (|set| TYPE-EQ-DECL NIL |sets| NIL)
     (|add| CONST-DECL "finseq[T]" |more_finseq| NIL)
@@ -350,6 +353,8 @@
     (|has_empty_assumptions| FORMULA-DECL NIL |roles| NIL)
     (|posnat| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
     (|nonneg_int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
+    (|r| SKOLEM-CONST-DECL "pre_role" |roles| NIL)
+    (|i| SKOLEM-CONST-DECL "index[setof[atom]](r`rnon)" |roles| NIL)
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
     (|no_assumptions_length| FORMULA-DECL NIL |roles| NIL)
@@ -387,6 +392,8 @@
      "(strict_total_order?[real])" |real_props| NIL)
     (|posnat| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
     (|nonneg_int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
+    (|r| SKOLEM-CONST-DECL "pre_role" |roles| NIL)
+    (|i| SKOLEM-CONST-DECL "index[setof[atom]](r`runique)" |roles| NIL)
     (|member| CONST-DECL "bool" |sets| NIL)
     (|empty?| CONST-DECL "bool" |sets| NIL)
     (|no_assumptions_length| FORMULA-DECL NIL |roles| NIL)
@@ -481,6 +488,7 @@
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
     (|mapping?| CONST-DECL "bool" |free_alg| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|vari| TYPE-EQ-DECL NIL |free_alg| NIL)
@@ -639,6 +647,7 @@
     (|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
      NIL)
     (|mapping?| CONST-DECL "bool" |free_alg| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|vari| TYPE-EQ-DECL NIL |free_alg| NIL)
@@ -1427,10 +1436,12 @@
     (|instance| CONST-DECL "lift[subst]" |traces| NIL)
     (|down| ADT-ACCESSOR-DECL "[(up?) -> T]" |lift_adt| NIL)
     (|up?| ADT-RECOGNIZER-DECL "[lift -> boolean]" |lift_adt| NIL)
+    (|every| ADT-DEF-DECL "boolean" |lift_adt| NIL)
     (|lift| TYPE-DECL NIL |lift_adt| NIL)
     (|instantiate| CONST-DECL "{c: trace | length(c) = h}" |traces| NIL)
     (|subst| TYPE-EQ-DECL NIL |free_alg| NIL)
     (|mapping?| CONST-DECL "bool" |free_alg| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (|upto| NONEMPTY-TYPE-EQ-DECL NIL |nat_types| NIL)
@@ -1465,6 +1476,12 @@
     (|recv?| ADT-RECOGNIZER-DECL "[event -> boolean]" |traces| NIL)
     (|recv| ADT-CONSTRUCTOR-DECL "[mesg -> (recv?)]" |traces| NIL)
     (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL)
+    (|j| SKOLEM-CONST-DECL "index[event](pa(x!1`1)`trace)" |roles| NIL)
+    (|x!1| SKOLEM-CONST-DECL "node(b`space)" |roles| NIL)
+    (|pa| SKOLEM-CONST-DECL "protocol_assignment(p, b)" |roles| NIL)
+    (|b| SKOLEM-CONST-DECL "run(p)" |roles| NIL)
+    (|p| SKOLEM-CONST-DECL "protocol" |roles| NIL)
+    (|w| SKOLEM-CONST-DECL "(mvar?)" |roles| NIL)
     (|all_acquired?| CONST-DECL "bool" |roles| NIL)
     (|mvar?| ADT-RECOGNIZER-DECL "[mesg -> boolean]" |free_alg| NIL)
     (|mvar_subst| FORMULA-DECL NIL |free_alg| NIL)
@@ -1511,17 +1528,17 @@
         NIL))
       NIL))
     NIL)
-   ((^ CONST-DECL "finseq" |finite_sequences| NIL)
-    (|min| CONST-DECL "{p: real | p <= m AND p <= n}" |real_defs| NIL)
+   ((|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
+     NIL)
     (|empty_seq| CONST-DECL "finseq" |finite_sequences| NIL)
-    (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
+    (|min| CONST-DECL "{p: real | p <= m AND p <= n}" |real_defs| NIL)
+    (^ CONST-DECL "finseq" |finite_sequences| NIL)
+    (|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
      NIL)
     (|int_min| APPLICATION-JUDGEMENT "{k: int | k <= i AND k <= j}" |real_defs|
      NIL)
     (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
      |real_props| NIL)
-    (|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
-     NIL)
     (|ninst| CONST-DECL "bool" |roles| NIL)
     (|real_gt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
@@ -1563,10 +1580,18 @@
      |real_props| NIL))
    SHOSTAK))
  (|role_param_occurs_TCC1| 0
-  (|role_param_occurs_TCC1-1| NIL 3626800661 ("" (SUBTYPE-TCC) NIL NIL) NIL
-   NIL))
- (|role_param_occurs_TCC2| 0
-  (|role_param_occurs_TCC2-1| NIL 3626800661 ("" (SUBTYPE-TCC) NIL NIL) NIL
+  (|role_param_occurs_TCC1-1| NIL 3626800661 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (^ CONST-DECL "finseq" |finite_sequences| NIL)
+    (|min| CONST-DECL "{p: real | p <= m AND p <= n}" |real_defs| NIL)
+    (|param_pred| CONST-DECL "bool" |roles| NIL)
+    (|param?| CONST-DECL "bool" |traces| NIL)
+    (|role_pred| CONST-DECL "bool" |roles| NIL)
+    (|ninst| CONST-DECL "bool" |roles| NIL)
+    (|instance| CONST-DECL "lift[subst]" |traces| NIL)
+    (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
+     NIL))
    NIL))
  (|role_param_occurs| 0
   (|role_param_occurs-1| NIL 3626800667
@@ -1579,25 +1604,51 @@
         NIL))
       NIL))
     NIL)
-   ((|role_pred| CONST-DECL "bool" |roles| NIL)
-    (|param_pred| CONST-DECL "bool" |roles| NIL))
+   ((|param_pred| CONST-DECL "bool" |roles| NIL)
+    (|role_pred| CONST-DECL "bool" |roles| NIL))
    SHOSTAK))
- (|role_param_role_TCC1| 0
-  (|role_param_role_TCC1-1| NIL 3626803682 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL))
- (|role_param_role_TCC2| 0
-  (|role_param_role_TCC2-1| NIL 3626803682 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL))
  (|role_param_role| 0
   (|role_param_role-1| NIL 3626803682
    ("" (SKOLEM!)
     (("" (SMASH)
-      (("" (EXPAND "role_pred")
-        (("" (SMASH) (("" (EXPAND "param_pred") (("" (PROPAX) NIL NIL)) NIL))
+      (("1" (EXPAND "role_pred")
+        (("1" (EXPAND "param_pred") (("1" (SMASH) NIL NIL)) NIL)) NIL)
+       ("2" (EXPAND "role_pred")
+        (("2" (SMASH)
+          (("2" (EXPAND "param_pred")
+            (("2" (SMASH)
+              (("2" (DELETE -4 -5)
+                (("2" (EXPAND "ninst")
+                  (("2" (SMASH)
+                    (("2" (DELETE -4 -3 -6 -7)
+                      (("2" (REPLACE -1)
+                        (("2" (DELETE -2 1 2 -1)
+                          (("2" (EXPAND "^")
+                            (("2" (EXPAND "min") (("2" (GRIND) NIL NIL)) NIL))
+                            NIL))
+                          NIL))
+                        NIL))
+                      NIL))
+                    NIL))
+                  NIL))
+                NIL))
+              NIL))
+            NIL))
           NIL))
         NIL))
       NIL))
     NIL)
-   ((|param_pred| CONST-DECL "bool" |roles| NIL)
-    (|role_pred| CONST-DECL "bool" |roles| NIL))
+   ((|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|param_pred| CONST-DECL "bool" |roles| NIL)
+    (|role_pred| CONST-DECL "bool" |roles| NIL)
+    (|ninst| CONST-DECL "bool" |roles| NIL)
+    (|min| CONST-DECL "{p: real | p <= m AND p <= n}" |real_defs| NIL)
+    (^ CONST-DECL "finseq" |finite_sequences| NIL)
+    (|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL))
    SHOSTAK))
  (|param_slide| 0
   (|param_slide-1| NIL 3626804449
@@ -1611,7 +1662,17 @@
                 (("" (REPLACE -1)
                   (("" (REPLACE -6)
                     (("" (SMASH)
-                      (("1" (POSTPONE) NIL NIL)
+                      (("1" (NAME "s" "n0!1`1")
+                        (("1" (CASE-REPLACE "n0!1=(s,i!1)")
+                          (("1" (CASE-REPLACE "n1!1=(s,j!1)")
+                            (("1" (DELETE -1 -2 -3 -4 -8 -10)
+                              (("1" (SMASH) (("1" (POSTPONE) NIL NIL)) NIL))
+                              NIL)
+                             ("2" (DELETE 2) (("2" (SMASH) NIL NIL)) NIL))
+                            NIL)
+                           ("2" (SMASH) NIL NIL))
+                          NIL))
+                        NIL)
                        ("2" (DELETE -1 -2 -4 -5 -7 -8)
                         (("2" (EXPAND "param?")
                           (("2" (SKOLEM -1 "i")

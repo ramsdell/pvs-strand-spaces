@@ -208,21 +208,24 @@ begin
       role_pred(p, r, i)(b)(n) and role_pred(p, s, j)(b)(n) implies i = j
 
   role_param_occurs: lemma
-    forall(p: protocol, r: (p), i: index(r`trace), v: vari, t: mesg,
+    forall(p: protocol, r: (p), i: index(r`trace),
+           v: (param?(r`trace)), t: mesg,
            b: bundle, n: node(b`space)):
       role_pred(p, r, i)(b)(n) and
       param_pred(p, r, v)(b)(n, t) implies
         param?(r`trace ^ (0, i))(v)
 
   role_param_role: lemma
-    forall(p: protocol, r, s: (p), i: index(r`trace), v: vari, t: mesg,
+    forall(p: protocol, r, s: (p), i: index(r`trace),
+           v: (param?(s`trace)), t: mesg,
            b: bundle, n: node(b`space)):
       role_pred(p, r, i)(b)(n) and
       param_pred(p, s, v)(b)(n, t) implies
-        role_pred(p, s, i)(b)(n)
+        i < length(s`trace) and role_pred(p, s, i)(b)(n)
         
   param_slide: lemma
-    forall(p: protocol, r: (p), i, j: index(r`trace), v: vari, t: mesg,
+    forall(p: protocol, r: (p), i, j: index(r`trace),
+           v: (param?(r`trace)), t: mesg,
            b: bundle, n0, n1: node(b`space)):
       role_pred(p, r, i)(b)(n0) and
       param_pred(p, r, v)(b)(n0, t) and

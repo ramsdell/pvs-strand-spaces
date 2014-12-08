@@ -8,6 +8,7 @@
       NIL))
     NIL)
    ((|occurs?| DEF-DECL "boolean" |free_alg| NIL)
+    (|subterm| ADT-DEF-DECL "boolean" |free_alg| NIL)
     (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
      NIL)
     (|asym| ADT-CONSTRUCTOR-DECL "[nat -> (asymkey?)]" |free_alg| NIL)
@@ -463,6 +464,7 @@
     (|key| TYPE-EQ-DECL NIL |free_alg| NIL)
     (|enc?| ADT-RECOGNIZER-DECL "[mesg -> boolean]" |free_alg| NIL)
     (|en| ADT-CONSTRUCTOR-DECL "[[mesg, key] -> (enc?)]" |free_alg| NIL)
+    (|subterm| ADT-DEF-DECL "boolean" |free_alg| NIL)
     (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (< CONST-DECL "bool" |reals| NIL)
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
@@ -602,6 +604,7 @@
     (|invert| ADT-CONSTRUCTOR-DECL "[asymkey -> (invkey?)]" |free_alg| NIL)
     (|send?| ADT-RECOGNIZER-DECL "[event -> boolean]" |traces| NIL)
     (|send| ADT-CONSTRUCTOR-DECL "[mesg -> (send?)]" |traces| NIL)
+    (|subterm| ADT-DEF-DECL "boolean" |free_alg| NIL)
     (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
     (< CONST-DECL "bool" |reals| NIL)
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT

@@ -149,4 +149,13 @@ begin
         forall(i: index(tgt), x: vari):
           occurs?(x, t(pat(i))) implies up?(find(x, s))
 
+  extend_binds: lemma
+    forall(pat: trace, tgt: {c: trace | length(c) <= length(pat)}, 
+           i: index(tgt), x: vari, t: mesg):
+      up?(instance(pat, tgt)) and
+      up?(instance(pat, tgt ^ (0, i))) and
+      param?(pat ^ (0, i))(x) and
+      down(find(x, down(instance(pat, tgt ^ (0, i))))) = t implies
+        down(find(x, down(instance(pat, tgt)))) = t
+
 end traces

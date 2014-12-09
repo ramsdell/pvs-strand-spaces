@@ -149,6 +149,18 @@ begin
         forall(i: index(tgt), x: vari):
           occurs?(x, t(pat(i))) implies up?(find(x, s))
 
+  prefix_instance_index: lemma
+    forall(pat: trace, tgt: {c: trace | length(c) <= length(pat)}, 
+           i: index(tgt), j: upto[i + 1], r, s: subst):
+      instance_at(pat, tgt ^ (0, i), i - j + 1, r) = up(s) implies
+        instance_at(pat, tgt, i + 1, s) = instance_at(pat, tgt, i - j + 1, r)
+
+  prefix_instance: lemma
+    forall(pat: trace, tgt: {c: trace | length(c) <= length(pat)}, 
+           i: index(tgt), s: subst):
+      instance(pat, tgt ^ (0, i)) = up(s) implies
+        instance_at(pat, tgt, i + 1, s) = instance(pat, tgt)
+
   extended_binds_too: lemma
     forall(pat: trace, tgt: {c: trace | length(c) <= length(pat)}, 
            i: index(tgt), x: vari, r, s: subst):

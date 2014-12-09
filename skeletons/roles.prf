@@ -1673,61 +1673,264 @@
                                       (("1" (EXPAND "ninst")
                                         (("1" (SMASH)
                                           (("1" (DELETE -10 -11 -4 -5)
-                                            (("1" (LEMMA "extend_binds")
-                                              (("1"
-                                                (INST -1 "r!1`trace"
-                                                 "finseq_appl(b!1`space)(s) ^ (0, j!1)"
-                                                 "i!1" "v!1" "t!1")
-                                                (("1" (SMASH)
-                                                  (("1" (LEMMA "find_lookup")
-                                                    (("1" (INST? :WHERE 2)
-                                                      (("1" (SMASH)
-                                                        (("1"
-                                                          (LEMMA
-                                                           "instance_binds")
+                                            (("1" (REPLACE -5 :DIR RL)
+                                              (("1" (DELETE -5)
+                                                (("1" (LEMMA "find_lookup")
+                                                  (("1" (INST?)
+                                                    (("1" (SMASH)
+                                                      (("1" (REPLACE -1)
+                                                        (("1" (DELETE -1)
                                                           (("1"
-                                                            (INST? :WHERE 1)
-                                                            (("1"
-                                                              (INST? :WHERE 1)
-                                                              (("1"
-                                                                (LEMMA
-                                                                 "lift_up_eta[subst]")
-                                                                (("1" (INST?)
+                                                            (LEMMA
+                                                             "find_lookup")
+                                                            (("1" (INST?)
+                                                              (("1" (SMASH)
+                                                                (("1"
+                                                                  (REPLACE -1)
                                                                   (("1"
-                                                                    (REPLACE
-                                                                     -1)
+                                                                    (DELETE -1)
                                                                     (("1"
-                                                                      (EXPAND
-                                                                       "param?")
+                                                                      (LEMMA
+                                                                       "extended_binds_too")
                                                                       (("1"
-                                                                        (SKOLEM
-                                                                         -4
-                                                                         "k")
+                                                                        (INST
+                                                                         -1
+                                                                         "r!1`trace"
+                                                                         "finseq_appl(b!1`space)(s) ^ (0, j!1)"
+                                                                         "i!1"
+                                                                         "v!1"
+                                                                         "_"
+                                                                         "_")
                                                                         (("1"
-                                                                          (INST
-                                                                           -2
-                                                                           "k"
-                                                                           "_")
+                                                                          (INST?)
                                                                           (("1"
-                                                                            (INST?)
+                                                                            (INST
+                                                                             -1
+                                                                             "down(instance(r!1`trace,
+                               finseq_appl(b!1`space)(s) ^ (0, i!1)))")
                                                                             (("1"
                                                                               (SMASH)
                                                                               (("1"
-                                                                                (CASE-REPLACE
-                                                                                 "t(finseq_appl[event](r!1`trace ^ (0, i!1))(k))=t(finseq_appl[event](r!1`trace )(k))")
+                                                                                (LEMMA
+                                                                                 "lift_up_eta[subst]")
                                                                                 (("1"
-                                                                                  (DELETE
-                                                                                   2
-                                                                                   3
-                                                                                   4
-                                                                                   5)
+                                                                                  (INST?)
+                                                                                  (("1"
+                                                                                    (REPLACE
+                                                                                     -1)
+                                                                                    (("1"
+                                                                                      (CASE-REPLACE
+                                                                                       "finseq_appl(b!1`space)(s) ^ (0, j!1) ^ (0, i!1)=finseq_appl(b!1`space)(s) ^ (0, i!1)")
+                                                                                      (("1"
+                                                                                        (DELETE
+                                                                                         -1
+                                                                                         -2
+                                                                                         -4
+                                                                                         -7
+                                                                                         2
+                                                                                         3
+                                                                                         4
+                                                                                         5)
+                                                                                        (("1"
+                                                                                          (APPLY-EXTENSIONALITY
+                                                                                           1)
+                                                                                          (("1"
+                                                                                            (DELETE
+                                                                                             2)
+                                                                                            (("1"
+                                                                                              (GRIND)
+                                                                                              NIL
+                                                                                              NIL))
+                                                                                            NIL)
+                                                                                           ("2"
+                                                                                            (DELETE
+                                                                                             2)
+                                                                                            (("2"
+                                                                                              (APPLY-EXTENSIONALITY
+                                                                                               1)
+                                                                                              (("2"
+                                                                                                (DELETE
+                                                                                                 2)
+                                                                                                (("2"
+                                                                                                  (GRIND)
+                                                                                                  NIL
+                                                                                                  NIL))
+                                                                                                NIL))
+                                                                                              NIL))
+                                                                                            NIL))
+                                                                                          NIL))
+                                                                                        NIL))
+                                                                                      NIL))
+                                                                                    NIL))
+                                                                                  NIL))
+                                                                                NIL)
+                                                                               ("2"
+                                                                                (LEMMA
+                                                                                 "lift_up_eta[subst]")
+                                                                                (("2"
+                                                                                  (INST?)
+                                                                                  (("2"
+                                                                                    (REPLACE
+                                                                                     -1)
+                                                                                    (("2"
+                                                                                      (PROPAX)
+                                                                                      NIL
+                                                                                      NIL))
+                                                                                    NIL))
+                                                                                  NIL))
+                                                                                NIL))
+                                                                              NIL))
+                                                                            NIL))
+                                                                          NIL)
+                                                                         ("2"
+                                                                          (DELETE
+                                                                           2 3
+                                                                           4)
+                                                                          (("2"
+                                                                            (GRIND)
+                                                                            NIL
+                                                                            NIL))
+                                                                          NIL))
+                                                                        NIL))
+                                                                      NIL))
+                                                                    NIL))
+                                                                  NIL)
+                                                                 ("2"
+                                                                  (DELETE 3 4)
+                                                                  (("2"
+                                                                    (EXPAND
+                                                                     "param?")
+                                                                    (("2"
+                                                                      (SKOLEM
+                                                                       -4 "k")
+                                                                      (("2"
+                                                                        (LEMMA
+                                                                         "instance_binds")
+                                                                        (("2"
+                                                                          (INST?)
+                                                                          (("2"
+                                                                            (INST?)
+                                                                            (("2"
+                                                                              (LEMMA
+                                                                               "lift_up_eta[subst]")
+                                                                              (("2"
+                                                                                (INST?)
+                                                                                (("2"
+                                                                                  (REPLACE
+                                                                                   -1)
+                                                                                  (("2"
+                                                                                    (INST
+                                                                                     -2
+                                                                                     "k"
+                                                                                     "v!1")
+                                                                                    (("1"
+                                                                                      (CASE-REPLACE
+                                                                                       "t(finseq_appl[event](r!1`trace ^ (0, i!1))(k))=t(finseq_appl[event](r!1`trace)(k))")
+                                                                                      (("1"
+                                                                                        (SMASH)
+                                                                                        NIL
+                                                                                        NIL)
+                                                                                       ("2"
+                                                                                        (DELETE
+                                                                                         -1
+                                                                                         -2
+                                                                                         -6
+                                                                                         2
+                                                                                         3)
+                                                                                        (("2"
+                                                                                          (TYPEPRED
+                                                                                           "k")
+                                                                                          (("2"
+                                                                                            (GRIND)
+                                                                                            NIL
+                                                                                            NIL))
+                                                                                          NIL))
+                                                                                        NIL)
+                                                                                       ("3"
+                                                                                        (DELETE
+                                                                                         -1
+                                                                                         -2
+                                                                                         -6
+                                                                                         2
+                                                                                         3)
+                                                                                        (("3"
+                                                                                          (TYPEPRED
+                                                                                           "k")
+                                                                                          (("3"
+                                                                                            (GRIND)
+                                                                                            NIL
+                                                                                            NIL))
+                                                                                          NIL))
+                                                                                        NIL))
+                                                                                      NIL)
+                                                                                     ("2"
+                                                                                      (DELETE
+                                                                                       -1
+                                                                                       -5
+                                                                                       2
+                                                                                       3)
+                                                                                      (("2"
+                                                                                        (TYPEPRED
+                                                                                         "k")
+                                                                                        (("2"
+                                                                                          (GRIND)
+                                                                                          NIL
+                                                                                          NIL))
+                                                                                        NIL))
+                                                                                      NIL))
+                                                                                    NIL))
+                                                                                  NIL))
+                                                                                NIL))
+                                                                              NIL))
+                                                                            NIL))
+                                                                          NIL))
+                                                                        NIL))
+                                                                      NIL))
+                                                                    NIL))
+                                                                  NIL))
+                                                                NIL))
+                                                              NIL))
+                                                            NIL))
+                                                          NIL))
+                                                        NIL)
+                                                       ("2" (DELETE 2 4)
+                                                        (("2" (EXPAND "param?")
+                                                          (("2" (SKOLEM -4 "k")
+                                                            (("2"
+                                                              (LEMMA
+                                                               "instance_binds")
+                                                              (("2" (INST?)
+                                                                (("2" (INST?)
+                                                                  (("2"
+                                                                    (LEMMA
+                                                                     "lift_up_eta[subst]")
+                                                                    (("2"
+                                                                      (INST?)
+                                                                      (("2"
+                                                                        (REPLACE
+                                                                         -1)
+                                                                        (("2"
+                                                                          (INST
+                                                                           -2
+                                                                           "k"
+                                                                           "v!1")
+                                                                          (("1"
+                                                                            (SMASH)
+                                                                            (("1"
+                                                                              (CASE-REPLACE
+                                                                               "t(finseq_appl[event](r!1`trace ^ (0, i!1))(k))=t(finseq_appl[event](r!1`trace)(k))")
+                                                                              (("1"
+                                                                                (DELETE
+                                                                                 2
+                                                                                 3
+                                                                                 4)
+                                                                                (("1"
+                                                                                  (TYPEPRED
+                                                                                   "k")
                                                                                   (("1"
                                                                                     (DELETE
-                                                                                     -1
                                                                                      -2
-                                                                                     -3
-                                                                                     -4
-                                                                                     -8)
+                                                                                     -6)
                                                                                     (("1"
                                                                                       (GRIND)
                                                                                       NIL
@@ -1738,18 +1941,16 @@
                                                                               NIL))
                                                                             NIL)
                                                                            ("2"
-                                                                            (TYPEPRED
-                                                                             "k")
+                                                                            (DELETE
+                                                                             2
+                                                                             3)
                                                                             (("2"
-                                                                              (DELETE
-                                                                               2
-                                                                               3
-                                                                               4)
+                                                                              (TYPEPRED
+                                                                               "k")
                                                                               (("2"
                                                                                 (DELETE
                                                                                  -2
-                                                                                 -4
-                                                                                 -5)
+                                                                                 -6)
                                                                                 (("2"
                                                                                   (GRIND)
                                                                                   NIL
@@ -1768,141 +1969,8 @@
                                                           NIL))
                                                         NIL))
                                                       NIL))
-                                                    NIL)
-                                                   ("2"
-                                                    (CASE-REPLACE
-                                                     "finseq_appl(b!1`space)(s) ^ (0, j!1) ^
-                               (0, i!1)=finseq_appl(b!1`space)(s)  ^
-                               (0, i!1)")
-                                                    (("1" (DELETE 3 -1 -2)
-                                                      (("1" (EXPAND "param?")
-                                                        (("1" (SKOLEM -1 "j")
-                                                          (("1"
-                                                            (LEMMA
-                                                             "instance_binds")
-                                                            (("1"
-                                                              (INST? :WHERE 1)
-                                                              (("1"
-                                                                (INST? :WHERE
-                                                                 1)
-                                                                (("1"
-                                                                  (LEMMA
-                                                                   "lift_up_eta[subst]")
-                                                                  (("1" (INST?)
-                                                                    (("1"
-                                                                      (REPLACE
-                                                                       -1)
-                                                                      (("1"
-                                                                        (INST
-                                                                         -2 "j"
-                                                                         "v!1")
-                                                                        (("1"
-                                                                          (SMASH)
-                                                                          (("1"
-                                                                            (CASE-REPLACE
-                                                                             "t(finseq_appl[event](r!1`trace ^ (0, i!1))(j))=t(finseq_appl[event](r!1`trace )(j))
-")
-                                                                            (("1"
-                                                                              (DELETE
-                                                                               -1
-                                                                               -2
-                                                                               -6
-                                                                               2
-                                                                               3
-                                                                               4)
-                                                                              (("1"
-                                                                                (TYPEPRED
-                                                                                 "j")
-                                                                                (("1"
-                                                                                  (GRIND)
-                                                                                  NIL
-                                                                                  NIL))
-                                                                                NIL))
-                                                                              NIL))
-                                                                            NIL))
-                                                                          NIL)
-                                                                         ("2"
-                                                                          (DELETE
-                                                                           -1
-                                                                           -3
-                                                                           -6 2
-                                                                           3)
-                                                                          (("2"
-                                                                            (DELETE
-                                                                             -1)
-                                                                            (("2"
-                                                                              (TYPEPRED
-                                                                               "j")
-                                                                              (("2"
-                                                                                (GRIND)
-                                                                                NIL
-                                                                                NIL))
-                                                                              NIL))
-                                                                            NIL))
-                                                                          NIL))
-                                                                        NIL))
-                                                                      NIL))
-                                                                    NIL))
-                                                                  NIL))
-                                                                NIL))
-                                                              NIL))
-                                                            NIL))
-                                                          NIL))
-                                                        NIL))
-                                                      NIL)
-                                                     ("2"
-                                                      (DELETE -1 -2 -3 -4 -5 -6
-                                                              -8 2 3 4)
-                                                      (("2"
-                                                        (APPLY-EXTENSIONALITY
-                                                         1)
-                                                        (("1" (DELETE 2)
-                                                          (("1" (GRIND) NIL
-                                                            NIL))
-                                                          NIL)
-                                                         ("2" (DELETE 2)
-                                                          (("2"
-                                                            (APPLY-EXTENSIONALITY
-                                                             1)
-                                                            (("2" (DELETE 2)
-                                                              (("2" (GRIND) NIL
-                                                                NIL))
-                                                              NIL))
-                                                            NIL))
-                                                          NIL))
-                                                        NIL))
-                                                      NIL))
-                                                    NIL)
-                                                   ("3"
-                                                    (CASE-REPLACE
-                                                     "finseq_appl(b!1`space)(s) ^ (0, j!1) ^ (0, i!1)=finseq_appl(b!1`space)(s) ^ (0, i!1)")
-                                                    (("1" (GRIND) NIL NIL)
-                                                     ("2"
-                                                      (DELETE -1 -2 -3 -4 -5 -6
-                                                              -8 2 3 4)
-                                                      (("2"
-                                                        (APPLY-EXTENSIONALITY
-                                                         1)
-                                                        (("1" (DELETE 2)
-                                                          (("1" (GRIND) NIL
-                                                            NIL))
-                                                          NIL)
-                                                         ("2" (DELETE 2)
-                                                          (("2"
-                                                            (APPLY-EXTENSIONALITY
-                                                             1)
-                                                            (("2" (GRIND) NIL
-                                                              NIL))
-                                                            NIL))
-                                                          NIL))
-                                                        NIL))
-                                                      NIL))
                                                     NIL))
-                                                  NIL)
-                                                 ("2"
-                                                  (DELETE -1 -3 -4 -5 -6 -7 2 3
-                                                          4)
-                                                  (("2" (GRIND) NIL NIL)) NIL))
+                                                  NIL))
                                                 NIL))
                                               NIL))
                                             NIL))
@@ -1952,11 +2020,38 @@
     (|role?| CONST-DECL "bool" |roles| NIL)
     (|role| TYPE-EQ-DECL NIL |roles| NIL)
     (|protocol| TYPE-EQ-DECL NIL |roles| NIL)
-    (|occurs?| DEF-DECL "boolean" |free_alg| NIL)
+    (|instance_at| DEF-DECL "lift[subst]" |traces| NIL)
     (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
      |real_props| NIL)
-    (|extend_binds| FORMULA-DECL NIL |traces| NIL)
+    (|find_lookup| FORMULA-DECL NIL |free_alg| NIL)
+    (|t| SHARED-ADT-ACCESSOR-DECL "[event -> mesg]" |traces| NIL)
+    (|k| SKOLEM-CONST-DECL "index[event](r!1`trace ^ (0, i!1))" |roles| NIL)
+    (|instance_binds| FORMULA-DECL NIL |traces| NIL)
+    (|extended_binds_too| FORMULA-DECL NIL |traces| NIL)
+    (|occurs?| DEF-DECL "boolean" |free_alg| NIL)
+    (|int_plus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|real_gt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|int_min| APPLICATION-JUDGEMENT "{k: int | k <= i AND k <= j}" |real_defs|
+     NIL)
+    (|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|min| CONST-DECL "{p: real | p <= m AND p <= n}" |real_defs| NIL)
+    (|empty_seq| CONST-DECL "finseq" |finite_sequences| NIL)
+    (|lift_up_eta| FORMULA-DECL NIL |lift_adt| NIL)
+    (|j!1| SKOLEM-CONST-DECL "index[event](r!1`trace)" |roles| NIL)
+    (|s| SKOLEM-CONST-DECL "strand(b!1`space)" |roles| NIL)
+    (|b!1| SKOLEM-CONST-DECL "bundle" |roles| NIL)
+    (|i!1| SKOLEM-CONST-DECL "index[event](r!1`trace)" |roles| NIL)
+    (|r!1| SKOLEM-CONST-DECL "(p!1)" |roles| NIL)
+    (|p!1| SKOLEM-CONST-DECL "protocol" |roles| NIL)
+    (|k| SKOLEM-CONST-DECL "index[event](r!1`trace ^ (0, i!1))" |roles| NIL)
+    (^ CONST-DECL "finseq" |finite_sequences| NIL)
     (|instance| CONST-DECL "lift[subst]" |traces| NIL)
+    (<= CONST-DECL "bool" |reals| NIL)
     (|down| ADT-ACCESSOR-DECL "[(up?) -> T]" |lift_adt| NIL)
     (|up?| ADT-RECOGNIZER-DECL "[lift -> boolean]" |lift_adt| NIL)
     (|every| ADT-DEF-DECL "boolean" |lift_adt| NIL)
@@ -1966,36 +2061,9 @@
     (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
-    (|instance_binds| FORMULA-DECL NIL |traces| NIL)
-    (|k| SKOLEM-CONST-DECL "index[event](r!1`trace ^ (0, i!1))" |roles| NIL)
-    (|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
-     NIL)
-    (|int_min| APPLICATION-JUDGEMENT "{k: int | k <= i AND k <= j}" |real_defs|
-     NIL)
-    (|real_gt_is_strict_total_order| NAME-JUDGEMENT
-     "(strict_total_order?[real])" |real_props| NIL)
-    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
-     |real_props| NIL)
-    (|int_plus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
-    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
-    (|min| CONST-DECL "{p: real | p <= m AND p <= n}" |real_defs| NIL)
-    (|t| SHARED-ADT-ACCESSOR-DECL "[event -> mesg]" |traces| NIL)
-    (|instance_at| DEF-DECL "lift[subst]" |traces| NIL)
-    (|empty_seq| CONST-DECL "finseq" |finite_sequences| NIL)
-    (|lift_up_eta| FORMULA-DECL NIL |lift_adt| NIL)
-    (|find_lookup| FORMULA-DECL NIL |free_alg| NIL)
-    (|j| SKOLEM-CONST-DECL "index[event](r!1`trace ^ (0, i!1))" |roles| NIL)
-    (|j!1| SKOLEM-CONST-DECL "index[event](r!1`trace)" |roles| NIL)
-    (|s| SKOLEM-CONST-DECL "strand(b!1`space)" |roles| NIL)
-    (|b!1| SKOLEM-CONST-DECL "bundle" |roles| NIL)
-    (^ CONST-DECL "finseq" |finite_sequences| NIL)
-    (|i!1| SKOLEM-CONST-DECL "index[event](r!1`trace)" |roles| NIL)
-    (|r!1| SKOLEM-CONST-DECL "(p!1)" |roles| NIL)
-    (|p!1| SKOLEM-CONST-DECL "protocol" |roles| NIL)
-    (<= CONST-DECL "bool" |reals| NIL)
-    (|vari?| CONST-DECL "bool" |free_alg| NIL)
-    (|vari| TYPE-EQ-DECL NIL |free_alg| NIL)
     (|param?| CONST-DECL "bool" |traces| NIL)
+    (|vari| TYPE-EQ-DECL NIL |free_alg| NIL)
+    (|vari?| CONST-DECL "bool" |free_alg| NIL)
     (|ninst| CONST-DECL "bool" |roles| NIL)
     (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
     (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)

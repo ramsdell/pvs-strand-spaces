@@ -161,6 +161,13 @@ begin
       instance(pat, tgt ^ (0, i)) = up(s) implies
         instance_at(pat, tgt, i + 1, s) = instance(pat, tgt)
 
+  instance_at_find: lemma
+    forall(pat: trace, tgt: {c: trace | length(c) <= length(pat)}, 
+           i: index(tgt), x: vari, r, s: subst):
+      up?(find(x, r)) and
+      instance_at(pat, tgt, length(tgt) - i, r) = up(s) implies
+        find(x, s) = find(x, r)
+
   extended_binds_too: lemma
     forall(pat: trace, tgt: {c: trace | length(c) <= length(pat)}, 
            i: index(tgt), x: vari, r, s: subst):

@@ -80,7 +80,8 @@
     (|real_gt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
     (|subst| TYPE-EQ-DECL NIL |free_alg| NIL)
-    (|mapping?| CONST-DECL "bool" |free_alg| NIL) NIL
+    (|mapping?| CONST-DECL "bool" |free_alg| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|vari| TYPE-EQ-DECL NIL |free_alg| NIL)
@@ -209,11 +210,13 @@
     (|vari?| CONST-DECL "bool" |free_alg| NIL)
     (|vari| TYPE-EQ-DECL NIL |free_alg| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
-    (PRED TYPE-EQ-DECL NIL |defined_types| NIL) NIL
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|mapping?| CONST-DECL "bool" |free_alg| NIL)
     (|subst| TYPE-EQ-DECL NIL |free_alg| NIL)
     (IMPLIES CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (|lift| TYPE-DECL NIL |lift_adt| NIL) NIL
+    (|lift| TYPE-DECL NIL |lift_adt| NIL)
+    (|every| ADT-DEF-DECL "boolean" |lift_adt| NIL)
     (|instance_at| DEF-DECL "lift[subst]" |traces| NIL)
     (|up?| ADT-RECOGNIZER-DECL "[lift -> boolean]" |lift_adt| NIL)
     (|up| ADT-CONSTRUCTOR-DECL "[T -> (up?)]" |lift_adt| NIL)
@@ -239,7 +242,10 @@
     (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
      |real_props| NIL)
-    NIL NIL NIL
+    (|tgt| SKOLEM-CONST-DECL "{c: trace | length(c) <= length(pat)}" |traces|
+     NIL)
+    (|pat| SKOLEM-CONST-DECL "trace" |traces| NIL)
+    (|k| SKOLEM-CONST-DECL "int" |traces| NIL)
     (- CONST-DECL "[numfield, numfield -> numfield]" |number_fields| NIL)
     (|numfield| NONEMPTY-TYPE-EQ-DECL NIL |number_fields| NIL)
     (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
@@ -264,9 +270,13 @@
     NIL)
    ((|instance| CONST-DECL "lift[subst]" |traces| NIL)
     (|instance_orients_index| FORMULA-DECL NIL |traces| NIL)
-    (|down| ADT-ACCESSOR-DECL "[(up?) -> T]" |lift_adt| NIL) NIL NIL
+    (|down| ADT-ACCESSOR-DECL "[(up?) -> T]" |lift_adt| NIL)
+    (|tgt| SKOLEM-CONST-DECL "{c: trace | length(c) <= length(pat)}" |traces|
+     NIL)
+    (|pat| SKOLEM-CONST-DECL "trace" |traces| NIL)
     (|instance_at| DEF-DECL "lift[subst]" |traces| NIL)
-    (|up?| ADT-RECOGNIZER-DECL "[lift -> boolean]" |lift_adt| NIL) NIL
+    (|up?| ADT-RECOGNIZER-DECL "[lift -> boolean]" |lift_adt| NIL)
+    (|every| ADT-DEF-DECL "boolean" |lift_adt| NIL)
     (|lift| TYPE-DECL NIL |lift_adt| NIL)
     (|lift_up_extensionality| FORMULA-DECL NIL |lift_adt| NIL)
     (|up| ADT-CONSTRUCTOR-DECL "[T -> (up?)]" |lift_adt| NIL)
@@ -279,7 +289,8 @@
     (|null| ADT-CONSTRUCTOR-DECL "(null?)" |list_adt| NIL)
     (|null?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
     (|subst| TYPE-EQ-DECL NIL |free_alg| NIL)
-    (|mapping?| CONST-DECL "bool" |free_alg| NIL) NIL
+    (|mapping?| CONST-DECL "bool" |free_alg| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (|vari| TYPE-EQ-DECL NIL |free_alg| NIL)
@@ -428,8 +439,11 @@
     (|finite_sequence| TYPE-EQ-DECL NIL |finite_sequences| NIL)
     (> CONST-DECL "bool" |reals| NIL) (|trace| TYPE-EQ-DECL NIL |traces| NIL)
     (<= CONST-DECL "bool" |reals| NIL)
-    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL) NIL NIL
-    NIL
+    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
+    (|k| SKOLEM-CONST-DECL "int" |traces| NIL)
+    (|pat| SKOLEM-CONST-DECL "trace" |traces| NIL)
+    (|tgt| SKOLEM-CONST-DECL "{c: trace | length(c) <= length(pat)}" |traces|
+     NIL)
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
     (|pred| TYPE-EQ-DECL NIL |defined_types| NIL)
@@ -456,12 +470,14 @@
     (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (|up| ADT-CONSTRUCTOR-DECL "[T -> (up?)]" |lift_adt| NIL)
     (|up?| ADT-RECOGNIZER-DECL "[lift -> boolean]" |lift_adt| NIL)
-    (|instance_at| DEF-DECL "lift[subst]" |traces| NIL) NIL
+    (|instance_at| DEF-DECL "lift[subst]" |traces| NIL)
+    (|every| ADT-DEF-DECL "boolean" |lift_adt| NIL)
     (|upto| NONEMPTY-TYPE-EQ-DECL NIL |nat_types| NIL)
     (|lift| TYPE-DECL NIL |lift_adt| NIL)
     (IMPLIES CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (|subst| TYPE-EQ-DECL NIL |free_alg| NIL)
-    (|mapping?| CONST-DECL "bool" |free_alg| NIL) NIL
+    (|mapping?| CONST-DECL "bool" |free_alg| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (|vari| TYPE-EQ-DECL NIL |free_alg| NIL)
@@ -704,7 +720,11 @@
     (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
      |real_props| NIL)
-    NIL NIL NIL (|upto| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
+    (|tgt| SKOLEM-CONST-DECL "{c: trace | length(c) <= length(pat)}" |traces|
+     NIL)
+    (|pat| SKOLEM-CONST-DECL "trace" |traces| NIL)
+    (|k| SKOLEM-CONST-DECL "int" |traces| NIL)
+    (|upto| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
     (|instance_subst| FORMULA-DECL NIL |traces| NIL)
     (|event_send_extensionality| FORMULA-DECL NIL |traces| NIL)
     (|send?| ADT-RECOGNIZER-DECL "[event -> boolean]" |traces| NIL)
@@ -718,13 +738,15 @@
     (|recv?| ADT-RECOGNIZER-DECL "[event -> boolean]" |traces| NIL)
     (|event_recv_extensionality| FORMULA-DECL NIL |traces| NIL)
     (|match_match_subst| FORMULA-DECL NIL |free_alg| NIL)
-    (|subst_evt| CONST-DECL "event" |traces| NIL) NIL
+    (|subst_evt| CONST-DECL "event" |traces| NIL)
+    (|j| SKOLEM-CONST-DECL "upto(length(tgt))" |traces| NIL)
     (+ CONST-DECL "[numfield, numfield -> numfield]" |number_fields| NIL)
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
     (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
      NIL)
-    (|upto_induction| FORMULA-DECL NIL |bounded_nat_inductions| NIL) NIL
+    (|upto_induction| FORMULA-DECL NIL |bounded_nat_inductions| NIL)
+    (|s| SKOLEM-CONST-DECL "subst" |traces| NIL)
     (|pred| TYPE-EQ-DECL NIL |defined_types| NIL)
     (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
      |real_props| NIL)
@@ -736,11 +758,13 @@
     (< CONST-DECL "bool" |reals| NIL)
     (|up| ADT-CONSTRUCTOR-DECL "[T -> (up?)]" |lift_adt| NIL)
     (|up?| ADT-RECOGNIZER-DECL "[lift -> boolean]" |lift_adt| NIL)
-    (|instance_at| DEF-DECL "lift[subst]" |traces| NIL) NIL
+    (|instance_at| DEF-DECL "lift[subst]" |traces| NIL)
+    (|every| ADT-DEF-DECL "boolean" |lift_adt| NIL)
     (|lift| TYPE-DECL NIL |lift_adt| NIL)
     (IMPLIES CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (|subst| TYPE-EQ-DECL NIL |free_alg| NIL)
-    (|mapping?| CONST-DECL "bool" |free_alg| NIL) NIL
+    (|mapping?| CONST-DECL "bool" |free_alg| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (|vari| TYPE-EQ-DECL NIL |free_alg| NIL)
@@ -798,7 +822,8 @@
     (|vari?| CONST-DECL "bool" |free_alg| NIL)
     (|vari| TYPE-EQ-DECL NIL |free_alg| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
-    (PRED TYPE-EQ-DECL NIL |defined_types| NIL) NIL
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|mapping?| CONST-DECL "bool" |free_alg| NIL)
     (|subst| TYPE-EQ-DECL NIL |free_alg| NIL)
     (|null?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
@@ -841,10 +866,12 @@
     (|vari?| CONST-DECL "bool" |free_alg| NIL)
     (|vari| TYPE-EQ-DECL NIL |free_alg| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
-    (PRED TYPE-EQ-DECL NIL |defined_types| NIL) NIL
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|mapping?| CONST-DECL "bool" |free_alg| NIL)
     (|subst| TYPE-EQ-DECL NIL |free_alg| NIL)
-    (|lift| TYPE-DECL NIL |lift_adt| NIL) NIL
+    (|lift| TYPE-DECL NIL |lift_adt| NIL)
+    (|every| ADT-DEF-DECL "boolean" |lift_adt| NIL)
     (|up?| ADT-RECOGNIZER-DECL "[lift -> boolean]" |lift_adt| NIL)
     (|down| ADT-ACCESSOR-DECL "[(up?) -> T]" |lift_adt| NIL)
     (|instance| CONST-DECL "lift[subst]" |traces| NIL)
@@ -1012,7 +1039,10 @@
         NIL))
       NIL))
     NIL)
-   (NIL NIL NIL
+   ((|k| SKOLEM-CONST-DECL "int" |traces| NIL)
+    (|pat| SKOLEM-CONST-DECL "trace" |traces| NIL)
+    (|tgt| SKOLEM-CONST-DECL "{c: trace | length(c) <= length(pat)}" |traces|
+     NIL)
     (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
      |real_props| NIL)
     (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
@@ -1023,7 +1053,8 @@
      NIL)
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
-    (+ CONST-DECL "[numfield, numfield -> numfield]" |number_fields| NIL) NIL
+    (+ CONST-DECL "[numfield, numfield -> numfield]" |number_fields| NIL)
+    (|a| SKOLEM-CONST-DECL "upto(length(tgt))" |traces| NIL)
     (|match| DEF-DECL "lift[subst]" |free_alg| NIL)
     (|down| ADT-ACCESSOR-DECL "[(up?) -> T]" |lift_adt| NIL)
     (|var_match_binds| FORMULA-DECL NIL |free_alg| NIL)
@@ -1042,9 +1073,11 @@
     (< CONST-DECL "bool" |reals| NIL)
     (|up| ADT-CONSTRUCTOR-DECL "[T -> (up?)]" |lift_adt| NIL)
     (|up?| ADT-RECOGNIZER-DECL "[lift -> boolean]" |lift_adt| NIL)
-    (|instance_at| DEF-DECL "lift[subst]" |traces| NIL) NIL
+    (|instance_at| DEF-DECL "lift[subst]" |traces| NIL)
+    (|every| ADT-DEF-DECL "boolean" |lift_adt| NIL)
     (|subst| TYPE-EQ-DECL NIL |free_alg| NIL)
-    (|mapping?| CONST-DECL "bool" |free_alg| NIL) NIL
+    (|mapping?| CONST-DECL "bool" |free_alg| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|lift| TYPE-DECL NIL |lift_adt| NIL) (|list| TYPE-DECL NIL |list_adt| NIL)
     (|vari| TYPE-EQ-DECL NIL |free_alg| NIL)
@@ -1092,7 +1125,8 @@
     (|null| ADT-CONSTRUCTOR-DECL "(null?)" |list_adt| NIL)
     (|null?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
     (|subst| TYPE-EQ-DECL NIL |free_alg| NIL)
-    (|mapping?| CONST-DECL "bool" |free_alg| NIL) NIL
+    (|mapping?| CONST-DECL "bool" |free_alg| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (|vari| TYPE-EQ-DECL NIL |free_alg| NIL)
@@ -1120,16 +1154,32 @@
     (|instance_binds_index| FORMULA-DECL NIL |traces| NIL))
    SHOSTAK))
  (|prefix_instance_index_TCC1| 0
-  (|prefix_instance_index_TCC1-1| NIL 3627149913 ("" (SUBTYPE-TCC) NIL NIL) NIL
+  (|prefix_instance_index_TCC1-1| NIL 3627149913 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (^ CONST-DECL "finseq" |finite_sequences| NIL)
+    (|min| CONST-DECL "{p: real | p <= m AND p <= n}" |real_defs| NIL))
    NIL))
  (|prefix_instance_index_TCC2| 0
-  (|prefix_instance_index_TCC2-1| NIL 3627149913 ("" (SUBTYPE-TCC) NIL NIL) NIL
+  (|prefix_instance_index_TCC2-1| NIL 3627149913 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (^ CONST-DECL "finseq" |finite_sequences| NIL)
+    (|min| CONST-DECL "{p: real | p <= m AND p <= n}" |real_defs| NIL))
    NIL))
  (|prefix_instance_index_TCC3| 0
-  (|prefix_instance_index_TCC3-1| NIL 3627149913 ("" (SUBTYPE-TCC) NIL NIL) NIL
+  (|prefix_instance_index_TCC3-1| NIL 3627149913 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (^ CONST-DECL "finseq" |finite_sequences| NIL)
+    (|min| CONST-DECL "{p: real | p <= m AND p <= n}" |real_defs| NIL))
    NIL))
  (|prefix_instance_index_TCC4| 0
-  (|prefix_instance_index_TCC4-1| NIL 3627149913 ("" (SUBTYPE-TCC) NIL NIL) NIL
+  (|prefix_instance_index_TCC4-1| NIL 3627149913 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (^ CONST-DECL "finseq" |finite_sequences| NIL)
+    (|min| CONST-DECL "{p: real | p <= m AND p <= n}" |real_defs| NIL))
    NIL))
  (|prefix_instance_index| 0
   (|prefix_instance_index-1| NIL 3627149914
@@ -1257,7 +1307,13 @@
     (|mult_divides1| APPLICATION-JUDGEMENT "(divides(n))" |divides| NIL))
    SHOSTAK))
  (|prefix_instance_TCC1| 0
-  (|prefix_instance_TCC1-1| NIL 3627149913 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL))
+  (|prefix_instance_TCC1-1| NIL 3627149913 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|instance| CONST-DECL "lift[subst]" |traces| NIL)
+    (^ CONST-DECL "finseq" |finite_sequences| NIL)
+    (|min| CONST-DECL "{p: real | p <= m AND p <= n}" |real_defs| NIL))
+   NIL))
  (|prefix_instance| 0
   (|prefix_instance-1| NIL 3627150779
    ("" (SKOLEM!)
@@ -1313,6 +1369,169 @@
     (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
     (|instance| CONST-DECL "lift[subst]" |traces| NIL))
    SHOSTAK))
+ (|instance_at_find_TCC1| 0
+  (|instance_at_find_TCC1-1| NIL 3627164316 ("" (SUBTYPE-TCC) NIL NIL) NIL
+   NIL))
+ (|instance_at_find| 0
+  (|instance_at_find-1| NIL 3627164317
+   ("" (SKOLEM 1 ("pat" "tgt" "_" "x" "_" "s"))
+    (("" (INDUCT "i")
+      (("1" (FLATTEN)
+        (("1" (SKOLEM 1 "r")
+          (("1" (GRIND)
+            (("1" (DECOMPOSE-EQUALITY -3)
+              (("1" (REPLACE -1) (("1" (PROPAX) NIL NIL)) NIL)) NIL))
+            NIL))
+          NIL))
+        NIL)
+       ("2" (SKOLEM 1 "i")
+        (("2" (FLATTEN)
+          (("2" (SKOLEM 1 "r")
+            (("2" (FLATTEN)
+              (("2" (EXPAND "instance_at" -4)
+                (("2" (SMASH)
+                  (("1" (DELETE -4 -5)
+                    (("1" (INST? :WHERE -4)
+                      (("1" (SMASH)
+                        (("1" (REPLACE -3)
+                          (("1" (DELETE -3 -2)
+                            (("1" (LEMMA "match_find")
+                              (("1" (INST?)
+                                (("1" (INST -1 "x" "down(find(x, r))")
+                                  (("1"
+                                    (CASE-REPLACE
+                                     "up(down(find(x,r)))=find(x,r)")
+                                    (("1" (DELETE -1) (("1" (SMASH) NIL NIL))
+                                      NIL)
+                                     ("2" (DECOMPOSE-EQUALITY 1) NIL NIL))
+                                    NIL))
+                                  NIL))
+                                NIL))
+                              NIL))
+                            NIL))
+                          NIL)
+                         ("2" (DELETE -2)
+                          (("2" (LEMMA "match_find")
+                            (("2" (INST?)
+                              (("2" (INST -1 "x" "down(find(x, r))")
+                                (("2"
+                                  (CASE-REPLACE
+                                   "up(down(find(x,r)))=find(x,r)")
+                                  (("1" (DELETE -1) (("1" (SMASH) NIL NIL))
+                                    NIL)
+                                   ("2" (DECOMPOSE-EQUALITY 1) NIL NIL))
+                                  NIL))
+                                NIL))
+                              NIL))
+                            NIL))
+                          NIL))
+                        NIL))
+                      NIL))
+                    NIL)
+                   ("2" (DELETE 1 2)
+                    (("2" (INST? :WHERE -4)
+                      (("2" (SMASH)
+                        (("1" (REPLACE -3)
+                          (("1" (DELETE -3 -2)
+                            (("1" (LEMMA "match_find")
+                              (("1" (INST?)
+                                (("1" (INST -1 "x" "down(find(x, r))")
+                                  (("1"
+                                    (CASE-REPLACE
+                                     "up(down(find(x,r)))=find(x,r)")
+                                    (("1" (DELETE 1) (("1" (SMASH) NIL NIL))
+                                      NIL)
+                                     ("2" (DECOMPOSE-EQUALITY 1) NIL NIL))
+                                    NIL))
+                                  NIL))
+                                NIL))
+                              NIL))
+                            NIL))
+                          NIL)
+                         ("2" (DELETE -2)
+                          (("2" (LEMMA "match_find")
+                            (("2" (INST?)
+                              (("2" (INST -1 "x" "down(find(x, r))")
+                                (("2"
+                                  (CASE-REPLACE
+                                   "up(down(find(x,r)))=find(x,r)")
+                                  (("1" (SMASH) NIL NIL)
+                                   ("2" (DECOMPOSE-EQUALITY 1) NIL NIL))
+                                  NIL))
+                                NIL))
+                              NIL))
+                            NIL))
+                          NIL))
+                        NIL))
+                      NIL))
+                    NIL))
+                  NIL))
+                NIL))
+              NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   ((|lift_up_extensionality| FORMULA-DECL NIL |lift_adt| NIL)
+    (|match_find| FORMULA-DECL NIL |free_alg| NIL)
+    (|match| DEF-DECL "lift[subst]" |free_alg| NIL)
+    (|t| SHARED-ADT-ACCESSOR-DECL "[event -> mesg]" |traces| NIL)
+    (|finseq| TYPE-EQ-DECL NIL |finite_sequences| NIL)
+    (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
+     NIL)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|int_plus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|real_gt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|down| ADT-ACCESSOR-DECL "[(up?) -> T]" |lift_adt| NIL)
+    (<= CONST-DECL "bool" |reals| NIL) (|trace| TYPE-EQ-DECL NIL |traces| NIL)
+    (> CONST-DECL "bool" |reals| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|finite_sequence| TYPE-EQ-DECL NIL |finite_sequences| NIL)
+    (|event| TYPE-DECL NIL |traces| NIL)
+    (|below| TYPE-EQ-DECL NIL |nat_types| NIL)
+    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
+    (|below_induction| FORMULA-DECL NIL |bounded_nat_inductions| NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|up| ADT-CONSTRUCTOR-DECL "[T -> (up?)]" |lift_adt| NIL)
+    (- CONST-DECL "[numfield, numfield -> numfield]" |number_fields| NIL)
+    (|numfield| NONEMPTY-TYPE-EQ-DECL NIL |number_fields| NIL)
+    (|instance_at| DEF-DECL "lift[subst]" |traces| NIL) NIL
+    (|upto| NONEMPTY-TYPE-EQ-DECL NIL |nat_types| NIL)
+    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
+    (|find| DEF-DECL "lift[mesg]" |free_alg| NIL)
+    (|up?| ADT-RECOGNIZER-DECL "[lift -> boolean]" |lift_adt| NIL)
+    (|lift| TYPE-DECL NIL |lift_adt| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (IMPLIES CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|subst| TYPE-EQ-DECL NIL |free_alg| NIL)
+    (|mapping?| CONST-DECL "bool" |free_alg| NIL) NIL
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|vari| TYPE-EQ-DECL NIL |free_alg| NIL)
+    (|vari?| CONST-DECL "bool" |free_alg| NIL)
+    (|mesg| TYPE-DECL NIL |free_alg| NIL)
+    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
+    (|pred| TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL)
+    (< CONST-DECL "bool" |reals| NIL) (>= CONST-DECL "bool" |reals| NIL)
+    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
+    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
+    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL))
+   SHOSTAK))
  (|extended_binds_too_TCC1| 0
   (|extended_binds_too_TCC1-1| NIL 3627141846 ("" (SUBTYPE-TCC) NIL NIL)
    ((|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
@@ -1321,6 +1540,119 @@
     (|min| CONST-DECL "{p: real | p <= m AND p <= n}" |real_defs| NIL)
     (|instance| CONST-DECL "lift[subst]" |traces| NIL))
    NIL))
+ (|extended_binds_too_TCC2| 0
+  (|extended_binds_too_TCC2-1| NIL 3627164316 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|instance| CONST-DECL "lift[subst]" |traces| NIL)
+    (^ CONST-DECL "finseq" |finite_sequences| NIL)
+    (|min| CONST-DECL "{p: real | p <= m AND p <= n}" |real_defs| NIL))
+   NIL))
  (|extended_binds_too| 0
-  (|extended_binds_too-1| NIL 3627143542 ("" (POSTPONE) NIL NIL) NIL SHOSTAK)))
+  (|extended_binds_too-1| NIL 3627143542
+   ("" (SKOLEM 1 ("pat" "tgt" "i" "x" "r" "s"))
+    (("" (FLATTEN)
+      (("" (LEMMA "prefix_instance")
+        (("" (INST?)
+          (("" (SMASH)
+            (("" (REPLACE -3)
+              (("" (LEMMA "instance_binds")
+                (("" (INST? :WHERE -2)
+                  (("" (SMASH)
+                    (("" (EXPAND "param?")
+                      (("" (SKOLEM -5 "j")
+                        (("" (INST -2 "j" "x")
+                          (("1"
+                            (CASE-REPLACE
+                             "t(finseq_appl[event](pat ^ (0, i))(j))=t(finseq_appl[event](pat )(j))
+")
+                            (("1" (SMASH)
+                              (("1" (DELETE -1 -2 -3 -6)
+                                (("1" (LEMMA "instance_at_find")
+                                  (("1"
+                                    (INST -1 "pat" "tgt" "length(tgt) -i -1"
+                                     "x" "r" "s")
+                                    (("1" (SMASH) NIL NIL)) NIL))
+                                  NIL))
+                                NIL))
+                              NIL)
+                             ("2" (DELETE - 2)
+                              (("2" (TYPEPRED "j") (("2" (GRIND) NIL NIL))
+                                NIL))
+                              NIL)
+                             ("3" (DELETE - 2)
+                              (("3" (TYPEPRED "j") (("3" (GRIND) NIL NIL))
+                                NIL))
+                              NIL))
+                            NIL)
+                           ("2" (DELETE - 2)
+                            (("2" (TYPEPRED "j") (("2" (GRIND) NIL NIL)) NIL))
+                            NIL))
+                          NIL))
+                        NIL))
+                      NIL))
+                    NIL))
+                  NIL))
+                NIL))
+              NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   ((|prefix_instance| FORMULA-DECL NIL |traces| NIL)
+    (|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|instance_binds| FORMULA-DECL NIL |traces| NIL)
+    (|finseq_appl| CONST-DECL "[below[length(fs)] -> T]" |finite_sequences|
+     NIL)
+    (|t| SHARED-ADT-ACCESSOR-DECL "[event -> mesg]" |traces| NIL)
+    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
+    (|numfield| NONEMPTY-TYPE-EQ-DECL NIL |number_fields| NIL)
+    (- CONST-DECL "[numfield, numfield -> numfield]" |number_fields| NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|instance_at_find| FORMULA-DECL NIL |traces| NIL)
+    (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
+    (|min| CONST-DECL "{p: real | p <= m AND p <= n}" |real_defs| NIL)
+    (|int_plus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|real_gt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|int_min| APPLICATION-JUDGEMENT "{k: int | k <= i AND k <= j}" |real_defs|
+     NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    NIL NIL NIL NIL (|param?| CONST-DECL "bool" |traces| NIL)
+    (|finseq| TYPE-EQ-DECL NIL |finite_sequences| NIL)
+    (^ CONST-DECL "finseq" |finite_sequences| NIL)
+    (|subst| TYPE-EQ-DECL NIL |free_alg| NIL)
+    (|mapping?| CONST-DECL "bool" |free_alg| NIL) NIL
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|vari| TYPE-EQ-DECL NIL |free_alg| NIL)
+    (|vari?| CONST-DECL "bool" |free_alg| NIL)
+    (|mesg| TYPE-DECL NIL |free_alg| NIL)
+    (|index| NONEMPTY-TYPE-EQ-DECL NIL |nonempty_finite_sequences| NIL)
+    (< CONST-DECL "bool" |reals| NIL) (>= CONST-DECL "bool" |reals| NIL)
+    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
+    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
+    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (<= CONST-DECL "bool" |reals| NIL) (|trace| TYPE-EQ-DECL NIL |traces| NIL)
+    (> CONST-DECL "bool" |reals| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|finite_sequence| TYPE-EQ-DECL NIL |finite_sequences| NIL)
+    (|event| TYPE-DECL NIL |traces| NIL)
+    (|below| TYPE-EQ-DECL NIL |nat_types| NIL)
+    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL))
+   SHOSTAK)))
 

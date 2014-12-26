@@ -36,4 +36,12 @@ begin
   left_card_increases: theorem
     forall(x, y): x < y implies left_card(x) < left_card(y)
 
+  finite_strict_induction: theorem
+    (forall (p: pred[T]):
+      (forall (x: T):
+        (forall (y: T): y < x implies p(y))
+           implies p(x))
+    implies
+      (forall (x: T): p(x)))
+
 end finite_strict_orders

@@ -80,7 +80,8 @@
     (|real_gt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
     (|subst| TYPE-EQ-DECL NIL |free_alg| NIL)
-    (|mapping?| CONST-DECL "bool" |free_alg| NIL) NIL
+    (|mapping?| CONST-DECL "bool" |free_alg| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|vari| TYPE-EQ-DECL NIL |free_alg| NIL)
@@ -1620,9 +1621,9 @@
   (|extended_binds_too_TCC1-1| NIL 3627141846 ("" (SUBTYPE-TCC) NIL NIL)
    ((|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
      NIL)
+    (|instance| CONST-DECL "lift[subst]" |traces| NIL)
     (^ CONST-DECL "finseq" |finite_sequences| NIL)
-    (|min| CONST-DECL "{p: real | p <= m AND p <= n}" |real_defs| NIL)
-    (|instance| CONST-DECL "lift[subst]" |traces| NIL))
+    (|min| CONST-DECL "{p: real | p <= m AND p <= n}" |real_defs| NIL))
    NIL))
  (|extended_binds_too| 0
   (|extended_binds_too-1| NIL 3627143542

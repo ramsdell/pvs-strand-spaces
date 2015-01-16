@@ -15,6 +15,7 @@ AWK='
 
 cat <<EOF | awk "$AWK" > batch.el
 skeletons adversary
+security_goals unilateral
 strand_spaces derivability
 state_spaces protocols_and_state
 diffie_hellman adversary

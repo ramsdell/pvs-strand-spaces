@@ -1,0 +1,383 @@
+\documentclass[12pt]{article}
+
+% Ideas for making this into something more than just notes
+
+% First algebra very simple to explain carried-by
+
+% Add role orig assumptions later
+
+% Add wrap-decrypt
+
+\newif\ifreleased
+\releasedfalse % \releasedtrue
+
+% For drafts:
+\ifreleased
+\else
+\pagestyle{myheadings}
+\markright{Draft of \today{}}
+\fi
+
+\usepackage{graphics}
+\usepackage[matrix,arrow,curve]{xy}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{url}
+
+\newtheorem{thm}{Theorem}
+\newtheorem{lem}[thm]{Lemma}
+\newcommand{\remark}[1]{\emph{[#1]}}
+\newcommand{\cpsa}{\textsc{cpsa}}
+\newcommand{\pvs}{\textsc{pvs}}
+\newcommand{\cn}[1]{\ensuremath{\operatorname{\mathsf{#1}}}}
+\newcommand{\fn}[1]{\ensuremath{\operatorname{\mathit{#1}}}}
+\newcommand{\srt}[1]{\ensuremath{\mathsf{#1}}}
+\newcommand{\typ}{\mathbin:}
+\newcommand{\seq}[1]{\ensuremath{\langle#1\rangle}}
+\newcommand{\enc}[2]{\ensuremath{\{\!|#1|\!\}_{#2}}}
+\newcommand{\invk}[1]{{#1}^{-1}}
+\newcommand{\tg}[1]{\cn{g}_{#1}}
+\newcommand{\inbnd}{\mathord -}
+\newcommand{\outbnd}{\mathord +}
+\newcommand{\neutral}{\mathord\circ}
+\newcommand{\nat}{\ensuremath{\mathbb{N}}}
+\newcommand{\zed}{\ensuremath{\mathbb{Z}}}
+%\newcommand{\pow}[1]{\wp(#1)}
+\newcommand{\pow}[1]{\mathcal P(#1)}
+\newcommand{\all}[1]{\forall#1\mathpunct.}
+\newcommand{\some}[1]{\exists#1\mathpunct.}
+\newcommand{\funct}[1]{\lambda#1\mathpunct.}
+\newcommand{\up}{\mathord\uparrow}
+\newcommand{\down}{\mathord\downarrow}
+
+\newcommand{\nodes}{\fn{nd}}
+\newcommand{\nnodes}{\operatorname{\mathit{nd}^{\neutral}}}
+\newcommand{\key}{\srt{A}|\srt{S}}
+\newcommand{\base}{\key|\srt{D}|\srt{E}}
+\newcommand{\boot}{\cn{bt}}
+\newcommand{\extend}{\cn{ex}}
+\newcommand{\bootl}{\cn{bl}}
+\newcommand{\extendl}{\cn{el}}
+\newcommand{\observl}{\cn{ol}}
+\newcommand{\tran}{\ensuremath{\tau}}
+\newcommand{\pth}{\ensuremath{\pi}}
+\newcommand{\pcr}{\fn{pcr}}
+\newcommand{\evt}{\fn{evt}}
+\newcommand{\sdom}{\fn{Dom}}
+\newcommand{\ra}{\fn{ra}}
+
+\title{Neutral Nodes in PVS}
+\author{John D.~Ramsdell}
+
+\begin{document}
+\maketitle
+%% \paragraph{Notation.}
+
+%% A finite sequence is a function from an initial segment of the natural
+%% numbers.  The length of a sequence~$X$ is~$|X|$, and
+%% sequence~$X=\seq{X(0),\ldots, X(n-1)}$ for $n=|X|$.  If~$S$ is a set,
+%% then~$S^\ast$ is the set of finite sequences over~$S$, and~$S^+$ is the
+%% non-empty finite sequences over~$S$.  The prefix of sequence~$X$ of
+%% length~$n$ is~$\prefix{X}{n}$.
+
+\section{Message and State Model}
+\label{sec:tpm}
+
+Messages and states are modeled by elements of an order-sorted
+algebra~\cite{GoguenMeseguer92}. An order-sorted algebra is a
+generalization of a many-sorted algebra in which sorts may be
+partially ordered.  The carrier sets associated with ordered sorts are
+related by the subset relation.
+
+\begin{figure}
+$$\begin{array}{ll@{{}\typ{}}ll}
+\mbox{Sorts:}&
+\multicolumn{3}{l}{\mbox{\srt{M}, \srt{L}, $\top$, $\srt{A}$,
+    $\srt{S}$, $\srt{D}$, $\srt{E}$}}\\
+\mbox{Subsorts:}&
+\multicolumn{3}{l}{\mbox{$\srt{A}<\top$, $\srt{S}<\top$,
+    $\srt{D}<\top$, $\srt{E}<\top$}}\\
+\mbox{Operations:}&\boot&\srt{M}&\mbox{Boot state}\\
+&\extend&\top\times\srt{M}\to\srt{M}&\mbox{Extend state}\\
+&\bootl&\srt{L}&\mbox{Boot label}\\
+&\extendl&\srt{\top}\to\srt{L}&\mbox{Extend label}\\
+&\observl&\srt{\top}\to\srt{L}&\mbox{Observe label}\\
+&(\cdot,\cdot)&\top\times\top\to\top& \mbox{Pairing}\\
+&\enc{\cdot}{(\cdot)}&\top\times\srt{A}\to\top&\mbox{Asymmetric encryption}\\
+&\enc{\cdot}{(\cdot)}&\top\times\srt{S}\to\top&\mbox{Symmetric encryption}\\
+&\#&\srt{\top}\to\top& \mbox{Hashing}\\
+&\invk{(\cdot)}&\srt{A}\to\srt{A}& \mbox{Asymmetric key inverse}\\
+&\invk{(\cdot)}&\srt{S}\to\srt{S}& \mbox{Symmetric key inverse}\\
+&\cn{a}_i,\cn{b}_i&\srt{A}& \mbox{Asymmetric key constants}\\
+&\cn{s}_i&\srt{S}& \mbox{Symmetric key constants}\\
+&\cn{d}_i&\srt{D}& \mbox{Data constants}\\
+&\cn{e}_i&\srt{E}& \mbox{Text constants}\\
+&\tg{i}&\top& \mbox{Tag constants}\\
+\mbox{Equations:}&\multicolumn{2}{l}{\invk{\cn{a}_i}=\cn{b}_i\quad
+\invk{\cn{b}_i}=\cn{a}_i}
+&(i\in\nat)\\
+&\multicolumn{2}{l}{\all{k\typ\srt{A}}\invk{(\invk{k})}=k}
+&\all{k\typ\srt{S}}\invk{k}=k
+\end{array}$$
+\caption{Crypto Algebra with State Signature}\label{fig:signature}
+\end{figure}
+
+Figure~\ref{fig:signature} shows the signature of the algebra used in
+this paper.  Sort~\srt{M} is the sort of TPM machine states,
+sort~\srt{L} is the sort of transition labels, and sort~$\top$ is the
+sort of all messages.  Messages of sort~$\srt{A}$ (asymmetric keys),
+sort~$\srt{S}$ (symmetric keys), sort~$\srt{D}$ (data), and
+sort~$\srt{E}$ (text) are called \emph{atoms}.  Messages are atoms,
+tag constants, or constructed using encryption $\enc{\cdot}{(\cdot)}$,
+hashing $\#(\cdot)$, and pairing $(\cdot,\cdot)$, where the comma
+operation is right associative and parentheses are omitted when the
+context permits.  The canonical representative for each element in the
+algebra is the term that contains the fewest number of occurrences of
+the inverse operation~$\invk{(\cdot)}$.
+
+The value in the PCR associated with a TPM state is the message
+given by the {\pcr} function,
+$$\begin{array}{r@{{}={}}l}
+\multicolumn{2}{c}{\pcr\typ\srt{M}\to\top}\\
+\pcr(\boot)&\cn{g}_0\\
+\pcr(\extend(t, m))&\#(t,\pcr(m))
+\end{array}$$
+The function {\pcr} is injective.
+
+The TPM transition relation
+is~$\tran\subseteq\srt{M}\times\srt{L}\times\srt{M}$, where
+$(m,\bootl,\boot)\in\tran$ (boot), $(m,\extendl(t),\extend(t,m))\in\tran$
+(extend), or $(m,\observl(\pcr(m)), m)\in\tran$ (observe).  An infinite
+sequence of states~$\pth_s$ and labels~$\pth_\ell$ is a \emph{path} if
+$\all{i\in\nat}(\pth_s(i),\pth_\ell(i),\break\pth_s(i+1))\in\tran$
+where $\pth_s(0)=\boot$.  Observation transitions are used with the
+TPM quote and decrypt operations.
+
+Useful properties about paths through state space are given by the Init
+Extend and Prefix Extend Lemmas.
+
+%% init_extend: lemma
+%%   forall(p: path, x: mesg, st: state, k: nat):
+%%     p(k)`1 = extend(x, st) implies
+%%       exists(j: nat):
+%%         j < k and p(j)`1 = st and p(j+1)`1 = extend(x, st)
+
+\begin{lem}[Init Extend]\label{lem:init extend}
+\begingroup\rm
+$$\begin{array}{l}
+\all{\pth_s,t\typ\top,m\typ\srt{M},k\in\nat}\\
+\quad\mbox{$\pth_s(k)=\extend(t,m)$ implies}\\
+\qquad\some{j\in\nat}
+\mbox{$j<k$ and $\pth_s(j)=m$ and $\pth_s(j+1)=\extend(t,m)$}
+\end{array}$$
+\endgroup
+\end{lem}
+
+%% prefix_extend: lemma
+%%   forall(p: path, x: mesg, st: state, i, k: nat):
+%%     i <= k and p(k)`1 = extend(x, st) implies
+%%       subterm(p(i)`1, p(k)`1) or
+%%       exists(j: nat):
+%%         i <= j and j < k and p(j)`1 = st and p(j+1)`1 = extend(x, st)
+
+\begin{lem}[Prefix Extend]\label{lem:prefix extend}
+\begingroup\rm
+$$\begin{array}{l}
+\all{\pth_s,t\typ\top,i,k\in\nat}\\
+\quad\mbox{$i\leq k$ and $\pth_s(k)=\extend(t,m)$ implies}\\
+\qquad\mbox{$\pth_s(i)$ is a subterm of $\pth_s(k)$ or}\\
+\qquad\some{j\in\nat}
+\mbox{$i\leq j<k$ and $\pth_s(j)=m$ and $\pth_s(j+1)=\extend(t,m)$}
+\end{array}$$
+\endgroup
+\end{lem}
+
+These two lemmas are used to prove the one employed to prove the
+security goal in the envelope protocol.
+
+%% state_split: lemma
+%%   forall(p: path, x, x0, x1: mesg, st: state, i, k: nat):
+%%     i <= k and x0 /= x1 and
+%%     p(i)`1 = extend(x0, extend(x, st)) and
+%%     p(k)`1 = extend(x1, extend(x, st)) implies
+%%       exists(j0, j1: nat):
+%%         j0 < i and i < j1 and j1 < k and
+%%         p(j0)`1 = st and p(j0+1)`1 = extend(x, st) and
+%%         p(j1)`1 = st and p(j1+1)`1 = extend(x, st)
+
+\begin{lem}[State Split]\label{lem:state split}
+\begingroup\rm
+$$\begin{array}{l}
+\all{\pth_s,t,t_0,t_1\typ\top,m\typ\srt{M},i,k\in\nat}\\
+\quad\mbox{$i\leq k$ and $\pth_s(i)=\extend(t_0,\extend(t,m))$ and}\\
+\quad\mbox{$t_0\neq t_1$ and $\pth_s(k)=\extend(t_1,\extend(t,m))$ implies}\\
+\qquad\some{j_0,j_1\in\nat}\\
+\qquad\quad\mbox{$j_0<i<j_1<k$ and $\pth_s(j_0)=\pth_s(j_1)=m$ and}\\
+\qquad\quad\mbox{$\pth_s(j_0+1)=\pth_s(j_1+1)=\extend(t,m)$}
+\end{array}$$
+\endgroup
+\end{lem}
+
+\section{Strand Spaces With State Synchronization}\label{sec:strand spaces}
+
+In strand space theory, the \emph{trace} of a strand is a linearly
+ordered sequence of events $e_0\Rightarrow\cdots\Rightarrow e_{n-1}$,
+and an \emph{event} is a message transmission $\outbnd t$ or a
+reception $\inbnd t$, where~$t$ has sort~$\top$, or a state
+synchronization $\neutral\ell$, where~$\ell$ has sort~$\srt{L}$.  A
+\emph{strand space}~$\Theta$ is a map from a set of strands to a set
+of traces.  We choose the set of strands to be a prefix of the natural
+numbers, so a strand space is finite sequence of traces.
+
+A node names an event in a strand space.  The set of \emph{nodes} of
+strand space $\Theta$ is $\{(s,i)\mid s\in\sdom(\Theta), 0\leq i <
+|\Theta(s)|\}$, and the event at a node is
+$\evt_\Theta(s,i)=\Theta(s)(i)$.  A node is a \emph{neutral node}
+in~$\Theta$ if the event at the node is a state synchronization.  The set
+of nodes of~$\Theta$ is $\nodes(\Theta)$ and the set of neutral nodes
+of~$\Theta$ is $\nnodes(\Theta)$.
+
+A message~$t_0$ is \emph{carried by}~$t_1$, written $t_0\sqsubseteq
+t_1$ if~$t_0$ can be extracted from a reception of~$t_1$, assuming
+plaintext is extractable from encryptions.  In other
+words,~$\sqsubseteq$ is the smallest reflexive, transitive relation
+such that $t_0\sqsubseteq t_0$, $t_0\sqsubseteq (t_0, t_1)$,
+$t_1\sqsubseteq (t_0, t_1)$, and $t_0\sqsubseteq\enc{t_0}{t_1}$.
+
+A message \emph{originates} in trace~$c$ at index~$i$ if it is carried
+by $c(i)$, $c(i)$ is a transmission, and it is not carried by any
+messaging event earlier in the trace.  A message~$t$ is
+\emph{non-originating} in a strand space~$\Theta$, written
+$\fn{non}(\Theta,t)$, if it originates on no strand.  A message~$t$
+\emph{uniquely originates} in a strand space~$\Theta$ at node~$n$,
+written $\fn{uniq}(\Theta,t,n)$, if it originates in the trace of
+exactly one strand~$s$ at index~$i$, and $n=(s,i)$.
+
+The model of execution is a bundle.  The triple
+$\Upsilon=(\Theta,\to,\leadsto)$ is a \emph{bundle} if it defines a
+finite directed acyclic graph, where the vertices are the nodes of
+$\Theta$, and an edge represents communication~($\to$), state
+passing~($\leadsto$), or strand succession~($\Rightarrow$)
+in~$\Theta$.  For communication, if $n_0\rightarrow n_1$, then there
+is a message~$t$ such that~$\evt_\Theta(n_0)=\outbnd t$
+and~$\evt_\Theta(n_1)=\inbnd t$.  For each reception node~$n_1$, there
+is a unique transmission node~$n_0$ with $n_0\to n_1$.  For state
+passing, if $n_0\leadsto n_1$, then~$n_0$ and~$n_1$ are neutral nodes,
+and transitions at neutral nodes are compatible with a path through
+state space.  The transitions are \emph{compatible} with a path if
+there is a one-to-one correspondence between neutral nodes and an
+initial segment of a path through state space, the state passing edges
+respect path ordering, and neutral node labels map to path labels.
+More formally, transitions at neutral nodes are state
+compatible~\cite[Def.~11]{Guttman12} if there exists an $i\in\nat$,
+$f\in\nnodes(\Theta)\to\zed_i$, and path~$\pth$ such that
+\begin{enumerate}
+\item\label{enum:bijection} $f$ is a bijection,
+\item\label{enum:orderings} $\all{n_0,n_1\in\nnodes(\Theta)}
+n_0\leadsto n_1\mbox{ iff }f(n_0)+1=f(n_1)$, and
+\item\label{enum:labels} $\all{n\in\nnodes(\Theta)}
+\evt_\Theta(n)=\pth_\ell(f(n))$
+\end{enumerate}
+State compatibility implies that neutral nodes are totally ordered.
+
+State compatibility Property~\ref{enum:labels} asserts that the label
+at a neutral node must agree with the label of some path through state
+space.  It is this property that explains why a labeled transition
+system is used instead of a simple state transition system.  The label
+asserts that a subset of the set of transitions are bound to the event
+at a neutral node.  However, had a subset of the transition relation
+been bound to the event, all that could have been assert by
+Property~\ref{enum:labels} is that the path associated with the event
+is in the subset.
+
+Each acyclic graph has a transitive irreflexive relation~$\prec$ on
+its vertices.  The relation specifies the causal ordering of nodes in
+a bundle.  A transitive irreflexive binary relation is also called a
+strict order.  In a bundle, when~$\prec$ is restricted to neutral
+nodes, it is can be shown that it is identical to~$\leadsto^+$, where
+$\leadsto^+$ is the transitive closure of~$\leadsto$.  Furthermore,
+compatibility Property~\ref{enum:orderings} can be used to derive the
+following relation between node ordering and the function~$f$.
+$$\all{n_0,n_1\in\nnodes(\Theta)}n_0\prec n_1\mbox{ iff }f(n_0)<f(n_1)$$
+
+In the remainder of this section, the theory of strand spaces used in
+the proofs has been simplified.  In the full theory, origination
+assumptions can be inherited from roles.  See~\cite{Ramsdell13} for
+all the gory details.
+
+When a bundle is a run of a protocol, the behavior of each strand is
+constrained by a role.  Adversarial strands are constrained by roles
+as are non-adversarial strands.  A \emph{protocol} is a set of roles,
+and a \emph{role} is a function from message variables to a trace.  A
+trace~$c$ is an \emph{instance} of role~$r$ if~$c$ is a prefix of~$r$
+applied to some messages.  For protocol~$P$, bundle
+$\Upsilon=(\Theta,\to,\leadsto)$ is a \emph{run of protocol}~$P$ if
+there exists a role assignment $\ra\in \sdom(\Theta)\to P$ such that
+for all $s\in\sdom(\Theta)$, $\Theta(s)$ is an instance of~$\ra(s)$.
+In what follows, we fix the protocol~$P$ and only consider bundles
+that are runs of~$P$.
+
+\begin{figure}
+$$\begin{array}{r@{{}={}}l}
+\fn{create}(t\typ\base)&\outbnd t\qquad\fn{tag}_i=\outbnd\tg{i}\\
+\fn{pair}(t_0\typ\top, t_1\typ\top)&
+\inbnd t_0\Rightarrow\inbnd t_1\Rightarrow\outbnd (t_0,t_1)\\
+\fn{sep}(t_0\typ\top, t_1\typ\top)&
+\inbnd (t_0, t_1)\Rightarrow\outbnd t_0\Rightarrow\outbnd t_1\\
+\fn{enc}(t\typ\top, k\typ\srt{A}|\srt{S})&
+\inbnd t\Rightarrow\inbnd k\Rightarrow\outbnd \enc{t}{k}\\
+\fn{dec}(t\typ\top, k\typ\key)&
+\inbnd \enc{t}{k}\Rightarrow\inbnd\invk{k}\Rightarrow\outbnd t
+\end{array}$$
+\caption{Adversary Roles}\label{fig:adversary}
+\end{figure}
+
+The roles that constrain adversarial behavior are in
+Figure~\ref{fig:adversary}.  For the encryption related roles,
+$k\typ\key$ asserts that~$k$ is either a symmetric or asymmetric
+key.  For the create role, $t\typ\base$ asserts that~$t$ is an atom.
+
+\section{Skeletons}\label{sec:skeletons}
+
+In this paper, a skeleton will be specified using a sentence in
+order-sorted logic.  The sorts are the message algebra sorts augmented
+with a sort~\srt{Z} for strands and sort~\srt{N} for nodes.  The
+atomic formula $\cn{htin}(z,h,c)$ asserts that strand~$z$ has a length
+of at least~$h$, and its trace is a prefix of trace~$c$. The formula
+$n_0\ll n_1$ asserts node~$n_0$ precedes node~$n_1$.  The formula
+$\cn{non}(t)$ asserts that message~$t$ is non-originating, and
+$\cn{uniq}(t,n)$ asserts that message~$t$ uniquely originates at
+node~$n$.  Finally, the formula $\cn{sends}(n,t)$ asserts that the
+event at node~$n$ is a transmission of message~$t$.  The roles of the
+protocol serve as function symbols.
+
+\begin{figure}
+$$\begin{array}{l@{\quad}l}
+\Upsilon,\alpha\models x=y&\mbox{iff $\alpha(x)=\alpha(y)$;}\\
+(\Theta,\to,\leadsto),\alpha\models\cn{htin}(z,h,c)
+&\mbox{iff $|\Theta(\alpha(z))|\geq \alpha(h)$ and}\\
+&\mbox{\phantom{iff} $\Theta(\alpha(z))$ is a prefix of $\alpha(c)$;}\\
+\Upsilon,\alpha\models n_0\ll n_1
+&\mbox{iff $\alpha(n_0)\prec_\Upsilon\alpha(n_1)$;}\\
+(\Theta,\to,\leadsto),\alpha\models\cn{non}(t)
+&\mbox{iff $\fn{non}(\Theta,\alpha(t))$;}\\
+(\Theta,\to,\leadsto),\alpha\models\cn{uniq}(t,n)
+&\mbox{iff $\fn{uniq}(\Theta,\alpha(t),\alpha(n))$;}\\
+(\Theta,\to,\leadsto),\alpha\models\cn{sends}(n,t)
+&\mbox{iff $\evt_\Theta(\alpha(n))=\outbnd\alpha(t)$.}
+\end{array}$$
+\caption{Satisfaction}\label{fig:satisfaction}
+\end{figure}
+
+For bundle~$\Upsilon$, variable assignment~$\alpha$, and
+formula~$\Phi$, satisfaction $\Upsilon,\alpha\models\Phi$ is defined
+using the semantics for atomic formulas specified in
+Figure~\ref{fig:satisfaction}.  A bundle~$\Upsilon$ is described by a
+skeleton iff the skeleton's sentence~$\Phi$ is modeled by~$\Upsilon$,
+written $\Upsilon\models\Phi$.
+
+\bibliography{secureprotocols}
+\bibliographystyle{plain}
+
+\end{document}

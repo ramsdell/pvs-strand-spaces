@@ -1,0 +1,1287 @@
+\documentclass[12pt]{article}
+
+% Ideas for making this into something more than just notes
+
+% First algebra very simple to explain carried-by
+
+% Add role orig assumptions later
+
+% Add wrap-decrypt
+
+\newif\ifreleased
+\releasedfalse % \releasedtrue
+
+% For drafts:
+\ifreleased
+\else
+\pagestyle{myheadings}
+\markright{Draft of \today{}}
+\fi
+
+\usepackage{graphics}
+\usepackage[matrix,arrow,curve]{xy}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{url}
+
+\newtheorem{thm}{Theorem}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{conj}[thm]{Conjecture}
+\newenvironment{note}{\begingroup\itshape}{\endgroup}
+\newcommand{\remark}[1]{\emph{[#1]}}
+\newcommand{\cpsa}{\textsc{cpsa}}
+\newcommand{\pvs}{\textsc{pvs}}
+\newcommand{\cn}[1]{\ensuremath{\operatorname{\mathsf{#1}}}}
+\newcommand{\fn}[1]{\ensuremath{\operatorname{\mathit{#1}}}}
+\newcommand{\srt}[1]{\ensuremath{\mathsf{#1}}}
+\newcommand{\gtag}[1]{\ensuremath{\mathit{#1}}}
+\newcommand{\typ}{\mathbin:}
+\newcommand{\seq}[1]{\ensuremath{\langle#1\rangle}}
+\newcommand{\append}{\cdot}
+\newcommand{\enc}[2]{\ensuremath{\{\!|#1|\!\}_{#2}}}
+\newcommand{\invk}[1]{{#1}^{-1}}
+\newcommand{\tg}[1]{\cn{g}_{#1}}
+\newcommand{\inbnd}{\mathord -}
+\newcommand{\outbnd}{\mathord +}
+\newcommand{\neutral}{\mathord\circ}
+\newcommand{\nat}{\ensuremath{\mathbb{N}}}
+\newcommand{\zed}{\ensuremath{\mathbb{Z}}}
+\newcommand{\all}[1]{\forall#1\mathpunct.}
+\newcommand{\some}[1]{\exists#1\mathpunct.}
+\newcommand{\funct}[1]{\lambda#1\mathpunct.}
+\newcommand{\sel}{\downarrow}
+
+\newcommand{\alg}{\ensuremath{\mathbb{A}}}
+\newcommand{\msg}{\ensuremath{\mathcal{M}}}
+\newcommand{\ssp}{\ensuremath{\mathcal{S}}}
+\newcommand{\bun}{\ensuremath{\mathcal{B}}}
+\newcommand{\sta}{\ensuremath{\mathcal{Q}}}
+\newcommand{\strands}{\ensuremath{\mathcal{Z}}}
+\newcommand{\nodes}{\ensuremath{\mathcal{N}}}
+\newcommand{\nnodes}{\nodes^{\neutral}}
+\newcommand{\key}{\srt{A}|\srt{S}}
+\newcommand{\base}{\key|\srt{D}|\srt{E}}
+\newcommand{\boot}{\cn{bt}}
+\newcommand{\extend}{\cn{ex}}
+\newcommand{\init}{\ensuremath{\mathcal{I}}}
+\newcommand{\tran}{\ensuremath{\mathcal{T}}}
+\newcommand{\pth}{\ensuremath{\pi}}
+\newcommand{\encode}{\fn{enc}}
+\newcommand{\decode}{\fn{dec}}
+\newcommand{\eran}{\ensuremath{\mathcal{R}}}
+\newcommand{\evt}{\fn{evt}}
+\newcommand{\dom}{\fn{Dom}}
+\newcommand{\ran}{\fn{Ran}}
+\newcommand{\ra}{\fn{ra}}
+
+\newcommand{\comp}{\ensuremath{\mathcal{C}}}
+\newcommand{\lab}{\ensuremath{\mathcal{L}}}
+\newcommand{\cbar}[1]{\ensuremath{\overline{#1}}}
+\newcommand{\labs}{\ensuremath{\lambda}}
+\newcommand{\cnnodes}{\bar\nodes^{\neutral}}
+
+\newcommand{\bool}{\ensuremath{\mathbb{B}}}
+\newcommand{\truth}{\ensuremath{\mathfrak{t}}}
+\newcommand{\falsehood}{\ensuremath{\mathfrak{f}}}
+\newcommand{\gua}{\ensuremath{\mathcal{G}}}
+\newcommand{\addr}{\ensuremath{\mathcal{A}}}
+\newcommand{\attr}{\ensuremath{\mathcal{C}}}
+\newcommand{\ainit}{\ensuremath{\mathsf{init}}}
+\newcommand{\awrap}{\ensuremath{\mathsf{wrap}}}
+\newcommand{\adecrypt}{\ensuremath{\mathsf{decrypt}}}
+\newcommand{\anno}{\fn{anno}}
+
+\title{Strand Spaces With Explicit State-Passing}
+\author{John D.~Ramsdell}
+
+\begin{document}
+\maketitle
+
+\begin{note}
+  The introduction has not been written yet.  Some observations follow.
+\end{note}
+
+This paper adds state to strand spaces.  In strand spaces, a strand is
+a sequence of message transmission and reception events.  An execution
+in strand spaces is a set of strands along with a pairing of
+transmission and reception events such that the same message is passed
+between the two events.
+
+The addition of state-passing involves adding a state synchronization
+event associated with a transition in a state machine.  An execution
+in strand spaces with transition events augments message-passing with
+state-passing.  State synchronization events are paired such that the
+post-state in one event is the same as the pre-state in the next
+event.
+
+This approach to adding state to strand spaces preserves an important
+property of strand spaces.  One can always trace a path backwards from
+the use of a message to some location at which it originated.  This
+fact has been verified using PVS using the methods described
+in~\cite{Ramsdell13}.  More generally, all of the theorems and lemmas
+in this paper have proved in PVS with the exception of
+Lemmas~\ref{lem:faithful labels} and~\ref{lem:faithful transitions} in
+Section~\ref{sec:bcphi}.
+
+\begin{note}
+  There are holes in this paper marked by $\ast\ast\ast$.  Any help
+  filling them would be greatly appreciated.
+\end{note}
+
+%% \paragraph{Notation.}
+
+%% A finite sequence is a function from an initial segment of the natural
+%% numbers.  The length of a sequence~$X$ is~$|X|$, and
+%% sequence~$X=\seq{X(0),\ldots, X(n-1)}$ for $n=|X|$.  If~$S$ is a set,
+%% then~$S^\ast$ is the set of finite sequences over~$S$, and~$S^+$ is the
+%% non-empty finite sequences over~$S$.  The prefix of sequence~$X$ of
+%% length~$n$ is~$\prefix{X}{n}$.
+
+\section{Strand Spaces With Transitions}\label{sec:strand spaces}
+
+The parameters to the strand space theory with transitions are
+\begin{enumerate}
+\item a set of messages (\msg),
+\item a carried by relation (${\sqsubseteq}\subseteq\msg\times\msg$),
+\item a set of states (\sta),
+\item a set of initial states ($\init\subseteq\sta$),
+\item a state transition relation ($\tran\subseteq\sta\times\sta$), and
+\item a state encoding function ($\encode\in\sta\to\msg$).
+\end{enumerate}
+The set of messages~{\msg} is often the carrier set of a message
+algebra.  Intuitively, a message~$m_0$ is carried by~$m_1$
+($m_0\sqsubseteq m_1$) if it is possible to extract~$m_0$ from~$m_1$.
+An infinite sequence of states~$\pth$ is a \emph{path} iff
+$\all{i\in\nat}(\pth(i),\pth(i+1))\in\tran$ with $\pth(0)\in\init$.
+
+In strand space theory, the \emph{trace} of a strand is a linearly
+ordered sequence of events $e_0\Rightarrow\cdots\Rightarrow e_{n-1}$,
+and an \emph{event} is a message transmission $\outbnd m$ or a
+reception $\inbnd m$, where~$m\in\msg$, or a state synchronization
+$\neutral t$, where~$t\in\tran$.  A \emph{strand space}~$\ssp$ is a
+map from a set of strands to a set of traces.  We choose the set of
+strands to be a prefix of the natural numbers, so a strand space is
+finite sequence of traces.  The set of strands of strand space {\ssp}
+is $\strands(\ssp)=\dom(\ssp)$.
+
+A node names an event in a strand space.  The set of \emph{nodes} of
+strand space $\ssp$ is $\{(z,i)\mid z\in\strands(\ssp), 0\leq i <
+|\ssp(z)|\}$, and the event at a node is $\evt_\ssp(z,i)=\ssp(z)(i)$.
+A node is a \emph{transition node} in~$\ssp$ iff the event at the node
+is a state synchronization.  The set of nodes of~$\ssp$ is
+$\nodes(\ssp)$ and the set of transition nodes of~$\ssp$ is
+$\nnodes(\ssp)$.
+
+A state~$q$ carries a message iff its encoding $\encode(q)$ carries it.
+A message \emph{appears} in trace~$c$ at index~$i$ iff
+\begin{enumerate}
+\item $c(i)$ is the transmission~$\outbnd m$, it is carried by~$m$,
+  and it is not carried by any event earlier in the trace, or
+\item $c(i)$ is the synchronization
+event $\neutral(q_0,q_1)$, the message is carried by $q_1$,
+and it is not carried by $q_0$ or any event earlier in the
+trace.
+\end{enumerate}
+
+The model of execution is a bundle.  The triple
+$\bun=(\ssp,\to,\leadsto)$ is a \emph{bundle} iff it defines a finite
+directed acyclic graph, where the vertices are the nodes of $\ssp$,
+and an edge represents communication~($\to$), state
+passing~($\leadsto$), or strand succession~($\Rightarrow$) in~$\ssp$.
+
+For communication, if $n_0\rightarrow n_1$, then there is a
+message~$t$ such that $\evt_\ssp(n_0)=\outbnd m$
+and $\evt_\ssp(n_1)=\inbnd m$.  For each reception node~$n_1$, there
+is a unique transmission node~$n_0$ with $n_0\to n_1$.
+
+For state passing, if $n_0\leadsto n_1$, then~$n_0$ and~$n_1$ are
+transition nodes, and there is a state~$q$ such that
+$\evt_\ssp(n_0)=\neutral(q_0,q)$ and $\evt_\ssp(n_1)=\neutral(q,q_1)$.
+Node~$n_1$ is a \emph{start node} iff it is a transition node and there
+does not exists a node~$n_0$, such that $n_0\leadsto n_1$.  If~$n$ is
+a start node with $\evt_\ssp(n)=\neutral(q_0,q_1)$ then $q_0\in\init$.
+Finally, there exists an $\ell\in\nat$ and bijective
+$f\in\nnodes(\ssp)\to\zed_\ell$ such that
+\begin{equation}\label{eq:next}
+\all{n_0,n_1\in\nnodes(\ssp)}n_0\leadsto n_1\mbox{ iff }f(n_0)+1=f(n_1),
+\end{equation}
+and some path~$\pth$ such that
+\begin{equation}\label{eq:paths}
+\all{n\in\nnodes(\ssp)}\evt_\ssp(n)=\neutral(\pth(f(n)), \pth(f(n)+1)).
+\end{equation}
+Equation~\ref{eq:next} ensures the transition nodes are totally
+ordered.  Equation~\ref{eq:paths} is unnecessary when considering
+finite paths through state space, however the use of finite paths
+complicates proofs in PVS so they will be excluded here.  For a bundle
+$\bun$, its associated strand space will be denoted $\ssp_\bun$ unless
+the association is clear from the context.
+
+Each acyclic graph has a transitive irreflexive relation~$\prec$ on
+its vertices.  The relation specifies the causal ordering of nodes in
+a bundle.  A transitive irreflexive binary relation is also called a
+strict order.  In a bundle, when~$\prec$ is restricted to transition
+nodes, it is can be shown that it is identical to~$\leadsto^+$, where
+$\leadsto^+$ is the transitive closure of~$\leadsto$.  Furthermore,
+Equation~\ref{eq:next} can be used to derive the following relation
+between node ordering and the function~$f$.
+\begin{equation}\label{eq:orderings}
+\all{n_0,n_1\in\nnodes(\ssp)}n_0\prec n_1\mbox{ iff }f(n_0)<f(n_1)
+\end{equation}
+
+A message~$t$ \emph{originates} in
+bundle~$\bun=(\ssp,\to,\leadsto)$ at node~$n$ iff
+\begin{enumerate}
+\item it appears in $\ssp(z)$ at index~$i$ and $n=(z,i)$, or
+\item $n$ is a start node, $\evt_\ssp(n)=\neutral(q_0,q_1)$, and~$m$ is
+  carried by~$q_0$.
+\end{enumerate}
+A message~$m$ is \emph{non-originating} in bundle~$\bun$, written
+$\fn{non}(\bun,m)$, if it originates at no node.  A message~$m$
+\emph{uniquely originates} in bundle~$\bun$ at node~$n$, written
+$\fn{uniq}(\bun,m,n)$, if it originates at~$n$ and nowhere else.
+With the definitions of origination and bundles given here, strand
+spaces with transitions retains a key property of the original version
+of strand spaces.
+
+\begin{lem}\label{lem:carried originates}
+  If message~$m$ is carried by $\evt_{\ssp_\bun}(n)$, then~$m$
+  originates in~\bun.
+\end{lem}
+\begin{proof}
+  By induction on the graph of {\bun} and a case analysis of the events at~$n$.
+  \begin{enumerate}
+  \item If $n$ is a transmission, then either $m$ originates at $n$ or~$m$
+    is carried earlier in the strand by the definition of appears.
+  \item If $n$ is a reception, then there is an earlier transmission
+    that carries $m$.
+  \item If $\evt_{\ssp_\bun}(n)=\neutral(q_0,q_1)$ and $m\sqsubseteq q_0$,
+    then~$n$ is a start node or for some~$n'$, $n'\leadsto n$,
+    $\evt_{\ssp_\bun}(n')=\neutral(q'_0,q'_1)$, and $m\sqsubseteq q'_1$.
+  \item If $\evt_{\ssp_\bun}(n)=\neutral(q_0,q_1)$ and $m\sqsubseteq q_1$,
+    then $m\sqsubseteq q_0$, or~$m$ appears at~$n$, or~$m$ is carried
+    earlier in the strand.
+  \end{enumerate}
+  \vspace{-4.4ex}
+\end{proof}
+
+In the remainder of this section, the theory of strand spaces used in
+the proofs has been simplified.  In the full theory, origination
+assumptions can be inherited from roles.  See~\cite{Ramsdell13} for
+all the gory details.
+
+When a bundle is a run of a protocol, the behavior of each strand is
+constrained by a role.  Adversarial strands are constrained by roles
+as are non-adversarial strands.  A \emph{protocol} is a set of roles,
+and a \emph{role} is a set of traces.  A trace~$c$ is an
+\emph{instance} of role~$r$ iff~$c$ is a prefix of some member of~$r$.
+For protocol~$P$, bundle $\bun=(\ssp,\to,\leadsto)$ is a \emph{run of
+  protocol}~$P$ iff there exists a role assignment $\ra\in
+\strands(\ssp)\to P$ such that for all $z\in\strands(\ssp)$, $\ssp(z)$ is an
+instance of~$\ra(z)$.
+
+\subsection{Skeletons}\label{sec:skeletons}
+
+In this paper, a skeleton will be specified using a sentence in
+first-order logic.  The atomic formula $\cn{htin}(z,h,c)$ asserts
+that strand~$z$ has a length of at least~$h$, and its trace is a
+prefix of trace~$c$. The formula $n_0\ll n_1$ asserts node~$n_0$
+precedes node~$n_1$.  The formula $\cn{non}(m)$ asserts that
+message~$m$ is non-originating, and $\cn{uniq}(m,n)$ asserts that
+message~$m$ uniquely originates at node~$n$.  Finally, the formula
+$\cn{sends}(n,m)$ asserts that the event at node~$n$ is a transmission
+of message~$m$.  The roles of the protocol serve as function symbols.
+
+\begin{figure}
+$$\begin{array}{l@{\quad}l}
+\bun,\alpha\models x=y&\mbox{iff $\alpha(x)=\alpha(y)$;}\\
+\bun,\alpha\models\cn{htin}(z,h,c)
+&\mbox{iff $|\bun_\ssp(\alpha(z))|\geq \alpha(h)$ and}\\
+&\mbox{\phantom{iff} $\bun_\ssp(\alpha(z))$ is a prefix of
+  $\alpha(c)$;}\\
+\bun,\alpha\models n_0\ll n_1
+&\mbox{iff $\alpha(n_0)\prec_\bun\alpha(n_1)$;}\\
+\bun,\alpha\models\cn{non}(m)
+&\mbox{iff $\fn{non}(\bun,\alpha(m))$;}\\
+\bun,\alpha\models\cn{uniq}(m,n)
+&\mbox{iff $\fn{uniq}(\bun,\alpha(m),\alpha(n))$;}\\
+\bun,\alpha\models\cn{sends}(n,m)
+&\mbox{iff $\evt_{\bun_\ssp}(\alpha(n))=\outbnd\alpha(m)$.}
+\end{array}$$
+\caption{Satisfaction}\label{fig:satisfaction}
+\end{figure}
+
+For bundle~$\bun$, variable assignment~$\alpha$, and
+formula~$\Phi$, satisfaction $\bun,\alpha\models\Phi$ is defined
+using the semantics for atomic formulas specified in
+Figure~\ref{fig:satisfaction}.  A bundle~$\bun$ is described by a
+skeleton iff the skeleton's sentence~$\Phi$ is modeled by~$\bun$,
+written $\bun\models\Phi$.
+
+\section{Message Model}\label{sec:message model}
+
+Typically, messages are modeled by elements of an order-sorted
+algebra~\cite{GoguenMeseguer92}. An order-sorted algebra is a
+generalization of a many-sorted algebra in which sorts may be
+partially ordered.  The carrier sets associated with ordered sorts are
+related by the subset relation.
+
+\begin{figure}
+$$\begin{array}{ll@{{}\typ{}}ll}
+\mbox{Sorts:}&
+\multicolumn{3}{l}{\mbox{$\srt{M}$, $\srt{A}$,
+    $\srt{S}$, $\srt{D}$, $\srt{E}$}}\\
+\mbox{Subsorts:}&
+\multicolumn{3}{l}{\mbox{$\srt{A}<\srt{M}$, $\srt{S}<\srt{M}$,
+    $\srt{D}<\srt{M}$, $\srt{E}<\srt{M}$}}\\
+\mbox{Operations:}&(\cdot,\cdot)&\srt{M}\times\srt{M}\to\srt{M}& \mbox{Pairing}\\
+&\enc{\cdot}{(\cdot)}&\srt{M}\times\srt{A}\to\srt{M}&\mbox{Asymmetric encryption}\\
+&\enc{\cdot}{(\cdot)}&\srt{M}\times\srt{S}\to\srt{M}&\mbox{Symmetric encryption}\\
+&\#&\srt{\srt{M}}\to\srt{M}& \mbox{Hashing}\\
+&\invk{(\cdot)}&\srt{A}\to\srt{A}& \mbox{Asymmetric key inverse}\\
+&\invk{(\cdot)}&\srt{S}\to\srt{S}& \mbox{Symmetric key inverse}\\
+&\cn{a}_i,\cn{b}_i&\srt{A}& \mbox{Asymmetric key constants}\\
+&\cn{s}_i&\srt{S}& \mbox{Symmetric key constants}\\
+&\cn{d}_i&\srt{D}& \mbox{Data constants}\\
+&\cn{e}_i&\srt{E}& \mbox{Text constants}\\
+&\tg{i}&\srt{M}& \mbox{Tag constants}\\
+\mbox{Equations:}&\multicolumn{2}{l}{\invk{\cn{a}_i}=\cn{b}_i\quad
+\invk{\cn{b}_i}=\cn{a}_i}
+&(i\in\nat)\\
+&\multicolumn{2}{l}{\all{k\typ\srt{A}}\invk{(\invk{k})}=k}
+&\all{k\typ\srt{S}}\invk{k}=k
+\end{array}$$
+\caption{Crypto Algebra Signature}\label{fig:algebra signature}
+\end{figure}
+
+Figure~\ref{fig:algebra signature} shows the signature of the algebra
+used in examples in this paper.  Sort~$\srt{M}$ is the sort of all
+messages.  Messages of sort~$\srt{A}$ (asymmetric keys),
+sort~$\srt{S}$ (symmetric keys), sort~$\srt{D}$ (data), and
+sort~$\srt{E}$ (text) are called \emph{atoms}.  Messages are atoms,
+tag constants, or constructed using encryption $\enc{\cdot}{(\cdot)}$,
+hashing $\#(\cdot)$, and pairing $(\cdot,\cdot)$, where the comma
+operation is right associative and parentheses are omitted when the
+context permits.
+
+The algebra~{\alg} is the initial quotient term algebra over the
+signature.  The canonical representative for each element in the
+algebra is the term that contains no occurrences of the inverse
+operation~$\invk{(\cdot)}$.  At times, we conflate a message with its
+canonical representative.  The carrier set~$\alg_\srt{M}$ for sort
+\srt{M} is what is used to instantiate strand spaces with transitions.
+For sort~$S$ in the signature, we write $m\typ S$ for $m\in\alg_S$.
+For skeleton formulas, $\bun,\alpha\models m\typ S$ iff
+$\alpha(m)\in\alg_S$.  For strands and nodes, sorts~\srt{Z}
+and~\srt{N} have been added with the property that $\bun,\alpha\models
+z\typ\srt{Z}$ iff $\alpha(z)\in\strands(\ssp_\bun)$ and
+$\bun,\alpha\models n\typ\srt{N}$ iff $\alpha(n)\in\nodes(\ssp_\bun)$.
+
+A message~$m_0$ is \emph{carried by}~$m_1$, written $m_0\sqsubseteq
+m_1$ iff~$m_0$ can be extracted from a reception of~$m_1$, assuming
+plaintext is extractable from encryptions.  In other
+words,~$\sqsubseteq$ is the smallest reflexive, transitive relation
+such that $m_0\sqsubseteq m_0$, $m_0\sqsubseteq (m_0, m_1)$,
+$m_1\sqsubseteq (m_0, m_1)$, and $m_0\sqsubseteq\enc{m_0}{m_1}$.
+
+\begin{figure}
+$$\begin{array}{r@{{}={}}l}
+\fn{create}(m\typ\base)&\outbnd m\qquad\fn{tag}_i=\outbnd\tg{i}\\
+\fn{pair}(m_0\typ\srt{M}, m_1\typ\srt{M})&
+\inbnd m_0\Rightarrow\inbnd m_1\Rightarrow\outbnd (m_0,m_1)\\
+\fn{sep}(m_0\typ\srt{M}, m_1\typ\srt{M})&
+\inbnd (m_0, m_1)\Rightarrow\outbnd m_0\Rightarrow\outbnd m_1\\
+\fn{enc}(m\typ\srt{M}, k\typ\srt{A}|\srt{S})&
+\inbnd m\Rightarrow\inbnd k\Rightarrow\outbnd \enc{m}{k}\\
+\fn{dec}(m\typ\srt{M}, k\typ\key)&
+\inbnd \enc{m}{k}\Rightarrow\inbnd\invk{k}\Rightarrow\outbnd m\\
+\fn{hash}(m\typ\srt{M})&
+\inbnd m\Rightarrow\outbnd \#m
+\end{array}$$
+\caption{Adversary Traces}\label{fig:adversary}
+\end{figure}
+
+The roles that constrain adversarial behavior are defined by the
+functions in Figure~\ref{fig:adversary}.  The role defined by the
+function is all the traces that it generates.  For example, the role
+associated with the function \fn{pair} is $\{\fn{pair}(m_0,m_1)\mid
+m_0,m_1\typ\srt{M}\}$.  For the encryption related roles, $k\typ\key$
+asserts that~$k$ is either a symmetric or asymmetric key.  For the
+create role, $m\typ\base$ asserts that~$m$ is an atom.
+
+\section{TPM State Model}
+\label{sec:tpm}
+
+The model of a Trusted Platform Module (TPM) is very simple.  It
+models a TPM as a single Platform Configuration Register (PCR) that
+can be extended and reset.  TPM state is modeled by augmenting the
+algebra signature with a sort \srt{Q} for the states, and two
+additional operations.
+%%
+$$\begin{array}{l@{{}\typ{}}ll}
+\boot&\srt{Q}&\mbox{Boot state}\\
+\extend&\srt{M}\times\srt{Q}\to\srt{Q}&\mbox{Extend state}
+\end{array}$$
+%%
+The set of states in this model is $\sta=\alg_\srt{Q}$.
+
+A TPM state is encoded as a message that represents the PCR associated
+with the state.
+$$\begin{array}{r@{{}={}}l}
+\multicolumn{2}{c}{\encode\in\sta\to\msg}\\
+\encode(\boot)&\cn{g}_0\\
+\encode(\extend(m, q))&\#(m,\encode(q))
+\end{array}$$
+The PCR for the boot state is known to the adversary.
+
+The TPM transition relation
+is~$\tran\subseteq\sta\times\sta$, where
+\[\begin{array}{llr@{{}={}}lr}
+  (q_0, q_1)\in\tran\qquad
+&\text{iff}&q_1&\boot & \mbox{(boot)} \\
+&\text{or}&\some{m\in\msg} q_1& \cn{ex}(m,q_0) &
+\mbox{(extend)} \\
+&\text{or}& q_0 &q_1&\qquad
+\mbox{(observe)}
+\end{array}\]
+Observation transitions are used with the TPM quote operation.  The
+set of TPM initial states $\init\subseteq\sta$ is the
+singleton~$\{\boot\}$.
+
+Useful properties about paths through state space are given by the Init
+Extend and the Prefix Extend Lemmas.
+
+%% init_extend: lemma
+%%   forall(p: path, x: mesg, st: state, k: nat):
+%%     p(k)`1 = extend(x, st) implies
+%%       exists(j: nat):
+%%         j < k and p(j)`1 = st and p(j+1)`1 = extend(x, st)
+
+\begin{lem}[Init Extend]\label{lem:init extend}
+\begingroup\rm
+\[\begin{array}{l}
+\all{\pth,m\typ\srt{M},q\typ\srt{Q},k\in\nat}\\
+\quad\pth(k)=\extend(m,q)\\
+\qquad\supset\some{j\in\nat}j<k\\
+\qquad\quad{}\land\pth(j)=q\land\pth(j+1)=\extend(m,q)
+\end{array}\]
+\endgroup
+\end{lem}
+
+%% prefix_extend: lemma
+%%   forall(p: path, x: mesg, st: state, i, k: nat):
+%%     i <= k and p(k)`1 = extend(x, st) implies
+%%       subterm(p(i)`1, p(k)`1) or
+%%       exists(j: nat):
+%%         i <= j and j < k and p(j)`1 = st and p(j+1)`1 = extend(x, st)
+
+\begin{lem}[Prefix Extend]\label{lem:prefix extend}
+\begingroup\rm
+\[\begin{array}{l}
+\all{\pth,m\typ\srt{M},q\typ\srt{Q},i,k\in\nat}i\leq k\\
+\quad{}\land\pth(k)=\extend(m,q)\\
+\qquad\supset\mbox{$\pth(i)$ is a subterm of $\pth(k)$}\\
+\qquad\quad{}\lor\some{j\in\nat}
+i\leq j<k\\
+\qquad\qquad{}\land\pth(j)=q\land\pth(j+1)=\extend(m,q)
+\end{array}\]
+\endgroup
+\end{lem}
+
+These two lemmas are used to prove the one employed to prove the
+security goal in the envelope protocol.
+
+%% state_split: lemma
+%%   forall(p: path, x, x0, x1: mesg, st: state, i, k: nat):
+%%     i <= k and x0 /= x1 and
+%%     p(i)`1 = extend(x0, extend(x, st)) and
+%%     p(k)`1 = extend(x1, extend(x, st)) implies
+%%       exists(j0, j1: nat):
+%%         j0 < i and i < j1 and j1 < k and
+%%         p(j0)`1 = st and p(j0+1)`1 = extend(x, st) and
+%%         p(j1)`1 = st and p(j1+1)`1 = extend(x, st)
+
+\begin{lem}[State Split]\label{lem:state split}
+\begingroup\rm
+$$\begin{array}{l}
+\all{\pth,m,m_0,m_1\typ\srt{M},q\typ\srt{Q},i,k\in\nat}i\leq k\\
+\quad{}\land\pth(i)=\extend(m_0,\extend(m,q))\\
+\quad{}\land m_0\neq m_1\land\pth(k)=\extend(m_1,\extend(m,q))\\
+\qquad\supset\some{j_0,j_1\in\nat}j_0<i<j_1<k\\
+\qquad\quad{}\land\pth(j_0)=\pth(j_1)=q\\
+\qquad\quad{}\land\pth(j_0+1)=\pth(j_1+1)=\extend(m,q)
+\end{array}$$
+\endgroup
+\end{lem}
+
+\subsection{A Bridge Lemma}\label{sec:bridge}
+
+A \emph{bridge} lemma imports a lemma from the state model into strand
+spaces with transitions.  The bridge lemma for Lemma~\ref{lem:init
+  extend} and its proof follow.
+
+  %% init_extend_bridge: lemma
+  %% forall(bu: bundle, n: (tran_node?(bu`space)), st: state, x: mesg):
+  %%   sync_at(bu`space)(n)`1 = extend(x, st) implies
+  %%     exists(n0: (tran_node?(bu`space))):
+  %%       sync_at(bu`space)(n0) = (st, extend(x, st)) and
+  %%       prec?(bu)(n0, n)
+
+\begin{lem}[Init Extend Bridge]\label{lem:init extend bridge}
+\[
+\begin{array}{l}
+  n\in\nnodes(\bun)\land\evt_\ssp(n)=\neutral(\extend(m,q_0),q_1)\\
+  \quad\supset\some{n'}n'\prec n\land
+  \evt_\ssp(n')=\neutral(q_0,\extend(m,q_0))
+\end{array}
+\]
+\end{lem}
+\begin{proof}
+  Because {\bun} is a bundle, Equations~\ref{eq:paths}
+  and~\ref{eq:orderings} apply.  Instantiating Equation~\ref{eq:paths}
+  with~$n$ adds the assumption
+  \[\evt_\ssp(n)=\neutral(\pth(f(n)), \pth(f(n)+1)),\]
+  so $\pth(f(n))=\extend(m,q_0)$.
+  Instantiating Lemma~\ref{lem:init extend} adds the assumption
+  \[\some{j\in\nat}j<f(n)\land\pth(j)=q_0\land\pth(j+1)=\extend(m,q_0).\]
+  Since an existential in an assumption is equivalent to a universal
+  over an implication, we specialize to add three assumptions,
+  \[j<f(n)\land\pth(j)=q_0\land\pth(j+1)=\extend(m,q_0).\]
+  Function~$f$ is bijective and therefore surjective.  There exists
+  an~$n'$ such that $f(n')=j$.  Eliminating~$j$ gives
+  \[f(n')<f(n)\land\pth(f(n'))=q_0\land\pth(f(n')+1)=\extend(m,q_0).\]
+  Instantiating Equation~\ref{eq:orderings} with~$n'$ and~$n$ gives
+  $n'\prec n$.  Note that this instantiation makes use of the backward
+  implication of Equation~\ref{eq:orderings}.  Instantiating
+  Equation~\ref{eq:paths} with~$n'$ adds
+  \[\evt_\ssp(n')=\neutral(\pth(f(n')), \pth(f(n')+1)),\]
+  so $\evt_\ssp(n')=\neutral(q_0,\extend(m,q_0))$.  Instantiating the
+  conclusion of the lemma with~$n'$ completes the proof.
+\end{proof}
+
+\subsection{State Split Protocol Analysis}\label{sec:state split}
+
+The State Split Protocol is a greatly simplified version of the
+Envelope Protocol.  An analysis of the Envelope Protocol is described
+in~\cite{RamsdellEtAl14}.  The State Split Protocol shares interesting
+analysis issues.
+
+The protocol uses tag~$\gtag{quo}=\cn{g}_1$ for ``quote'',
+$\gtag{obt}=\cn{g}_2$ for ``obtain'', and $\gtag{ref}=\cn{g}_3$ for
+``refuse''.  The traces of the non-adversarial roles are
+\[
+\begin{array}{l@{{}={}}l}
+\fn{boot}(q\typ\srt{Q})&\neutral(q,\boot)\\
+\fn{extend}(q\typ\srt{Q}, m\typ\srt{M})&
+\inbnd m\Rightarrow\neutral(q,\extend(m, q))\\
+\fn{quote}(q\typ\srt{Q}, t\typ\srt{E},k\typ\srt{A})&
+\inbnd t\Rightarrow\neutral(q, q)\Rightarrow
+\outbnd\fn{mkq}(t,q,k)
+\end{array}
+\]
+where the make quote function is $\fn{mkq}(t,q,k)=\enc{\#(\gtag{quo},
+  \encode(q), t)}{k}$.  In this section, we consider only bundles
+that are runs of this protocol.
+
+\begin{figure}
+$$\xymatrix{
+\txt{\strut }&\txt{\strut }&\txt{\strut quote}&\txt{\strut quote}&\txt{\strut extend}&\txt{\strut extend}\\
+&&\bullet\ar@{=>}[d]&\bullet\ar@{=>}[d]&\bullet\ar@{=>}[d]&\bullet\ar@{=>}[d]\\
+&&\bullet\ar@{=>}[d]&\bullet\ar@{=>}[d]&\bullet\ar@/^/[ll]&\bullet\ar@/^/[ll]\\
+\bullet\ar@{=>}[d]&\bullet\ar@{=>}[d]&\bullet\ar@/^/[ll]&\bullet\ar@/^/[ll]&&\\
+\bullet&\bullet&&&&}$$
+\caption{Result Skeleton}\label{fig:result}
+\end{figure}
+
+\begin{figure}
+\[
+\begin{array}{l}
+\all{n_0, n_1\typ\srt{N}, q\typ\srt{Q}, t_0,t_1\typ\srt{E},
+k\typ\srt{A}}\\
+\quad\cn{send}(n_0, \fn{mkq}(t_0, \extend(\gtag{obt}, q),k))\land\cn{non}(k)\\
+\qquad\land\cn{send}(n_1, \fn{mkq}(t_1, \extend(\gtag{ref}, q),k))
+\\
+\qquad\supset\some{z_0,z_1,z_2, z_3\typ\srt{Z}}\\
+\qquad\quad n_0=(z_0,2)\land n_1=(z_1,2)\\
+\qquad\qquad{}\land\cn{htin}(z_0, 3, \fn{quote}(q,\gtag{obt}, k))\\
+\qquad\qquad{}\land\cn{htin}(z_1, 3, \fn{quote}(q,\gtag{ref}, k))\\
+\qquad\qquad{}\land\cn{htin}(z_2, 2, \fn{extend}(q,\gtag{obt}))\\
+\qquad\qquad{}\land\cn{htin}(z_3, 2, \fn{extend}(q,\gtag{ref}))\\
+\qquad\qquad{}\land(z_2,1)\ll(z_0,1)
+\land(z_3,1)\ll(z_1,1)\\
+\qquad\qquad{}\land((z_2,1)\ll(z_3,1)\lor(z_3,1)\ll(z_2,1))
+\end{array}
+\]
+\caption{Shape Analysis Sentence}\label{fig:sas}
+\end{figure}
+
+The point-of-view skeleton is described by
+\[
+\begin{array}{l}
+\some{n_0, n_1\typ\srt{N}, q\typ\srt{Q}, t_0,t_1\typ\srt{E},
+k\typ\srt{A}}\\
+\quad\cn{send}(n_0, \fn{mkq}(t_0, \extend(\gtag{obt}, q),k))\land\cn{non}(k)\\
+\qquad\land\cn{send}(n_1, \fn{mkq}(t_1, \extend(\gtag{ref}, q),k))
+\end{array}
+\]
+A diagram of the result skeleton is in Figure~\ref{fig:result}, and
+its associated shape analysis sentence is in Figure~\ref{fig:sas}.
+Note that in all bundles of the result skeleton, the transition nodes
+are totally ordered, but the transition nodes in the result skeleton
+are not.  Thus the result skeleton is not realized.
+
+Let's compare a state threading analysis of the State Split Protocol
+with a hypothetical analysis using strand spaces with transitions.
+The first point to make is that bridge lemmas are simpler and more
+obvious because of the fact that a state synchronization event is a
+transition, in contrast with a node annotation which is a set of
+transitions.  For this problem, Lemma~\ref{lem:init extend bridge} is
+the relevant bridge lemma.  This bridge lemma is used to derive
+Lemma~\ref{lem:quote extend implies extend}, which is satisfied only
+in bundles that are runs of the protocol.
+
+\begin{lem}[Quote Extend Implies Extend]
+\label{lem:quote extend implies extend}
+\begingroup\rm
+\[\begin{array}{l}
+\all{z\typ\srt{Z},q\typ\srt{Q},m\typ\srt{M},t\typ\srt{E}, k\typ\srt{A}}\\
+\quad\cn{htin}(z, 3, \fn{quote}(\extend(m,q),t,k))\\
+\qquad\supset\some{z_0\typ\srt{Z}}
+\cn{htin}(z_0, 2, \fn{extend}(q, m))
+\land(z_0,1)\ll(z,1)
+\end{array}
+\]
+\endgroup
+\end{lem}
+
+For this problem, the quote strands are inferred using ordinary
+authentication tests.  The extend strands are inferred using the lemma
+above.  The remaining node orderings are derived using the fact that
+transition nodes are totally ordered.
+
+The strand spaces with transitions approach follows closely the state
+threading approach used in~\cite{RamsdellEtAl14}.  In the state
+threading approach, authentication tests occur at nodes carrying a
+representation of the state.  In the strand spaces with transitions
+approach, those tests occur at transition nodes.  In particular, in
+this problem, after inferring the existence of the quote strands,
+the question is how to explain the first state in the second node of a
+quote strand.  The answer is to augment with an extend strand.
+
+\section{The \bun, \comp, $\phi$ Model}\label{sec:bcphi}
+
+Strand spaces with transitions is a natural way of adding state to
+strand spaces.  To bundles that contain message-passing edges, it adds
+state-passing edges, and the rest follows.  However, the
+state-passing model has a serious shortcoming.  State and message-passing
+are intertwined in a way that makes it hard to reuse results on
+slightly different problems.
+
+The \bun, \comp, $\phi$ model~\cite{Guttman12} was designed to
+address this shortcoming.  In this model, states are related using a
+labeled transition system.  The labels~{\lab} are messages
+$(\lab\subseteq\msg)$, and the transition system~\cbar{\tran} is in
+$\sta\times\lab\times\sta$.  A computation $\comp=(\labs,\pth)$ is a
+pair where {\labs} is an infinite sequence of labels, {\pth} is a
+path, and $\all{i\in\nat}(\pth(i),\labs(i),\pth(i+1))\in\cbar{\tran}$.
+In general, variables related to ones defined by strand spaces with
+transitions will be barred.
+
+In the \bun, \comp, $\phi$ model, a state synchronization event is a
+label, not a transition.  A node is a \emph{neutral node}
+in~$\cbar\ssp$ iff the event at the node is a state synchronization.
+The set of neutral nodes of~$\cbar\ssp$ is $\cnnodes(\cbar\ssp)$.  The
+bundle $\cbar{\bun}=(\cbar\ssp,\to)$ omits the state-passing
+edges~$\leadsto$ from its associated graph along with the constraints
+associated with state-passing.  In short, a bundle~\cbar{\bun} is just
+a strand space bundle augmented with neutral nodes.
+
+Let $\comp=(\labs,\pth)$ and $\ell$ be the number of neutral nodes in
+\cbar{\bun}.  We define \cbar{\bun}, \comp, $\phi$ to be a
+\emph{compatible triple} iff $\phi\in\cnnodes(\cbar\ssp)\to\zed_\ell$
+and is bijective,
+\begin{equation}\label{eq:cbar orderings}
+\all{n_0,n_1\in\cnnodes(\cbar\ssp)}n_0\prec n_1\supset\phi(n_0)<\phi(n_1),
+\end{equation}
+and
+\begin{equation}\label{eq:cpar paths}
+\all{n\in\cnnodes(\cbar\ssp)}\evt_{\cbar\ssp}(n)=\neutral\labs(\phi(n)).
+\end{equation}
+A bundle \cbar{\bun} is \emph{compatible with} {\comp} iff there
+exists a~$\phi$ such that \cbar{\bun}, \comp, $\phi$ is a compatible
+triple.  Bundle \cbar{\bun} is a \emph{compatible bundle} iff it is
+compatible with some computation \comp.  All of these definitions are
+from~\cite{Guttman12}.
+
+We investigate the relationship between strand spaces with labels and
+strand spaces with transitions while seeking to preserve
+Lemma~\ref{lem:carried originates}.  As a first pass, we assume the
+message algebra has a pairing operation.  Let $\eran=\ran(\encode)$ be
+the range of~\encode, and $\lab=\{(m_0,m_1)\mid m_0,m_1\in\eran\}$ so
+that a label encodes a transition.  With this choice of labels, the
+definition of appears and origination in strand spaces with labels is
+obvious, and Lemma~\ref{lem:carried originates} applies.
+
+Let~$\Lambda(\bun)$ be the strand spaces with labels bundle that
+results from deleting all state-passing edges~$\leadsto$, and
+replacing state synchronization events of the form $\neutral(q_0,q_1)$
+with $\neutral(\encode(q_0),\encode(q_1))$.
+
+\begin{lem}[Faithful Labels]\label{lem:faithful labels}
+  If {\bun} is a bundle, then $\Lambda(\bun)$ is a compatible bundle.
+\end{lem}
+\begin{proof}
+  By the properties of a bundle, there exists a bijection~$f$ where
+  $f\in\nnodes(\cbar\ssp)\to\zed_\ell$.  By Equation~\ref{eq:paths}, there
+  is a path~$\pth$ that can be extended into a computation~{\comp}
+  using the chosen labeling.  $\Lambda(\bun)$, \comp, $f$ are a
+  compatible triple.
+\end{proof}
+
+Notice that Equation~\ref{eq:orderings} is a biconditional but
+Equation~\ref{eq:cbar orderings} is an implication.  The addition of
+the state-passing edges is what enables the strengthening of the
+implication to a biconditional.  Therefore, the proof a bridge lemma
+in~\bun, such as the one for Lemma~\ref{lem:init extend bridge}, also
+applies to~$\Lambda(\bun)$.
+
+Assume the encoding function is injective.  The PCR encoding function
+from Section~\ref{sec:tpm} is injective.  Let decoding function
+$\decode\in\eran\to\sta$ be the inverse of~\encode.
+
+Let $\Delta(\cbar\bun,\comp,\phi)$ be result of replacing the events
+in \cbar{\bun} of the form $\neutral(m_0, m_1)$ with
+$\neutral(\decode(m_0),\decode(m_1))$, and adding edges of the form
+$n_0\leadsto n_1$ when $n_0,n_1\in\dom\phi$ and
+$\phi(n_0)+1=\phi(n_1)$.
+
+\begin{lem}[Faithful Transitions]\label{lem:faithful transitions}
+  If {\encode} is injective and {\cbar\bun}, \comp, $\phi$ is a
+  compatible triple, then $\Delta(\cbar\bun,\comp,\phi)$ is a bundle.
+\end{lem}
+\begin{proof}
+  By Equation~\ref{eq:next} on transition node orderings.
+\end{proof}
+
+\subsection{Constraints on Labels}\label{sec:constraints on labels}
+
+Of course, encoding transitions as labels defeats the whole purpose of
+the \bun, \comp, $\phi$ model!  State and message-passing are
+intertwined as in the state-passing model, all be it in an encoded
+form.
+
+To satisfy Lemma~\ref{lem:carried originates}, we add two relations
+${\sqsubseteq_0,\sqsubseteq_1}\in\msg\times\lab$ with the property
+that
+for all $q_0,q_1\in\sta$, $m_0\in\lab$, and $m\in\msg$,
+\begin{equation}\label{eq:sqsubseteq0}
+m\sqsubseteq_0m_0\mbox{ iff }(q_0,m_0,q_1)\in\cbar{\tran}\land
+m\sqsubseteq q_0
+\end{equation}
+and
+\begin{equation}\label{eq:sqsubseteq1}
+m\sqsubseteq_1m_0\mbox{ iff }(q_0,m_0,q_1)\in\cbar{\tran}\land
+m\sqsubseteq q_1.
+\end{equation}
+
+The definition of appears becomes: a message~$m$ \emph{appears} in
+trace~$c$ at index~$i$ iff
+\begin{enumerate}
+\item $c(i)$ is the transmission~$\outbnd m_0$, $m$ is carried
+  by~$m_0$, and~$m$ is not carried by any event earlier in the trace,
+  or
+\item\label{item:appears sync} $c(i)$ is the synchronization event
+  $\neutral m_0$, $m\sqsubseteq_1 m_0$, $m\not\sqsubseteq_0 m_0$,
+  and~$m$ is not carried by any event earlier in the trace,
+\end{enumerate}
+where a message~$m$ is carried in event $\neutral m_0$ iff
+$m\sqsubseteq_0 m_0$ or $m\sqsubseteq_1 m_0$.  (Only
+Item~\ref{item:appears sync} changed.)  The definition of origination
+requires a similar modification.
+
+Consider the following set of labels for the TPM model in
+Section~\ref{sec:tpm}.  The labels use tag~$\gtag{btl}=\cn{g}_4$ for
+``boot label'', $\gtag{exl}=\cn{g}_5$ for ``extend label'', and
+$\gtag{obl}=\cn{g}_6$ for ``observe label''.  The set of labels~{\lab}
+is
+\[\begin{array}{r@{{}\in\lab\quad\mbox{if}\quad}l}
+(\gtag{btl},m_0)&m_0\in\eran\\
+(\gtag{exl},m,m_0)&m\in\msg\land m_0\in\eran\\
+(\gtag{obl},m_0)&m_0\in\eran
+\end{array}\]
+
+The TPM labeled transition relation
+is~$\cbar\tran\subseteq\sta\times\lab\times\sta$, where
+\[\begin{array}{llr@{{}={}}lr}
+  (q_0, m_0, \boot)\in\cbar\tran
+&\text{if}&m_0&(\gtag{btl}, \encode(q_0)) & \mbox{(boot)} \\
+(q_0, m_0, \cn{ex}(m,q_0))\in\cbar\tran
+&\text{if}&m_0& (\gtag{exl}, m, \encode(q_0))&
+\mbox{(extend)} \\
+(q_0, m_0, q_0)\in\cbar\tran&\text{if}& m_0 &(\gtag{obl},\encode(q_0))&\qquad
+\mbox{(observe)}
+\end{array}\]
+
+The relations ${\sqsubseteq_0,\sqsubseteq_1}\in\msg\times\lab$ are
+\[\begin{array}{r@{{}={}}l@{\quad}r@{{}={}}l}
+m_1 \sqsubseteq_0(\gtag{btl},m_0)&
+m_1 \sqsubseteq m_0
+& m_1 \sqsubseteq_1(\gtag{btl},m_0)&
+\fn{false}\\
+m_1 \sqsubseteq_0(\gtag{exl},m,m_0)&
+m_1 \sqsubseteq m_0
+& m_1 \sqsubseteq_1(\gtag{exl},m,m_0)&
+m_1 \sqsubseteq \#(m,m_0)\\
+m_1 \sqsubseteq_0(\gtag{obl},m_0)&
+m_1 \sqsubseteq m_0
+& m_1 \sqsubseteq_1(\gtag{obl},m_0)&
+m_1 \sqsubseteq m_0
+\end{array}\]
+
+In this instance of strand spaces with labels, Lemma~\ref{lem:carried
+  originates} applies, however, have we made any real progress toward
+partitioning state and message-passing?  The answer is no because a
+label still encodes a transition.
+%
+\[\begin{array}{r@{\quad\Longrightarrow\quad}l}
+(\gtag{btl},m_0)&(\decode(m_0),\boot)\\
+(\gtag{exl},m,m_0)&(\decode(m_0),\extend(m,\decode(m_0)))\\
+(\gtag{obl},m_0)&(\decode(m_0),\decode(m_0))
+\end{array}\]
+
+In general, for $j=0,1$, suppose $\sqsubseteq_j$ has the form
+$m\sqsubseteq_j m_0$ iff $m\sqsubseteq g_j(m_0)$, where
+$g_j\in\lab\to\msg$.  When $g_j(m_0)=\encode(q_j)$,
+Equations~\ref{eq:sqsubseteq0} and~\ref{eq:sqsubseteq1} are satisfied
+and we say each label encodes a transition.
+
+\[\ast\ast\ast\]
+
+\begin{note}
+  At this point in the text, I would like to describe a labeling that
+  possesses $\sqsubseteq_0$ and $\sqsubseteq_1$, but does not encode
+  transitions.  I do not have an example.  Do you?  Could it be that
+  there are none?  How would one formalize the previous question?
+\end{note}
+
+\subsection{Protocols}\label{sec:protocols}
+
+\begin{sloppypar}
+Protocols have not been mentioned, except by way of the example in
+Section~\ref{sec:state split}.  Here is one possible use.  The labeled
+transition relation in Section~\ref{sec:constraints on labels} has the
+property that both $(\boot, (\gtag{btl}, \encode(\boot)),
+\encode(\boot))$ and $(\boot, (\gtag{obl}, \encode(\boot)),
+\encode(\boot))$ are in the transition relation.  If a bundle~{\bun}
+contains one event of the form $\neutral(\boot,\boot)$, there are two
+strand spaces with labels bundles faithful to it in the sense of
+Lemma~\ref{lem:faithful labels}.  If the bundles are runs of a
+protocol, the role assignment might eliminate one of the two possible
+translations.
+\end{sloppypar}
+
+\section{Guarded Transitions}\label{sec:guarded transitions}
+
+A transition relation~$t\in\tran$ is \emph{total} if
+$\all{q_0\in\sta}\some{q_1\in\sta}(q_0,q_1)\in t$, that is, there is
+a state that follows every state.  The TPM transition relation in
+Section~\ref{sec:tpm} is total.
+
+In this section, we explore an example in which the transition
+relation is not total.  The lack of totality causes a problem when
+defining the roles of its protocol.  A synchronization event might not
+be in the transition relation.
+
+The problem is solved by modifying a synchronization event to include
+a guard and amending Equation~\ref{eq:paths}.  With
+$\bool=\{\truth,\falsehood\}$, a guarded state synchronization event
+is~$\neutral g$, where $g\in\gua(\tran)$,
+$\gua(\tran)\subseteq\bool\times\sta\times\sta$, and
+\[(b,q_0,q_1)\in\gua(\tran)\mbox{ iff }b\supset (q_0,q_1)\in\tran.\]
+Equation~\ref{eq:paths} is amended to require that the guard be true in
+a path of a bundle.
+\begin{equation}\label{eq:guarded paths}
+\all{n\in\nnodes(\ssp)}\evt_\ssp(n)=\neutral(\truth,\pth(f(n)), \pth(f(n)+1)).
+\end{equation}
+In all other cases, the guard is ignored.  A motivating example is
+the Wrap-Decrypt Protocol.
+
+\subsection{Wrap-Decrypt State}\label{sec:wrap-decryt state}
+
+The state in the Wrap-Decrypt Protocol is a device that creates,
+stores, and shields symmetric keys.  The device offers two operations
+using the keys it stores.  It can encrypt a key using a key in the
+store, called wrapping, or it can decrypt a message using a key.
+
+A goal of this device is that all of its keys remain shielded within
+it.  A key could be leaked if a key is used to wrap itself, and then
+the wrapped key is decrypted.  We prove this attack is impossible
+using strand spaces with guarded transitions.  But first, we naively
+assume guards are unnecessary.
+
+The device enforces its security policy by associating an attribute
+with each of its keys.  A key has one of three attributes, \ainit,
+\awrap, and \adecrypt.  A key is created with attribute \ainit,
+wrapping is allowed when a key has attribute \awrap, and decrypting
+is allowed when a key has attribute \adecrypt.
+
+Attributes can be changed with the set wrap and set decrypt operation.
+The device policy is that set wrap succeeds as long as key's attribute
+is not {\adecrypt} and set decryt succeeds as long as key's attribute
+is not \awrap.  The remaining available operation of the device is
+key making.
+
+The state of the device is modeled by a finite sequence of attributes.
+For state~$q$, the allocated addresses of~$q$ are in
+$\addr(q)=\dom(q)$, the domain of~$q$.  The key associated with
+address~$a$ is~$\cn{s}_a$.  The handle of the key at~$a$ is
+$\#\cn{s}_a$.  The initial state is the empty sequence.
+
+  %% trans(st: state, nx: state): bool =
+  %%   nx = add(init_attr, st) or                       % Make
+  %%   exists(a: addr(st)):
+  %%     (st(a) /= decrypt_attr and
+  %%      nx = st with [`seq(a) := wrap_attr]) or       % Set wrap
+  %%     (st(a) /= wrap_attr and
+  %%      nx = st with [`seq(a) := decrypt_attr]) or    % Set decrypt
+  %%     (nx = st and st(a) = wrap_attr) or             % Wrap
+  %%     (nx = st and st(a) = decrypt_attr)             % Decrypt
+
+The transition relation {\tran} is
+\[\begin{array}{l@{}ll}
+\multicolumn{2}{l}{(q_0,q_1)\in\tran
+\mbox{ iff }q_1=q_0\append{\seq{\ainit}}}&\mbox{(make)}\\
+\quad{}\lor\some{a\in\addr(q_0)}&q_0(a)\neq\adecrypt\land
+q_1=q_0[a\leftarrow\awrap]&\mbox{(set wrap)}\\
+&\quad{}\lor q_0(a)\neq\awrap\land
+q_1=q_0[a\leftarrow\adecrypt]&\mbox{(set decrypt)}\\
+&\quad{}\lor q_0(a)=\awrap\land
+q_1=q_0&\mbox{(wrap)}\\
+&\quad{}\lor q_0(a)=\adecrypt\land
+q_1=q_0&\mbox{(decrypt)},
+\end{array}\]
+where $q_0\append{\seq{\ainit}}$ is the result of appending
+attribute {\ainit} to the end of~$q_0$ and
+$q_0[a\leftarrow\awrap]$ is the result of updating~$q_0$ so that
+{\awrap} is at address~$a$.
+
+The encoding function is the concatenation of all of the handles in
+the state.  Thus, handles are carried but not their keys.  In this
+case, the encoding function is not injective.
+
+There is only one address for each key in a state.
+\begin{equation}\label{eq:uniqueness}
+  \begin{array}{l}
+    \all{q\in\sta,k\typ\srt{S},a_0,a_1\in\addr(q)}\\
+    \quad k=\cn{s}_{a_0}{}\land k=\cn{s}_{a_1}\supset a_0=a_1.
+  \end{array}
+\end{equation}
+
+Let $\fn{hk}(q,k)(a)= a\in\addr(q)\land k=\cn{s}_a$.  In words,
+$\fn{hk}(q,k)$ is a predicate on addresses that is true when the
+address is an address of key~$k$ in state~$q$.  Using~\fn{hk},
+Equation~\ref{eq:uniqueness} becomes
+%
+\begin{equation}\label{eq:uniqueness alt}
+  \begin{array}{l}
+    \all{q\in\sta,k\typ\srt{S},a_0,a_1\in\nat}\\
+    \quad \fn{hk}(q,k)(a_0)\land\fn{hk}(q,k)(a_1)\supset a_0=a_1.
+  \end{array}
+\end{equation}
+
+A useful way to exploit this property is via the epsilon
+operator~$\epsilon$.  For unary predicate~$p$, $\epsilon p$ is a
+logical term that obeys the axiom $(\some{x}p(x))\supset p(\epsilon p)$.
+
+  %% has_key_epsilon: lemma
+  %%   forall(st: state, k: skey, a: addr(st)):
+  %%     has_key?(st, k)(a) implies
+  %%       a = epsilon(has_key?(st, k))
+
+\begin{lem}[Unique Key Address]\label{lem:epsilon}
+\[
+\begin{array}{l}
+\all{q\in\sta,k\typ\srt{S},a\in\nat}\\
+\quad\fn{hk}(q,k)(a)\supset a=\epsilon(\fn{hk}(q, k)).
+\end{array}
+\]
+\end{lem}
+
+Useful properties about paths through state space are given by the
+State Length Nondecreasing and the Sticky Attribute Lemmas.
+
+  %% state_length_nondecreasing: theorem
+  %%   forall(p: path, i, j: nat):
+  %%     i <= j implies
+  %%       length(p(i)) <= length(p(j))
+
+\begin{lem}[State Length Nondecreasing]\label{lem:nondecreasing}
+\[
+\all{\pth,i,j\in\nat}i\leq j
+\supset|\pth(i)|\leq|\pth(j)|.
+\]
+\end{lem}
+
+This lemma is used to show that when a key exists in a state in a
+path, it will exists in all later states.
+
+  %% sticky_attr: theorem
+  %%   forall(p: path, i, j: nat, a: addr(p(i)), r: attr):
+  %%     i <= j and p(i)(a) = r implies
+  %%       r = init_attr or
+  %%       p(j)(a) = r
+
+\begin{lem}[Sticky Attribute]\label{lem:sticky attribute}
+\[
+\begin{array}{l}
+\all{\pth,i,j\in\nat, a\in\addr(p(i)), r\in\attr}\\
+\quad i\leq j\land\pth(i)(a) = r\land r\neq\ainit\\
+\qquad{}\supset\pth(j)(a)=r
+\end{array}
+\]
+where {\attr} is the set of attributes.
+\end{lem}
+
+\subsection{Wrap-Decrypt Protocol}\label{sec:wrap-decryt protocol}
+
+We first explore the wrap role without guarded transitions.  The
+\fn{wrap} trace receives the handles of two keys and transmits the
+encryption of one by the other.  There is a state synchronization
+event between the receptions and the transmission during which the
+state is observed.
+%
+\[\fn{wrap}(q\typ\srt{Q},k_0,k_1\typ\srt{S})=
+\inbnd\#k_0\Rightarrow\inbnd\#k_1\Rightarrow
+\neutral(q,q)\Rightarrow\outbnd\enc{k_0}{k_1}\]
+
+\begin{figure}
+  \[
+  \begin{array}{r@{}l}
+    \fn{make}(q\typ\srt{Q})={}&\neutral(\truth,q,q\append\seq{\ainit})
+    \Rightarrow\outbnd\#\cn{s}_{|q|}\\[1.2ex]
+    \fn{setwrap}(q\typ\srt{Q},k\typ\srt{S})={}&
+    \left\{
+    \begin{array}{ll}
+        \neutral(\truth,q, q')&\some{a}\fn{hk}(q,k)(a)\land
+        q(a)\neq\adecrypt\\
+        \neutral(\falsehood,q,q)&\mbox{otherwise}
+    \end{array}
+    \right.\\
+    &\mbox{where }q'=q[\epsilon(\fn{hk}(q,k))\leftarrow\awrap]\\[1.2ex]
+    \fn{setdecrypt}(q\typ\srt{Q},k\typ\srt{S})={}&
+    \left\{
+    \begin{array}{ll}
+        \neutral(\truth,q, q')&\some{a}\fn{hk}(q,k)(a)\land
+        q(a)\neq\awrap\\
+        \neutral(\falsehood,q,q)&\mbox{otherwise}
+    \end{array}
+    \right.\\
+    &\mbox{where }q'=q[\epsilon(\fn{hk}(q,k))\leftarrow\adecrypt]\\[1.2ex]
+    \fn{wrap}(q\typ\srt{Q},k_0,k_1\typ\srt{S})={}&
+    \inbnd\#k_0\Rightarrow\inbnd\#k_1\Rightarrow
+    \neutral(b,q,q)\Rightarrow\outbnd\enc{k_0}{k_1}\\
+    &\mbox{where }b={}\begin{array}[t]{@{}l}
+      \some{a}\fn{hk}(st,k_1)(a)\\
+      \quad{}\land q(a)=\awrap
+      \end{array}\\[4ex]
+    \fn{decrypt}(q\typ\srt{Q},m\typ\srt{M},k\typ\srt{S})={}&
+    \inbnd\enc{m}{k}\Rightarrow\inbnd\#k\Rightarrow
+    \neutral(b,q,q)\Rightarrow\outbnd m\\
+    &\mbox{where }b={}\begin{array}[t]{@{}l}
+      \some{a}\fn{hk}(st,k)(a)\\
+      \quad{}\land q(a)=\adecrypt
+      \end{array}
+  \end{array}
+  \]
+  \caption{Wrap-Decrypt Traces}\label{fig:wrap-decrypt traces}
+
+\end{figure}
+
+A problem with this role is there is no way to guarantee that the
+synchronization event in each instance of the role is in the
+transition relation.  As a result, there is no means to restrict
+instances to the case in which key~$k_1$ is in the state~$q$, and the
+attribute of key~$k_1$ is \awrap.
+
+Figure~\ref{fig:wrap-decrypt traces} displays the Wrap-Decrypt Traces
+using guarded transitions.  The guard in the \fn{wrap} trace addresses
+both issues listed above.  The \fn{wrap} trace allows the wrapping of
+keys that are not in the store.  We chose to simplify the trace in
+this way because the simplification has no impact on the security goal
+to be proved in Section~\ref{sec:security goal}.
+
+The \fn{setwrap} trace motivates the use of the~$\epsilon$ operator.
+The context in which~$\epsilon$ occurs ensures the conclusion of the
+$\epsilon$ axiom is implied.
+
+In the full version of strand spaces~\cite{Ramsdell13}, origination
+assumptions can be inherited from roles.  In the PVS version of
+Wrap-Decrypt Protocol, every instantiation of the \fn{make} role adds
+the assumption that the handle of the freshly created key
+uniquely originates at its node.
+
+\subsection{Wrap-Decrypt Security Goal}\label{sec:security goal}
+
+The security goal we wish to prove is that a key cannot be used both
+for wrapping and decryption.  The goal is formalized within this
+framework by
+
+  %% wrap_and_decrypt_disjoint: theorem
+  %%   forall(bu: run(protocol_roles), z0, z1: strand(bu`space),
+  %%          h0, h1: nat, st0, st1: state, k0, k1: skey, x: mesg):
+  %%     h0 >= 3 and h1 >= 3 and
+  %%     wrap_inst(bu)(z0, h0, st0, k0, k1) and
+  %%     decrypt_inst(bu)(z1, h1, st1, x, k1)
+  %%       implies
+  %%         false
+
+\begin{thm}[Wrap-Decrypt Security Goal]\label{thm:security goal}
+\[
+\begin{array}{l}
+  \all{z_0,z_1\typ\srt{Z},h_0,h_1\in\nat,q_0,q_1\typ\srt{Q},
+    k_0,k_1\typ\srt{S},m\typ\srt{M}}\\
+  \quad h_0\geq 3\land h_1\geq 3\\
+  \qquad{}\land\cn{htin}(z_0,h_0,\fn{wrap}(q_0,k_0,k_1))\\
+  \qquad{}\land\cn{htin}(z_1,h_1,\fn{decrypt}(q_1,m,k_1))\\
+  \qquad\quad{}\supset\fn{falsehood}
+\end{array}
+\]
+\end{thm}
+
+In words, there is no bundle in which a wrap and a decrypt strand both
+include a transition node and share the key~$k_1$.  In contrast to
+Section~\ref{sec:state split}, we prove the security goal is
+satisfied in all bundles, not just the ones that are runs of the
+protocol.
+
+\paragraph{Proof Sketch.}  The general approach is to apply the Sticky
+Attribute Lemma (Lemma~\ref{lem:sticky attribute}) to show that when
+the wrap node is before the decrypt node, the decrypt strand is
+impossible because the key's attribute is \awrap, and vice versa.  The
+steps in the proof follow.  In these proofs, for event
+$e=\neutral(b,q_0,q_1)$, let $e\sel 0=b$, $e\sel 1=q_0$, and $e\sel
+2=q_1$.
+
+\begin{enumerate}
+\item Prove a bridge lemma for the Sticky Attribute Lemma analogous to
+  the Init Extend Bridge Lemma (Lemma~\ref{lem:init extend bridge}).
+\[
+\begin{array}{l}
+\all{n_0,n_1\in\nnodes(\ssp_\bun),a\in\addr
+  (\evt_{\ssp_\bun}(n_0)\sel 2),r\in\attr}\\
+\quad n_0\prec n_1\land\evt_{\ssp_\bun}(n_0)\sel 2(a)=r\land
+r\neq\ainit \\
+\qquad{}\supset\evt_{\ssp_\bun}(n_1)\sel 1(a)=r
+\end{array}
+\]
+\item Prove a modification of the bridge lemma in which addresses are
+  replaced by keys.
+\[
+\begin{array}{l}
+\all{n_0,n_1\in\nnodes(\ssp_\bun),k\typ\srt{S},r\in\attr}\\
+\quad\mbox{let }p=hk(\evt_{\ssp_\bun}(n_0)\sel 2,k)\mbox{ in}\\
+\quad n_0\prec n_1\land(\some{a}p(a))\land
+\evt_{\ssp_\bun}(n_0)\sel 2(\epsilon p)=r\land
+r\neq\ainit \\
+\qquad{}\supset\evt_{\ssp_\bun}(n_1)\sel 1(\epsilon p)=r
+\end{array}
+\]
+\item Prove three lemmas about wrap strands in bundles.  Prove the
+  key~$k_1$ is in the state, the strand is a state observer, and the
+  attribute of~$k_1$ is \awrap.
+\item Prove the analogous three lemmas about decrypt strands in bundles.
+\item To the security goal, instantiate the lemmas about wrap and
+  decrypt strands, apply the lemma that the transition nodes $(z_0,2)$
+  and $(z_1,2)$ are totally ordered, and then reason by cases.
+  \begin{description}
+    \item[Case $(z_0,2)=(z_1,2)$:] When $z_0=z_1$, the attribute
+      of~$k_1$ in the state at $(z_0,2)$ cannot be both {\awrap} and
+      {\adecrypt}, proving \fn{falsehood}.
+    \item[Case $(z_0,2)\prec(z_1,2)$:] Instantiate the modified bridge
+      lemma with\break$n_0\mapsto(z_0,2)$, $n_1\mapsto(z_1,2)$, $k\mapsto
+      k_1$, and $r\mapsto\awrap$.  The state at $(z_1,2)$ cannot be
+      both {\awrap} and {\adecrypt}, proving \fn{falsehood}.
+    \item[Case $(z_1,2)\prec(z_0,2)$:] Proof is analogous to the
+      previous case.\qed
+  \end{description}
+\end{enumerate}
+
+\subsection{Guards and State Threading}\label{sec:guards and state
+  threading}
+
+Guarded transitions suggest another way to do state threading when the
+encoding function is injective.  State threading~\cite{RamsdellEtAl14}
+is a method for reasoning about state in a protocol without the use of
+state synchronization events.  Instead, receive-send pairs of nodes
+are annotated by a subset of the transition relation.  With hindsight,
+a better approach might have been to annotate the node pair with a
+guarded transition.
+
+For the extend role in Section~\ref{sec:state split}, the annotation
+in~\cite{RamsdellEtAl14} for extending the state encoded by~$m_0$
+with~$m_1$ is
+\[\{(q_0,q_1)\mid q_0=\encode(m_0)\land q_1=\extend(m_1,q_0)\}.\]
+Let $p(m)(q)=(q=\encode(m))$, that is, $p(m)$ is a predicate on states
+that is true when the state is encoded by~$m$.  With guarded
+transitions, the annotation becomes
+%
+\[(\some{q}p(m_0)(q),\epsilon(p(m_0)),
+\extend(m_1,\epsilon(p(m_0)))).\]
+
+The advantage of using guarded transitions becomes apparent when
+considering bridge lemmas.  The state threading version of the Init
+Extend Bridge Lemma is
+%
+\[
+\begin{array}{l}
+  n\in\nnodes(\bun)\land(\some{q}p(m_0)(q))\land
+  \anno_\bun(n)\sel 1=\extend(m,\epsilon(p(m_0)))\\
+  \quad\supset\some{n'}n'\prec n\land
+  \anno_\bun(n')=(\truth, \epsilon(p(m_0)),\extend(m,\epsilon(p(m_0)))).
+\end{array}
+\]
+
+\subsection{Guards and the \bun, \comp, $\phi$ Model}\label{sec:guards
+  and bcphi}
+
+\[\ast\ast\ast\]
+
+\begin{note}
+  I don't know how to relate strand spaces with guarded transitions to
+  some version of the \bun, \comp, $\phi$ model.  If it can be done,
+  the Wrap-Decrypt Protocol and its security goal will be easily
+  transferred into this \bun, \comp, $\phi$ model.
+\end{note}
+
+\section{Conclusion}\label{sec:conclusion}
+
+\begin{note}
+  The conclusion has not been written yet.  Some observations follow.
+\end{note}
+
+\begin{itemize}
+\item This paper sorely needs the kind of example described at the end
+  of Section~\ref{sec:constraints on labels} or a proof that there are
+  none.
+\item The relationship between guarded transitions and the \bun, \comp,
+  $\phi$ model should be explored.
+\item Messages need not be part of an algebra to present and compare
+  strand spaces with transition to strand spaces with labels.  This is
+  because skeletons and their homomorphisms do not explicitly occur in
+  this discussion.
+\item Protocols play a surprisingly small role in this paper.
+\item The use of an automated proof assistant and carefully worked out
+  examples is crucial to ensuring the models are applicable.
+\end{itemize}
+
+\section*{Acknowledgments}\label{sec:aacknowledgments}
+Thanks to Daniel J.~Dougherty, Joshua D.~Guttman, Moses D.~Liskov, and
+Paul D.~Rowe.
+
+\bibliography{secureprotocols}
+\bibliographystyle{plain}
+
+\clearpage
+\tableofcontents
+
+\end{document}

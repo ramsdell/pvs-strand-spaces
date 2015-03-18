@@ -1,0 +1,549 @@
+\documentclass[12pt]{article}
+
+\newif\ifreleased
+\releasedfalse % \releasedtrue
+
+% For drafts:
+\ifreleased
+\else
+\pagestyle{myheadings}
+\markright{Draft of \today{}}
+\fi
+
+%\usepackage{graphics}
+%\usepackage[matrix,arrow,curve]{xy}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{url}
+
+\newtheorem{thm}{Theorem}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{conj}[thm]{Conjecture}
+\newenvironment{note}{\begingroup\itshape}{\endgroup}
+\newcommand{\remark}[1]{\emph{[#1]}}
+\newcommand{\cpsa}{\textsc{cpsa}}
+\newcommand{\pvs}{\textsc{pvs}}
+\newcommand{\cn}[1]{\ensuremath{\operatorname{\mathsf{#1}}}}
+\newcommand{\fn}[1]{\ensuremath{\operatorname{\mathit{#1}}}}
+\newcommand{\srt}[1]{\ensuremath{\mathsf{#1}}}
+\newcommand{\gtag}[1]{\ensuremath{\mathit{#1}}}
+\newcommand{\typ}{\mathbin:}
+\newcommand{\seq}[1]{\ensuremath{\langle#1\rangle}}
+\newcommand{\append}{\cdot}
+\newcommand{\enc}[2]{\ensuremath{\{\!|#1|\!\}_{#2}}}
+\newcommand{\invk}[1]{{#1}^{-1}}
+\newcommand{\tg}[1]{\cn{g}_{#1}}
+\newcommand{\inbnd}{\mathord -}
+\newcommand{\outbnd}{\mathord +}
+\newcommand{\start}{\mathord\ast}
+\newcommand{\sync}{\mathord !}
+\newcommand{\obsv}{\mathord ?}
+\newcommand{\neutral}{\mathord\circ}
+\newcommand{\nat}{\ensuremath{\mathbb{N}}}
+\newcommand{\zed}{\ensuremath{\mathbb{Z}}}
+\newcommand{\all}[1]{\forall#1\mathpunct.}
+\newcommand{\some}[1]{\exists#1\mathpunct.}
+\newcommand{\funct}[1]{\lambda#1\mathpunct.}
+\newcommand{\sel}{\downarrow}
+
+\newcommand{\alg}{\ensuremath{\mathbb{A}}}
+\newcommand{\msg}{\ensuremath{\mathcal{M}}}
+\newcommand{\ssp}{\ensuremath{\mathcal{S}}}
+\newcommand{\bun}{\ensuremath{\mathcal{B}}}
+\newcommand{\sta}{\ensuremath{\mathcal{Q}}}
+\newcommand{\strands}{\ensuremath{\mathcal{Z}}}
+\newcommand{\nodes}{\ensuremath{\mathcal{N}}}
+\newcommand{\nnodes}{\nodes^{\,!}}
+\newcommand{\key}{\srt{A}|\srt{S}}
+\newcommand{\base}{\key|\srt{D}|\srt{E}}
+\newcommand{\boot}{\cn{bt}}
+\newcommand{\extend}{\cn{ex}}
+\newcommand{\init}{\ensuremath{\mathcal{I}}}
+\newcommand{\tran}{\ensuremath{\mathcal{T}}}
+\newcommand{\pth}{\ensuremath{\pi}}
+\newcommand{\encode}{\fn{enc}}
+\newcommand{\decode}{\fn{dec}}
+\newcommand{\eran}{\ensuremath{\mathcal{R}}}
+\newcommand{\evt}{\fn{evt}}
+\newcommand{\dom}{\fn{Dom}}
+\newcommand{\ran}{\fn{Ran}}
+\newcommand{\ra}{\fn{ra}}
+
+\newcommand{\comp}{\ensuremath{\mathcal{C}}}
+\newcommand{\family}{\ensuremath{\mathcal{F}}}
+\newcommand{\pos}{\ensuremath{\mathcal{P}}}
+\newcommand{\lab}{\ensuremath{\mathcal{L}}}
+\newcommand{\labs}{\ensuremath{\lambda}}
+\newcommand{\cbar}[1]{\ensuremath{\overline{#1}}}
+\newcommand{\cnnodes}{\bar\nodes^{\neutral}}
+
+\newcommand{\bool}{\ensuremath{\mathbb{B}}}
+\newcommand{\truth}{\ensuremath{\mathfrak{t}}}
+\newcommand{\falsehood}{\ensuremath{\mathfrak{f}}}
+\newcommand{\gua}{\ensuremath{\mathcal{G}}}
+\newcommand{\addr}{\ensuremath{\mathcal{A}}}
+\newcommand{\attr}{\ensuremath{\mathcal{C}}}
+\newcommand{\ainit}{\ensuremath{\mathsf{init}}}
+\newcommand{\awrap}{\ensuremath{\mathsf{wrap}}}
+\newcommand{\adecrypt}{\ensuremath{\mathsf{decrypt}}}
+\newcommand{\anno}{\fn{anno}}
+
+\title{The \bun,\family,$\phi$ Model}
+\author{John D.~Ramsdell\and Joshua D.~Guttman\and Moses D.~Liskov\and
+  Paul D.~Rowe}
+
+\begin{document}
+\maketitle
+
+In this note, we describe a model patterned after the
+\bun,\cbar\comp,$\phi$ model~\cite{Guttman12}.  An execution of a protocol
+is described by a set strands.  In this model, each strand is a
+sequence of events of five kinds, \emph{transmissions},
+\emph{receptions}, \emph{initializations}, \emph{transitions}, and
+\emph{observations}.  Each event has a message with the exception of a
+transition, which has two.  A transition event provides
+synchronization between protocol activity and state change, and an
+observation provides a view into the current state.  These changes
+lead naturally to a \bun,\family,$\phi$ model, which is motivated by the
+recent implementation of state semantics in CPSA~3, and is a synthesis
+of the various models proposed by the authors.
+
+\emph{Much more should be here someday.}
+
+In the text that follows, an exclamation point in the margin marks
+important new material.
+
+\section{Strand Spaces With State}\label{sec:strand spaces}
+
+The parameters to the strand space theory with state are a set
+of messages (\msg), and a carried by relation
+(${\sqsubseteq}\subseteq\msg\times\msg$).
+
+The set of messages~{\msg} is often the carrier set of a message
+algebra.  Intuitively, a message~$m_0$ is carried by~$m_1$
+($m_0\sqsubseteq m_1$) if it is possible to extract~$m_0$ from~$m_1$.
+
+In strand space theory, the \emph{trace} of a strand is a linearly
+ordered sequence of events $e_0\Rightarrow\cdots\Rightarrow e_{n-1}$,
+and an \emph{event} is a message transmission~$\outbnd m$, a
+reception~$\inbnd m$, a state initialization~$\start m$, or a state
+observation~$\obsv m$, where~$m\in\msg$, or a
+\marginpar{!}
+state transition~$\sync t$, where~$t\in\msg\times\msg$.  A
+\emph{strand space}~$\ssp$ is a map from a set of strands to a set of
+traces.  We choose the set of strands to be a prefix of the natural
+numbers, so a strand space is finite sequence of traces.  The set of
+strands of strand space {\ssp} is $\strands(\ssp)=\dom(\ssp)$.
+
+A node names an event in a strand space.  The set of \emph{nodes} of
+strand space $\ssp$ is $\{(z,i)\mid z\in\strands(\ssp), 0\leq i <
+|\ssp(z)|\}$, and the event at a node is $\evt_\ssp(z,i)=\ssp(z)(i)$.
+A node is a \emph{path node} in~$\ssp$ iff the event at the node is a
+state initialization or a transition.  The set of nodes of~$\ssp$ is
+$\nodes(\ssp)$ and the set of transition nodes of~$\ssp$ is $\nnodes(\ssp)$.
+
+A message \emph{originates} in trace~$c$ at index~$i$ iff
+\begin{enumerate}
+\item $c(i)$ is the transmission~$\outbnd m$, it is carried by~$m$,
+  and it is not carried by any event earlier in the trace, or
+\item $c(i)$ is the initialization~$\start m$, it is carried by~$m$,
+  \marginpar{!}
+  and it is not carried by any event earlier in the trace, or
+\item $c(i)$ is the transition event $\sync(m_0,m_1)$, the message is
+  carried by $m_1$, and it is not carried by $m_0$ or any event
+  earlier in the trace.
+\end{enumerate}
+
+A message~$m$ is \emph{non-originating} in strand space~$\ssp$,
+written $\fn{non}(\ssp,m)$, if it originates at no node.  A
+message~$m$ \emph{uniquely originates} in strand space~$\ssp$ at
+node~$n$, written $\fn{uniq}(\ssp,m,n)$, if it originates at~$n$ and
+nowhere else.
+
+The model of execution is a bundle.  The triple
+$\bun=(\ssp,\to,\leadsto)$ is a \emph{bundle} iff it defines a finite
+directed acyclic graph, where the vertices are the nodes of $\ssp$,
+and an edge represents communication~($\to$), state
+passing~($\leadsto$), or strand succession~($\Rightarrow$) in~$\ssp$.
+
+For communication, if $n_0\rightarrow n_1$, then there is a
+message~$t$ such that $\evt_\ssp(n_0)=\outbnd m$
+and $\evt_\ssp(n_1)=\inbnd m$.  For each reception node~$n_1$, there
+is a unique transmission node~$n_0$ with $n_0\to n_1$.
+
+For state passing, if $n_0\leadsto n_1$, then\marginpar{!}
+\begin{enumerate}
+\item $n_0$ and~$n_1$ are transition nodes, and there is a message~$m$
+  such that $\evt_\ssp(n_0)=\sync(m_0,m)$ and
+  $\evt_\ssp(n_1)=\sync(m,m_1)$, or
+\item $n_0$ is an initialization node and~$n_1$ is a transition node,
+  and there is a message~$m$ such that $\evt_\ssp(n_0)=\start m$ and
+  $\evt_\ssp(n_1)=\sync(m,m_1)$, or
+\item $n_0$ is a transition node and~$n_1$ is an observation node, and
+  there is a message~$m$ such that $\evt_\ssp(n_0)=\sync(m_0,m)$ and
+  $\evt_\ssp(n_1)=\obsv m$, or
+\item $n_0$ is an initialization node and~$n_1$ is an observation
+  node, and there is a message~$m$ such that $\evt_\ssp(n_0)=\start m$
+  and $\evt_\ssp(n_1)=\obsv m$, or
+\item $n_0$ is an observation node and~$n_1$ is a transition node, and
+  there is a message~$m$ such that $\evt_\ssp(n_0)=\obsv m$ and
+  $\evt_\ssp(n_1)=\sync(m,m_1)$.
+\end{enumerate}
+Additionally,
+\begin{enumerate}
+\item for all path or observation nodes~$n_0$, and transition
+  nodes~$n_1$ and~$n_2$, $n_0\leadsto n_1$ and $n_0\leadsto n_2$ implies
+  $n_1=n_2$, and 
+\item for each transition or observation node~$n_1$, there exists a
+  path node~$n_0$ such that $n_0\leadsto n_1$, and
+\item for all path nodes~$n_0$, transition nodes~$n_1$, and
+  observation nodes~$n_2$, $n_0\leadsto n_1$ and $n_0\leadsto n_2$
+  implies $n_2\leadsto n_1$.
+\end{enumerate}
+
+Each acyclic graph has a transitive irreflexive relation~$\prec$ on
+its vertices.  The relation specifies the causal ordering of nodes in
+a bundle.  A transitive irreflexive binary relation is also called a
+strict order.
+
+For a bundle $\bun$, its associated strand space will be denoted
+$\ssp_\bun$ unless the association is clear from the context.
+
+With the definitions of origination and bundles given here, strand
+spaces with state retains a key property of the original version
+of strand spaces.
+
+\begin{lem}\label{lem:carried originates}
+  If message~$m$ is carried by $\evt_{\ssp_\bun}(n)$, then~$m$
+  originates in~\bun.
+\end{lem}
+\begin{proof}
+  By induction on the graph of {\bun} and a case analysis of the
+  events at~$n$ that carry~$m$.
+  \begin{enumerate}
+  \item If $n$ is a transmission, then either $m$ originates at $n$ or~$m$
+    is carried earlier in the strand by the definition of origination.
+  \item If $n$ is a reception, then there is an earlier transmission node
+    that carries~$m$.
+  \item If $n$ is an observation, then there is an earlier path node
+    that carries~$m$.
+  \item If $n$ is a initialization, then either $m$ originates at $n$ or~$m$
+    is carried earlier in the strand.
+  \item If $\evt_{\ssp_\bun}(n)=\sync(m_0,m_1)$ and $m\sqsubseteq
+    m_0$, then there is an earlier path node that carries~$m$.
+  \item If $\evt_{\ssp_\bun}(n)=\sync(m_0,m_1)$ and $m\sqsubseteq m_1$,
+    then $m\sqsubseteq m_0$, or~$m$ originates at~$n$, or~$m$ is carried
+    earlier in the strand.
+  \end{enumerate}
+  \vspace{-4.4ex}
+\end{proof}
+
+In the remainder of this section, the theory of strand spaces used in
+the proofs has been simplified.  In the full theory, origination
+assumptions can be inherited from roles.  See~\cite{Ramsdell13} for
+all the gory details.
+
+When a bundle is a run of a protocol, the behavior of each strand is
+constrained by a role.  Adversarial strands are constrained by roles
+as are non-adversarial strands.  A \emph{protocol} is a set of roles,
+and a \emph{role} is a set of traces.  A trace~$c$ is an
+\emph{instance} of role~$r$ iff~$c$ is a prefix of some member of~$r$.
+For protocol~$P$, bundle $\bun=(\ssp,\to,\leadsto)$ is a \emph{run of
+  protocol}~$P$ iff there exists a role assignment $\ra\in
+\strands(\ssp)\to P$ such that for all $z\in\strands(\ssp)$, $\ssp(z)$ is an
+instance of~$\ra(z)$.
+
+\section{State and Compatibility}
+
+The parameters to the state theory are
+\begin{enumerate}
+\item a set of states (\sta),
+\item a set of labels ($\lab\subseteq\msg$),
+\item a set of initial states ($\init\subseteq\sta$),
+\item a labeled state transition relation
+  ($\tran\subseteq\sta\times\lab\times\sta$), and
+\item an injective state encoding function ($f\in\sta\to\msg$).
+\end{enumerate}
+
+Let {\pth} be a finite sequence of states~\sta, and~{\labs} be a
+finite sequence of labels~\lab.  The pair $\comp=(\pth,\labs)$ is a
+\emph{computation} iff
+\begin{enumerate}
+\item $|\pth|=|\labs|+1$, and
+\item $\pth(0)\in\init$, and
+\item \(\all{i<|\labs|}(\pth(i),\labs(i),\pth(i+1))\in\tran\).
+\end{enumerate}
+A \emph{computation family} is a finite sequence of computations.  The
+set of positions in family~{\family } is \(\pos(\family)= \{(i, j)\mid
+i\in\dom(\family), (\pth,\labs)=\family(i), 0\leq j < |\labs|\}\).
+For positions $(i_0,j_0)$ and $(i_1,j_1)$ in $\pos(\family)$,
+$(i_0,j_0)\hookrightarrow(i_1,j_1)$ iff $i_0=i_1$ and $j_0=j_1+1$.
+
+In the \bun,\family,$\phi$ model, each execution is a triple.
+The~{\bun} refers to a bundle as described above, {\family} refers to
+a computation family, and $\phi$ to a map from transition nodes to
+positions in the family.
+
+We define \bun,\family,$\phi$ to be a \emph{compatible triple} iff
+\begin{enumerate}
+\item $\phi$ is a bijection between transition nodes and 
+  positions in~\family,
+\item $\phi$ preserves the strict order~$\prec$, meaning
+  that for all transition nodes~$n_0$ and~$n_1$, $n_0\prec n_1$ implies
+  $\phi(n_0)\hookrightarrow\phi(n_1)$, and
+\item $\phi$ preserves transitions, meaning that for 
+$(i,j)=\phi(n)$ and $(\pth,\labs)=\family(i)$,
+\marginpar{!}
+$\evt(n)=\sync(f(\pth(j),f(\pth(j+1))$.
+\item {\tran} has all observations, meaning for observation node~$n$
+  with $\evt(n)=\obsv m$, there is some $q\in\sta$ and $\ell\in\lab$
+  such that $(q,\ell,q)\in\tran$ and $m=f(q)$.
+\end{enumerate}
+
+One could add a requirement that the length of family~{\family} be the
+same as the number of initialization nodes in~\bun, but this is
+unnecessary.  Note that the structure of bundles and the definition of
+a computation ensures that the state encoded by an initialization node
+is an initial state.
+
+\section{The \bun,\cbar\comp,$\phi$ Model}\label{sec:bcphi}
+
+Strand spaces with states is a natural way of adding state to
+strand spaces.  To bundles that contain message-passing edges, it adds
+state-passing edges, and the rest follows.  However, the
+state-passing model has a serious shortcoming.  State and message-passing
+are intertwined in a way that makes it hard to reuse results on
+slightly different problems.
+
+The \bun,\cbar\comp,$\phi$ model~\cite{Guttman12} was designed to
+address this shortcoming.  In this model, states are related using a
+labeled transition system as in the \bun,\family,$\phi$ model.  In
+fact, the \cbar{\comp} in the \bun,\cbar\comp,$\phi$ model is really a
+computation family~\family.  Variables related to ones defined by
+strand spaces with state will be barred with the exception of
+computation families.  Thus, we disambiguate by writing
+\cbar\bun,\cbar\comp,$\cbar\phi$ for the Guttman's model.
+
+In the \cbar\bun,\cbar\comp,$\cbar\phi$ model, a state synchronization
+event is a label.  A node is a \emph{neutral node} in~$\cbar\ssp$ iff
+the event at the node is a state synchronization.  The set of neutral
+nodes of~$\cbar\ssp$ is $\cnnodes(\cbar\ssp)$.  The bundle
+$\cbar{\bun}=(\cbar\ssp,\to)$ omits the state-passing edges~$\leadsto$
+from its associated graph along with the constraints associated with
+state-passing.  In short, a bundle~\cbar{\bun} is just a strand space
+bundle augmented with neutral nodes.  Function \cbar{\phi} is a map
+from neutral nodes to positions in the family~\cbar\comp.
+
+We define \cbar{\bun},\cbar\comp,\cbar{\phi} to be a
+\emph{compatible triple} iff
+\begin{enumerate}
+\item \cbar{\phi} is a bijection between neutral nodes and 
+  positions in~\cbar\comp,
+\item \cbar{\phi} preserves the strict order~$\prec$, meaning
+  that for all neutral nodes~$n_0$ and~$n_1$, $n_0\prec n_1$ implies
+  $\cbar{\phi}(n_0)\hookrightarrow\cbar{\phi}(n_1)$, and
+\item \cbar{\phi} preserves transitions, meaning that for
+  $(i,j)=\cbar{\phi}(n)$ and $(\pth,\labs)=\cbar\comp(i)$,
+  $\evt(n)=\neutral(\labs(j)).$
+\end{enumerate}
+
+\section{Relating Models}
+
+\emph{This section needs help.  Unresolved issues follow.}
+
+\begin{enumerate}
+\item How does one reflect the definition of origination in the
+  \bun,\family,$\phi$ model into the \cbar\bun,\cbar\comp,$\cbar\phi$
+  via constrains on labels imposed by \tran?
+\item What should be done about initialization nodes?
+  \bun,\family,$\phi$ has them, but \cbar\bun,\cbar\comp,$\cbar\phi$
+  does not.
+\item What should be done about observation nodes?  They are not in
+  the domain of $\phi$ in \bun,\family,$\phi$, but they are in
+  the domain of $\cbar\phi$ in \cbar\bun,\cbar\comp,$\cbar\phi$.
+\end{enumerate}
+
+\section{Message Model}\label{sec:message model}
+
+Typically, messages are modeled by elements of an order-sorted
+algebra~\cite{GoguenMeseguer92}. An order-sorted algebra is a
+generalization of a many-sorted algebra in which sorts may be
+partially ordered.  The carrier sets associated with ordered sorts are
+related by the subset relation.
+
+\begin{figure}
+$$\begin{array}{ll@{{}\typ{}}ll}
+\mbox{Sorts:}&
+\multicolumn{3}{l}{\mbox{$\srt{M}$, $\srt{A}$,
+    $\srt{S}$, $\srt{D}$, $\srt{E}$}}\\
+\mbox{Subsorts:}&
+\multicolumn{3}{l}{\mbox{$\srt{A}<\srt{M}$, $\srt{S}<\srt{M}$,
+    $\srt{D}<\srt{M}$, $\srt{E}<\srt{M}$}}\\
+\mbox{Operations:}&(\cdot,\cdot)&\srt{M}\times\srt{M}\to\srt{M}& \mbox{Pairing}\\
+&\enc{\cdot}{(\cdot)}&\srt{M}\times\srt{A}\to\srt{M}&\mbox{Asymmetric encryption}\\
+&\enc{\cdot}{(\cdot)}&\srt{M}\times\srt{S}\to\srt{M}&\mbox{Symmetric encryption}\\
+&\#&\srt{\srt{M}}\to\srt{M}& \mbox{Hashing}\\
+&\invk{(\cdot)}&\srt{A}\to\srt{A}& \mbox{Asymmetric key inverse}\\
+&\invk{(\cdot)}&\srt{S}\to\srt{S}& \mbox{Symmetric key inverse}\\
+&\cn{a}_i,\cn{b}_i&\srt{A}& \mbox{Asymmetric key constants}\\
+&\cn{s}_i&\srt{S}& \mbox{Symmetric key constants}\\
+&\cn{d}_i&\srt{D}& \mbox{Data constants}\\
+&\cn{e}_i&\srt{E}& \mbox{Text constants}\\
+&\tg{i}&\srt{M}& \mbox{Tag constants}\\
+\mbox{Equations:}&\multicolumn{2}{l}{\invk{\cn{a}_i}=\cn{b}_i\quad
+\invk{\cn{b}_i}=\cn{a}_i}
+&(i\in\nat)\\
+&\multicolumn{2}{l}{\all{k\typ\srt{A}}\invk{(\invk{k})}=k}
+&\all{k\typ\srt{S}}\invk{k}=k
+\end{array}$$
+\caption{Crypto Algebra Signature}\label{fig:algebra signature}
+\end{figure}
+
+Figure~\ref{fig:algebra signature} shows the signature of the algebra
+used in examples in this paper.  Sort~$\srt{M}$ is the sort of all
+messages.  Messages of sort~$\srt{A}$ (asymmetric keys),
+sort~$\srt{S}$ (symmetric keys), sort~$\srt{D}$ (data), and
+sort~$\srt{E}$ (text) are called \emph{atoms}.  Messages are atoms,
+tag constants, or constructed using encryption $\enc{\cdot}{(\cdot)}$,
+hashing $\#(\cdot)$, and pairing $(\cdot,\cdot)$, where the comma
+operation is right associative and parentheses are omitted when the
+context permits.
+
+The algebra~{\alg} is the initial quotient term algebra over the
+signature.  The canonical representative for each element in the
+algebra is the term that contains no occurrences of the inverse
+operation~$\invk{(\cdot)}$.  At times, we conflate a message with its
+canonical representative.  The carrier set~$\alg_\srt{M}$ for sort
+\srt{M} is what is used to instantiate {\msg} in strand spaces with state.
+For sort~$S$ in the signature, we write $m\typ S$ for $m\in\alg_S$.
+%% For skeleton formulas, $\bun,\alpha\models m\typ S$ iff
+%% $\alpha(m)\in\alg_S$.  For strands and nodes, sorts~\srt{Z}
+%% and~\srt{N} have been added with the property that $\bun,\alpha\models
+%% z\typ\srt{Z}$ iff $\alpha(z)\in\strands(\ssp_\bun)$ and
+%% $\bun,\alpha\models n\typ\srt{N}$ iff $\alpha(n)\in\nodes(\ssp_\bun)$.
+
+A message~$m_0$ is \emph{carried by}~$m_1$, written $m_0\sqsubseteq
+m_1$ iff~$m_0$ can be extracted from a reception of~$m_1$, assuming
+plaintext is extractable from encryptions.  In other
+words,~$\sqsubseteq$ is the smallest reflexive, transitive relation
+such that $m_0\sqsubseteq m_0$, $m_0\sqsubseteq (m_0, m_1)$,
+$m_1\sqsubseteq (m_0, m_1)$, and $m_0\sqsubseteq\enc{m_0}{m_1}$.
+
+\begin{figure}
+$$\begin{array}{r@{{}={}}l}
+\fn{create}(m\typ\base)&\outbnd m\qquad\fn{tag}_i=\outbnd\tg{i}\\
+\fn{pair}(m_0\typ\srt{M}, m_1\typ\srt{M})&
+\inbnd m_0\Rightarrow\inbnd m_1\Rightarrow\outbnd (m_0,m_1)\\
+\fn{sep}(m_0\typ\srt{M}, m_1\typ\srt{M})&
+\inbnd (m_0, m_1)\Rightarrow\outbnd m_0\Rightarrow\outbnd m_1\\
+\fn{enc}(m\typ\srt{M}, k\typ\srt{A}|\srt{S})&
+\inbnd m\Rightarrow\inbnd k\Rightarrow\outbnd \enc{m}{k}\\
+\fn{dec}(m\typ\srt{M}, k\typ\key)&
+\inbnd \enc{m}{k}\Rightarrow\inbnd\invk{k}\Rightarrow\outbnd m\\
+\fn{hash}(m\typ\srt{M})&
+\inbnd m\Rightarrow\outbnd \#m
+\end{array}$$
+\caption{Adversary Traces}\label{fig:adversary}
+\end{figure}
+
+The roles that constrain adversarial behavior are defined by the
+functions in Figure~\ref{fig:adversary}.  The role defined by the
+function is all the traces that it generates.  For example, the role
+associated with the function \fn{pair} is $\{\fn{pair}(m_0,m_1)\mid
+m_0,m_1\typ\srt{M}\}$.  For the encryption related roles, $k\typ\key$
+asserts that~$k$ is either a symmetric or asymmetric key.  For the
+create role, $m\typ\base$ asserts that~$m$ is an atom.
+
+An atom~$m$ is \emph{penetrator non-originating} in bundle~{\bun} if
+there is no strand in~{\bun} with a trace that begins with $\outbnd
+m$.  The assumption has the effect of prohibiting the use of the
+create role for the atom by the adversary.
+
+\section{Wrap-Decrypt Protocol}
+
+The state in the Wrap-Decrypt Protocol is a device that creates,
+stores, and shields symmetric keys.  The device offers two operations
+using the keys it stores.  It can encrypt a key using a key in the
+store, called wrapping, or it can decrypt a message using a key.  A
+goal of this device is that all of its keys remain shielded within it.
+A key could be leaked if a key is used to wrap itself, and then the
+wrapped key is decrypted.
+
+The device enforces its security policy by associating an attribute
+with each of its keys.  A key has one of three attributes, \ainit,
+\awrap, and \adecrypt.  A key is created with attribute \ainit,
+wrapping is allowed when a key has attribute \awrap, and decrypting is
+allowed when a key has attribute \adecrypt. 
+
+Attributes can be changed with the set wrap and set decrypt operation.
+The device policy is that set wrap succeeds as long as key's attribute
+is not {\adecrypt} and set decryt succeeds as long as key's attribute
+is not \awrap.  The remaining available operation of the device is
+key making.
+
+\begin{figure}
+  \[
+  \begin{array}{r@{}l}
+    \fn{make}(q\typ\srt{S})={}&\start(\#k, \ainit)\Rightarrow\#k\\[1.2ex]
+    \fn{setwrapi}(k\typ\srt{S})={}&\sync((\#k,\ainit),(\#k,\awrap))\\
+    \fn{setwrapw}(k\typ\srt{S})={}&\sync((\#k,\awrap),(\#k,\awrap))\\[1.2ex]
+    \fn{setdecrypti}(k\typ\srt{S})={}&\sync((\#k,\ainit),(\#k,\adecrypt))\\
+    \fn{setdecryptw}(k\typ\srt{S})={}&\sync
+    ((\#k,\adecrypt),(\#k,\adecrypt))\\[1.2ex]
+    \fn{wrap}(k_0,k_1\typ\srt{S})={}&
+    \inbnd\#k_0\Rightarrow\inbnd\#k_1\Rightarrow
+    \obsv(\#k_1,\awrap)\Rightarrow\outbnd\enc{k_0}{k_1}\\[1.2ex]
+    \fn{decrypt}(m\typ\srt{M},k\typ\srt{S})={}&
+    \inbnd\enc{m}{k}\Rightarrow\inbnd\#k\Rightarrow
+    \obsv(\#k,\adecrypt)\Rightarrow\outbnd m
+  \end{array}
+  \]
+  \caption{Wrap-Decrypt Traces}\label{fig:wrap-decrypt traces}
+\end{figure}
+
+Let $A=\{\ainit,\awrap,\adecrypt\}$.  The set of states
+$\sta=\alg_\srt{S}\times A$.  The state encoding function
+$f(k,a)=(\#k,f_A(a))$, where $f_A$ maps each attribute to a distinct
+tag.  We use the attribute symbol to name the tag, so
+$f(k,\ainit)=(\#k,\ainit)$.  The initial states
+$\init=\{(k,\ainit)\mid k\in\alg_\srt{S}\}$.
+
+Figure~\ref{fig:wrap-decrypt traces} displays the Wrap-Decrypt
+Protocol traces.  In the full version of strand
+spaces~\cite{Ramsdell13}, origination assumptions can be inherited
+from roles.  This feature is used in the Wrap-Decrypt Protocol.  Every
+instantiation of the \fn{make} role adds the assumption that the hash
+of the key uniquely originates at the first node of a \fn{make}
+strand.  Additionally, the role adds the assumption that the key is
+penetrator non-originating.
+
+An unlabeled transition system compatible with the
+Wrap-Decrypt Protocol traces follows.  For
+$\cbar{\tran}\subseteq\sta\times\sta$,
+\[((k_0,a_0),(k_1,a_1))\in\cbar{\tran}\mbox{ iff
+}k_0=k_1\land(a_0=a_1\lor a_0=\ainit).\]
+
+\emph{At this point, labels should be added, and then used to link
+  this version of the protocol to one with neutral nodes.}
+
+\section{Discussion}
+
+The definition of a bundle {\bun} is motivated by the recent
+implementation of state semantics in CPSA~3.  In particular, the
+inclusion of state transition events and node orderings implied by
+initialization, transition, and observation nodes is new.  In this
+model, the treatment of observations is greatly simplified, and is not
+part of the state component of the model.  The state component need
+only focus on state transitions.  The details of state are abstracted
+away by the encoding function~$f$.
+
+This model of strand spaces with state is much easier to specify in
+PVS\@. The contents of a transition event need not be in the
+transition relation, so one does not need to use subsets of the
+transition relation or the like.
+
+\bibliography{secureprotocols}
+\bibliographystyle{plain}
+
+\end{document}

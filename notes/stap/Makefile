@@ -1,3 +1,5 @@
 BASE_NAME = stap
-MP_MACROS = strands.mp cmstrands.mp
-include ltxmp.mk
+ifndef MPINPUTS
+  export MPINPUTS=.:../../inputs:
+endif
+include ../../inputs/ltxmp.mk
